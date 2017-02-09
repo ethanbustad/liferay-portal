@@ -190,6 +190,7 @@ import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.xml.QName;
 import com.liferay.portal.language.LanguageResources;
 import com.liferay.portal.model.impl.CookieRemotePreference;
+import com.liferay.portal.model.impl.LayoutTypeImpl;
 import com.liferay.portal.plugin.PluginPackageUtil;
 import com.liferay.portal.security.jaas.JAASHelper;
 import com.liferay.portal.security.lang.DoPrivilegedUtil;
@@ -2732,14 +2733,16 @@ public class PortalImpl implements Portal {
 			variables.put("liferay:pvlsgid", "0");
 		}
 
-		LayoutType layoutType = layout.getLayoutType();
-
 		UnicodeProperties typeSettingsProperties =
-			layoutType.getTypeSettingsProperties();
+			layout.getTypeSettingsProperties();
 
 		variables.putAll(typeSettingsProperties);
 
-		return layoutType.getURL(variables);
+		LayoutTypeController layoutTypeController =
+			LayoutTypeControllerTracker.getLayoutTypeController(
+				layout.getType());
+
+		return LayoutTypeImpl.getURL(layoutTypeController.getURL(), variables);
 	}
 
 	@Override
@@ -3665,11 +3668,9 @@ public class PortalImpl implements Portal {
 	public HttpServletRequest getOriginalServletRequest(
 		HttpServletRequest request) {
 
-		HttpServletRequest originalRequest = null;
-
-		HttpServletRequestWrapper currentRequestWrapper = null;
-
 		HttpServletRequest currentRequest = request;
+		HttpServletRequestWrapper currentRequestWrapper = null;
+		HttpServletRequest originalRequest = null;
 
 		while (currentRequest instanceof HttpServletRequestWrapper) {
 			if (currentRequest instanceof
@@ -4387,8 +4388,18 @@ public class PortalImpl implements Portal {
 			friendlyURL = friendlyURL.substring(0, friendlyURL.length() - 1);
 		}
 
-		Layout layout = LayoutLocalServiceUtil.getFriendlyURLLayout(
-			groupId, privateLayout, friendlyURL);
+		Layout layout = null;
+
+		if (Validator.isNotNull(friendlyURL)) {
+			layout = LayoutLocalServiceUtil.getFriendlyURLLayout(
+				groupId, privateLayout, friendlyURL);
+		}
+		else {
+			long defaultPlid = LayoutLocalServiceUtil.getDefaultPlid(
+				groupId, privateLayout);
+
+			layout = LayoutLocalServiceUtil.getLayout(defaultPlid);
+		}
 
 		return new LayoutQueryStringComposite(layout, friendlyURL, queryString);
 	}
@@ -7320,7 +7331,12 @@ public class PortalImpl implements Portal {
 			long companyId, long groupId, Portlet portlet)
 		throws PortalException {
 
-		String rootPortletId = portlet.getRootPortletId();
+		String name = ResourceActionsUtil.getPortletBaseResource(
+			portlet.getRootPortletId());
+
+		if (Validator.isNull(name)) {
+			return;
+		}
 
 		Group group = GroupLocalServiceUtil.fetchGroup(groupId);
 
@@ -7328,12 +7344,7 @@ public class PortalImpl implements Portal {
 			groupId = group.getLiveGroupId();
 		}
 
-		String name = ResourceActionsUtil.getPortletBaseResource(rootPortletId);
 		String primaryKey = String.valueOf(groupId);
-
-		if (Validator.isNull(name)) {
-			return;
-		}
 
 		int count =
 			ResourcePermissionLocalServiceUtil.getResourcePermissionsCount(

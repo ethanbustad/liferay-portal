@@ -384,6 +384,28 @@ public class PortletLocalServiceImpl extends PortletLocalServiceBaseImpl {
 
 	@Override
 	@Skip
+	public Portlet fetchPortletById(long companyId, String portletId) {
+		portletId = PortalUtil.getJsSafePortletId(portletId);
+
+		Map<String, Portlet> companyPortletsMap = getPortletsMap(companyId);
+
+		String rootPortletId = PortletConstants.getRootPortletId(portletId);
+
+		if (portletId.equals(rootPortletId)) {
+			return companyPortletsMap.get(portletId);
+		}
+
+		Portlet portlet = companyPortletsMap.get(rootPortletId);
+
+		if (portlet != null) {
+			portlet = portlet.getClonedInstance(portletId);
+		}
+
+		return portlet;
+	}
+
+	@Override
+	@Skip
 	public List<CustomAttributesDisplay> getCustomAttributesDisplays() {
 		List<CustomAttributesDisplay> customAttributesDisplays =
 			new ArrayList<>();
@@ -483,24 +505,7 @@ public class PortletLocalServiceImpl extends PortletLocalServiceBaseImpl {
 	@Override
 	@Skip
 	public Portlet getPortletById(long companyId, String portletId) {
-		portletId = PortalUtil.getJsSafePortletId(portletId);
-
-		Portlet portlet = null;
-
-		Map<String, Portlet> companyPortletsMap = getPortletsMap(companyId);
-
-		String rootPortletId = PortletConstants.getRootPortletId(portletId);
-
-		if (portletId.equals(rootPortletId)) {
-			portlet = companyPortletsMap.get(portletId);
-		}
-		else {
-			portlet = companyPortletsMap.get(rootPortletId);
-
-			if (portlet != null) {
-				portlet = portlet.getClonedInstance(portletId);
-			}
-		}
+		Portlet portlet = fetchPortletById(companyId, portletId);
 
 		if (portlet != null) {
 			return portlet;
@@ -1146,8 +1151,7 @@ public class PortletLocalServiceImpl extends PortletLocalServiceBaseImpl {
 		}
 
 		updatePortlet(
-			portlet.getCompanyId(), portlet.getPortletId(), StringPool.BLANK,
-			portlet.isActive());
+			portlet.getCompanyId(), portlet.getPortletId(), StringPool.BLANK);
 	}
 
 	protected void initPortletDefaultPermissions(Portlet portlet)
@@ -2553,6 +2557,21 @@ public class PortletLocalServiceImpl extends PortletLocalServiceBaseImpl {
 			spriteFileName);
 
 		portletApp.setSpriteImages(spriteFileName, spriteProperties);
+	}
+
+	protected Portlet updatePortlet(
+		long companyId, String portletId, String roles) {
+
+		Portlet existingPortlet = portletPersistence.fetchByC_P(
+			companyId, portletId);
+
+		boolean active = true;
+
+		if (existingPortlet != null) {
+			active = existingPortlet.isActive();
+		}
+
+		return updatePortlet(companyId, portletId, roles, active);
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(

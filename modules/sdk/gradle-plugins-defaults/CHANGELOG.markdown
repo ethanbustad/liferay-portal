@@ -946,15 +946,68 @@ file contains a `Main-Class` header.
 
 ### Changed
 - [LPS-70282]: Update the [Liferay Gradle Plugins] dependency to version 3.1.2.
-- [LPS-70286]: Change `appJavadoc` module headings.
+- [LPS-70286]: Change the `appJavadoc` task's generated module headings (e.g.,
+*Liferay Journal API - com.liferay:com.liferay.journal:2.0.0*).
 
-## 2.4.18 - 2017-01-26
+## 2.4.18 - 2017-01-27
 
 ### Changed
 - [LPS-69926]: Make dependencies in the `compileInclude` configuration
 non-transitive by default.
 - [LPS-69926]: Make the `testCompile` configuration extend from the
 `compileInclude` configuration.
+
+## 2.4.19 - 2017-01-29
+
+### Changed
+- [LPS-70335]: Skip replacements of the `updateFileVersions` task in read-only
+sub-repositories.
+- [LPS-70336]: Update the [Liferay Gradle Plugins] dependency to version 3.1.3.
+
+## 2.4.20 - 2017-01-30
+
+### Fixed
+- [LPS-70335]: Fix location of version override files.
+
+## 2.4.21 - 2017-01-30
+
+### Changed
+- [LPS-66853]: Update the [Liferay Gradle Plugins] dependency to version 3.1.4.
+
+## 2.4.22 - 2017-01-31
+
+### Changed
+- [LPS-69606]: Generate WSDD files in a temporary directory.
+- [LPS-70379]: Update the [Liferay Gradle Plugins] dependency to version 3.1.5.
+- [LPS-70379]: Update the [Liferay Gradle Plugins Baseline] dependency to
+version 1.1.2.
+
+## 2.4.23 - 2017-02-01
+
+### Changed
+- [LPS-69926]: Move the `compileInclude` dependencies at the beginning of the
+test compile and runtime classpaths.
+
+## 2.4.24 - 2017-02-02
+
+### Changed
+- [LPS-67352]: Update the [Liferay Gradle Plugins] dependency to version 3.1.6.
+
+## 2.4.25 - 2017-02-03
+
+### Added
+- [LPS-70424]: Add the ability to set a custom value for the project group by
+setting the property `project.group` in a `gradle.properties` file contained in
+any parent directory of the project.
+
+### Changed
+- [LPS-69271]: Update the [Liferay Gradle Plugins] dependency to version 3.1.7.
+
+## 2.4.26 - 2017-02-04
+
+### Changed
+- [LPS-69926]: Set the `liferayOSGi.expandCompileInclude` property to `false` by
+default.
 
 [Liferay CDN]: https://cdn.lfrs.sl/repository.liferay.com/nexus/content/groups/public
 [Liferay Gradle Plugins]: https://github.com/liferay/liferay-portal/tree/master/modules/sdk/gradle-plugins
@@ -1048,6 +1101,10 @@ non-transitive by default.
 [LPS-70170]: https://issues.liferay.com/browse/LPS-70170
 [LPS-70282]: https://issues.liferay.com/browse/LPS-70282
 [LPS-70286]: https://issues.liferay.com/browse/LPS-70286
+[LPS-70335]: https://issues.liferay.com/browse/LPS-70335
+[LPS-70336]: https://issues.liferay.com/browse/LPS-70336
+[LPS-70379]: https://issues.liferay.com/browse/LPS-70379
+[LPS-70424]: https://issues.liferay.com/browse/LPS-70424
 [LRDOCS-2594]: https://issues.liferay.com/browse/LRDOCS-2594
 [LRDOCS-2841]: https://issues.liferay.com/browse/LRDOCS-2841
 [LRDOCS-2981]: https://issues.liferay.com/browse/LRDOCS-2981

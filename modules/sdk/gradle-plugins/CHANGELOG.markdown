@@ -993,9 +993,54 @@ to version 1.0.74.
 ## 3.1.2 - 2017-01-26
 
 ### Added
+- [LPS-70274]: Update the [Liferay Source Formatter] dependency to version
+1.0.342.
+- [LPS-70274]: Update the [Liferay Gradle Plugins Source Formatter] dependency
+to version 1.0.75.
 - [LPS-70282]: Automatically configure the `mainClassName` project property
 based on the `Main-Class` header in the `bnd.bnd` file, if the `application`
 plugin is applied.
+
+## 3.1.3 - 2017-01-29
+
+### Changed
+- [LPS-70336]: Update the [Liferay Source Formatter] dependency to version
+1.0.343.
+- [LPS-70336]: Update the [Liferay Gradle Plugins Source Formatter] dependency
+to version 1.0.76.
+
+## 3.1.4 - 2017-01-30
+
+### Changed
+- [LPS-66853]: Update the [Liferay Source Formatter] dependency to version
+1.0.344.
+- [LPS-66853]: Update the [Liferay Gradle Plugins Source Formatter] dependency
+to version 1.0.77.
+
+## 3.1.5 - 2017-01-31
+
+### Changed
+- [LPS-66853]: Update the [Liferay Source Formatter] dependency to version
+1.0.345.
+- [LPS-66853]: Update the [Liferay Gradle Plugins Source Formatter] dependency
+to version 1.0.78.
+- [LPS-70379]: Update the [Liferay Ant BND] dependency to version 2.0.33.
+
+## 3.1.6 - 2017-02-02
+
+### Changed
+- [LPS-67352]: Update the [Liferay Source Formatter] dependency to version
+1.0.347.
+- [LPS-67352]: Update the [Liferay Gradle Plugins Source Formatter] dependency
+to version 1.0.80.
+
+## 3.1.7 - 2017-02-03
+
+### Changed
+- [LPS-69271]: Update the [Liferay Source Formatter] dependency to version
+1.0.348.
+- [LPS-69271]: Update the [Liferay Gradle Plugins Source Formatter] dependency
+to version 1.0.81.
 
 [Gradle Bundle Plugin]: https://github.com/TomDmitriev/gradle-bundle-plugin
 [Liferay Ant BND]: https://github.com/liferay/liferay-portal/tree/master/modules/sdk/ant-bnd
@@ -1089,5 +1134,8 @@ plugin is applied.
 [LPS-70060]: https://issues.liferay.com/browse/LPS-70060
 [LPS-70084]: https://issues.liferay.com/browse/LPS-70084
 [LPS-70092]: https://issues.liferay.com/browse/LPS-70092
+[LPS-70274]: https://issues.liferay.com/browse/LPS-70274
 [LPS-70282]: https://issues.liferay.com/browse/LPS-70282
+[LPS-70336]: https://issues.liferay.com/browse/LPS-70336
+[LPS-70379]: https://issues.liferay.com/browse/LPS-70379
 [LRDOCS-3023]: https://issues.liferay.com/browse/LRDOCS-3023
