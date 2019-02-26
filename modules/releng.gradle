@@ -378,6 +378,8 @@ portalArtifactsJar {
 		fileTree(dir: projectDir.parentFile, include: "/portal-impl/src/content/Language*.properties").each {
 			append("content/" + it.name)
 		}
+
+		append("META-INF/taglib-mappings.properties")
 	}
 
 	doLast {
@@ -473,6 +475,8 @@ portalSourcesJar {
 		fileTree(dir: projectDir.parentFile, include: "/portal-impl/src/content/Language*.properties").each {
 			append("content/" + it.name)
 		}
+
+		append("META-INF/taglib-mappings.properties")
 	}
 
 	doLast {
