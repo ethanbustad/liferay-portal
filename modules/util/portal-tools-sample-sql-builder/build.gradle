@@ -14,6 +14,8 @@ dependencies {
 	compile project(":apps:asset:asset-tag-stats-service")
 	compile project(":apps:blogs:blogs-api")
 	compile project(":apps:blogs:blogs-service")
+	compile project(":apps:commerce:commerce-product-api")
+	compile project(":apps:commerce:commerce-product-service")
 	compile project(":apps:document-library:document-library-api")
 	compile project(":apps:dynamic-data-lists:dynamic-data-lists-api")
 	compile project(":apps:dynamic-data-lists:dynamic-data-lists-service")
