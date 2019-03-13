@@ -31,6 +31,7 @@ import com.liferay.blogs.model.impl.BlogsStatsUserModelImpl;
 import com.liferay.blogs.social.BlogsActivityKeys;
 import com.liferay.commerce.product.constants.CPPortletKeys;
 import com.liferay.commerce.product.model.CPDefinitionLocalizationModel;
+import com.liferay.commerce.product.model.CPDefinition;
 import com.liferay.commerce.product.model.CPDefinitionModel;
 import com.liferay.commerce.product.model.CPFriendlyURLEntryModel;
 import com.liferay.commerce.product.model.CPInstanceModel;
@@ -1409,6 +1410,18 @@ public class DataFactory {
 	}
 
 	public AssetEntryModel newAssetEntryModel(
+		CPDefinitionModel cpDefinitionModel) {
+
+		return newAssetEntryModel(
+			cpDefinitionModel.getGroupId(), cpDefinitionModel.getCreateDate(),
+			cpDefinitionModel.getModifiedDate(),
+			getClassNameId(CPDefinition.class),
+			cpDefinitionModel.getCPDefinitionId(), cpDefinitionModel.getUuid(),
+			0, true, true, ContentTypes.TEXT_PLAIN,
+			"Definition " + cpDefinitionModel.getCPDefinitionId());
+	}
+
+	public AssetEntryModel newAssetEntryModel(
 		DLFileEntryModel dLFileEntryModel) {
 
 		return newAssetEntryModel(
@@ -2628,10 +2641,6 @@ public class DataFactory {
 				"com_liferay_hello_world_web_portlet_HelloWorldPortlet,"));
 		layoutModels.add(
 			newLayoutModel(groupId, "blogs", "", BlogsPortletKeys.BLOGS + ","));
-		layoutModels.add(
-			newLayoutModel(
-				groupId, "commerce_product", "",
-				CPPortletKeys.CP_CONTENT_WEB + ","));
 		layoutModels.add(
 			newLayoutModel(
 				groupId, "document_library", "",
