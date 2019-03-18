@@ -24,6 +24,8 @@
 
 	<#include "blogs.ftl">
 
+    <#include "commerce_product.ftl">
+
 	<#include "ddl.ftl">
 
 	<#include "journal_article.ftl">

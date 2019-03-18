@@ -366,7 +366,6 @@ public class DataFactory {
 
 		initAssetCategoryModels();
 		initAssetTagModels();
-		initCommerceProductModels();
 		initCompanyModel();
 		initDLFileEntryTypeModel();
 		initGroupModels();
@@ -972,9 +971,9 @@ public class DataFactory {
 		}
 	}
 
-	public void initCommerceProductModels() {
+	public void initCommerceProductModels(long groupId) {
 		CPTaxCategoryModel cpTaxCategoryModel = newCPTaxCategoryModel(
-			_guestGroupId, "Normal Product");
+			groupId, "Normal Product");
 
 		_cpTaxCategoryModels = Collections.singletonList(cpTaxCategoryModel);
 
@@ -1000,7 +999,7 @@ public class DataFactory {
 			long cProductId = _counter.get();
 
 			CProductModel cProductModel = newCProductModel(
-				_guestGroupId, cProductId,
+				groupId, cProductId,
 				cpDefinitionIds[_maxCPDefinitionCount - 1]);
 
 			_cProductModels.add(cProductModel);
@@ -1015,7 +1014,7 @@ public class DataFactory {
 					newCPDefinitionLocalizationModel(cpDefinitionId));
 
 				CPDefinitionModel cpDefinitionModel = newCPDefinitionModel(
-					_guestGroupId, cpDefinitionId, cProductId,
+					groupId, cpDefinitionId, cProductId,
 					cpTaxCategoryModel.getCPTaxCategoryId(),
 					definitionIndex + 1);
 
@@ -1029,7 +1028,7 @@ public class DataFactory {
 
 					_cpInstanceModels.add(
 						newCPInstanceModel(
-							_guestGroupId, cpDefinitionId, instanceIndex));
+							groupId, cpDefinitionId, instanceIndex));
 				}
 			}
 		}
