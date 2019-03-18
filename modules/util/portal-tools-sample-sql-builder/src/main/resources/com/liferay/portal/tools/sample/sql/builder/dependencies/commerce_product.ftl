@@ -1,3 +1,5 @@
+${dataFactory.initCommerceProductModels(groupId)}
+
 <#list dataFactory.CPDefinitionLocalizationModels as cpDefinitionLocalizationModel>
 	${dataFactory.toInsertSQL(cpDefinitionLocalizationModel)}
 </#list>
@@ -33,7 +35,7 @@
 	layoutName = "commerce_product"
 	portletId = "com_liferay_commerce_product_content_web_internal_portlet_CPContentPortlet"
 
-	layoutModel = dataFactory.newLayoutModel(dataFactory.guestGroupModel.groupId, layoutName, "", portletId)
+	layoutModel = dataFactory.newLayoutModel(groupId, layoutName, "", portletId)
 />
 
 <@insertLayout _layoutModel=layoutModel />
