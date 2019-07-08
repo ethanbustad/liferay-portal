@@ -1336,6 +1336,11 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 		return groupPersistence.fetchByPrimaryKey(groupId);
 	}
 
+	@Override
+	public Group fetchGroup(long companyId, long classNameId, long classPK) {
+		return groupPersistence.fetchByC_C_C(companyId, classNameId, classPK);
+	}
+
 	/**
 	 * Returns the group with the matching group key by first searching the
 	 * system groups and then using the finder cache.
