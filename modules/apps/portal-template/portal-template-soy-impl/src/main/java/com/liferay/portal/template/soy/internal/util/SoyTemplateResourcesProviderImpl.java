@@ -31,9 +31,18 @@ import org.osgi.service.component.annotations.Reference;
 /**
  * @author Shuyang Zhou
  */
-@Component(immediate = true, service = SoyTemplateResourcesProvider.class)
+@Component(
+	immediate = true,
+	service = {
+		com.liferay.portal.template.soy.utils.SoyTemplateResourcesProvider.
+			class,
+		SoyTemplateResourcesProvider.class
+	}
+)
 public class SoyTemplateResourcesProviderImpl
-	implements SoyTemplateResourcesProvider {
+	implements com.liferay.portal.template.soy.utils.
+		SoyTemplateResourcesProvider,
+			   SoyTemplateResourcesProvider {
 
 	@Override
 	public List<TemplateResource> getAllTemplateResources() {
