@@ -14,6 +14,7 @@
 
 package com.liferay.dynamic.data.mapping.data.provider;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -22,6 +23,7 @@ import java.util.Map;
 
 /**
  * @author Leonardo Barros
+ * @author Ethan Bustad
  */
 public class DDMDataProviderResponse {
 
@@ -48,10 +50,78 @@ public class DDMDataProviderResponse {
 		return _status;
 	}
 
+	public static class Builder {
+
+		public static Builder newBuilder() {
+			return new Builder();
+		}
+
+		public DDMDataProviderResponse build() {
+			return new DDMDataProviderResponse(
+				_status, _ddmDataProviderResponseOutputs);
+		}
+
+		public Builder withOutput(String name, Object value) {
+			_ddmDataProviderResponseOutputs.add(
+				DDMDataProviderResponseOutput.of(name, null, value));
+
+			return this;
+		}
+
+		public Builder withStatus(
+			DDMDataProviderResponseStatus ddmDataProviderResponseStatus) {
+
+			_status = Status.valueOf(ddmDataProviderResponseStatus);
+
+			return this;
+		}
+
+		private Builder() {
+		}
+
+		private final List<DDMDataProviderResponseOutput>
+			_ddmDataProviderResponseOutputs = new ArrayList<>();
+		private Status _status = Status.OK;
+
+	}
+
 	public enum Status {
 
 		OK, SERVICE_UNAVAILABLE, SHORTCIRCUIT, TIMEOUT, UNAUTHORIZED,
-		UNKNOWN_ERROR
+		UNKNOWN_ERROR;
+
+		public static Status valueOf(
+			DDMDataProviderResponseStatus ddmDataProviderResponseStatus) {
+
+			if (ddmDataProviderResponseStatus ==
+					DDMDataProviderResponseStatus.OK) {
+
+				return Status.OK;
+			}
+			else if (ddmDataProviderResponseStatus ==
+						DDMDataProviderResponseStatus.SERVICE_UNAVAILABLE) {
+
+				return Status.SERVICE_UNAVAILABLE;
+			}
+			else if (ddmDataProviderResponseStatus ==
+						DDMDataProviderResponseStatus.SHORT_CIRCUIT) {
+
+				return Status.SHORTCIRCUIT;
+			}
+			else if (ddmDataProviderResponseStatus ==
+						DDMDataProviderResponseStatus.TIMEOUT) {
+
+				return Status.TIMEOUT;
+			}
+			else if (ddmDataProviderResponseStatus ==
+						DDMDataProviderResponseStatus.UNAUTHORIZED) {
+
+				return Status.UNAUTHORIZED;
+			}
+			else {
+				return Status.UNKNOWN_ERROR;
+			}
+		}
 
 	}
 
