@@ -22,6 +22,7 @@ import com.liferay.portal.kernel.template.TemplateManager;
 import com.liferay.portal.kernel.template.TemplateResource;
 import com.liferay.portal.template.BaseMultiTemplateManager;
 import com.liferay.portal.template.TemplateContextHelper;
+import com.liferay.portal.template.soy.SoyTemplateResource;
 
 import java.util.HashSet;
 import java.util.List;
@@ -108,6 +109,15 @@ public class SoyManager extends BaseMultiTemplateManager {
 		List<TemplateResource> templateResources,
 		TemplateResource errorTemplateResource, boolean restricted,
 		Map<String, Object> helperUtilities) {
+
+		if ((templateResources != null) && (templateResources.size() == 1) &&
+			(templateResources.get(0) instanceof SoyTemplateResource)) {
+
+			SoyTemplateResource soyTemplateResource =
+				(SoyTemplateResource)templateResources.get(0);
+
+			templateResources = soyTemplateResource.getTemplateResources();
+		}
 
 		return new SoyTemplate(
 			templateResources, errorTemplateResource, helperUtilities,
