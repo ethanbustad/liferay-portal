@@ -230,7 +230,7 @@ public class TemplateRendererTag extends ParamAndPropertyAncestorTagImpl {
 			_hydrate = null;
 			_module = null;
 			_templateNamespace = null;
-			_useNamespace = true;
+			_useNamespace = false;
 			_wrapper = null;
 		}
 	}
@@ -343,7 +343,7 @@ public class TemplateRendererTag extends ParamAndPropertyAncestorTagImpl {
 	private boolean _setServletContext;
 	private Template _template;
 	private String _templateNamespace;
-	private Boolean _useNamespace = true;
+	private Boolean _useNamespace = false;
 	private Boolean _wrapper;
 
 }
