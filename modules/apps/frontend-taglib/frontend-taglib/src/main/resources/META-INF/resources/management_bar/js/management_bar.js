@@ -173,6 +173,7 @@ AUI.add(
 							checkBoxesSelector: instance.get(
 								'checkBoxesSelector'
 							),
+							id: instance.get('id'),
 							itemsCountContainerSelector: instance
 								.get('itemsCountContainer')
 								.attr('class'),
@@ -335,6 +336,10 @@ AUI.add(
 			},
 
 			testRestoreTask(state, params, node) {
+				if (state.owner !== params.id) {
+					return;
+				}
+
 				var returnNode;
 
 				var currentNode = A.one(node);
