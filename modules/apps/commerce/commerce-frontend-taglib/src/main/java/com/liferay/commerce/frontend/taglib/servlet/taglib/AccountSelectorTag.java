@@ -19,9 +19,9 @@ import com.liferay.commerce.account.model.CommerceAccount;
 import com.liferay.commerce.constants.CommercePortletKeys;
 import com.liferay.commerce.constants.CommerceWebKeys;
 import com.liferay.commerce.context.CommerceContext;
-import com.liferay.commerce.frontend.taglib.internal.js.loader.modules.extender.npm.NPMResolverProvider;
 import com.liferay.commerce.frontend.taglib.internal.model.CurrentAccountModel;
 import com.liferay.commerce.frontend.taglib.internal.model.CurrentOrderModel;
+import com.liferay.commerce.frontend.taglib.internal.servlet.ServletContextUtil;
 import com.liferay.commerce.model.CommerceOrder;
 import com.liferay.frontend.js.loader.modules.extender.npm.NPMResolver;
 import com.liferay.frontend.taglib.soy.servlet.taglib.ComponentRendererTag;
@@ -107,13 +107,10 @@ public class AccountSelectorTag extends ComponentRendererTag {
 				putValue("currentOrder", currentOrderModel);
 			}
 
-			Layout accountManagementLayout = _getAccountManagementLayout(
-				themeDisplay.getScopeGroupId(), layoutSet.isPrivateLayout());
-
 			putValue(
 				"viewAllAccountsLink",
-				PortalUtil.getLayoutFriendlyURL(
-					accountManagementLayout, themeDisplay));
+				_getAccountManagementLayoutURL(
+					layoutSet.isPrivateLayout(), themeDisplay));
 
 			putValue(
 				"createNewOrderLink", _getAddCommerceOrderURL(themeDisplay));
@@ -136,7 +133,7 @@ public class AccountSelectorTag extends ComponentRendererTag {
 
 	@Override
 	public String getModule() {
-		NPMResolver npmResolver = NPMResolverProvider.getNPMResolver();
+		NPMResolver npmResolver = ServletContextUtil.getNPMResolver();
 
 		if (npmResolver == null) {
 			return StringPool.BLANK;
@@ -146,25 +143,28 @@ public class AccountSelectorTag extends ComponentRendererTag {
 			"commerce-frontend-taglib/account_selector/AccountSelector.es");
 	}
 
-	private Layout _getAccountManagementLayout(
-			long groupId, boolean privateLayout)
+	private String _getAccountManagementLayoutURL(
+			boolean privateLayout, ThemeDisplay themeDisplay)
 		throws PortalException {
 
 		Layout layout = LayoutLocalServiceUtil.fetchLayoutByFriendlyURL(
-			groupId, privateLayout, "/accounts");
+			themeDisplay.getScopeGroupId(), privateLayout, "/accounts");
+
+		if (layout == null) {
+			long plid = PortalUtil.getPlidFromPortletId(
+				themeDisplay.getScopeGroupId(),
+				CommerceAccountPortletKeys.COMMERCE_ACCOUNT);
+
+			if (plid > 0) {
+				layout = LayoutLocalServiceUtil.fetchLayout(plid);
+			}
+		}
 
 		if (layout != null) {
-			return layout;
+			return PortalUtil.getLayoutFriendlyURL(layout, themeDisplay);
 		}
 
-		long plid = PortalUtil.getPlidFromPortletId(
-			groupId, CommerceAccountPortletKeys.COMMERCE_ACCOUNT);
-
-		if (plid > 0) {
-			layout = LayoutLocalServiceUtil.fetchLayout(plid);
-		}
-
-		return layout;
+		return StringPool.BLANK;
 	}
 
 	private String _getAddCommerceOrderURL(ThemeDisplay themeDisplay)

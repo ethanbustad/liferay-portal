@@ -4048,6 +4048,18 @@ public class KaleoTaskAssignmentInstancePersistenceImpl
 		}
 	}
 
+	public void clearCache(Set<Serializable> primaryKeys) {
+		finderCache.clearCache(FINDER_CLASS_NAME_ENTITY);
+		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
+		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
+
+		for (Serializable primaryKey : primaryKeys) {
+			entityCache.removeResult(
+				KaleoTaskAssignmentInstanceModelImpl.ENTITY_CACHE_ENABLED,
+				KaleoTaskAssignmentInstanceImpl.class, primaryKey);
+		}
+	}
+
 	/**
 	 * Creates a new kaleo task assignment instance with the primary key. Does not add the kaleo task assignment instance to the database.
 	 *

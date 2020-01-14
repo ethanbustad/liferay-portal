@@ -21,19 +21,24 @@ import com.liferay.commerce.context.CommerceContext;
 import com.liferay.commerce.currency.model.CommerceCurrency;
 import com.liferay.commerce.currency.test.util.CommerceCurrencyTestUtil;
 import com.liferay.commerce.exception.CommerceOrderValidatorException;
+import com.liferay.commerce.inventory.model.CommerceInventoryBookedQuantity;
 import com.liferay.commerce.inventory.model.CommerceInventoryWarehouse;
+import com.liferay.commerce.inventory.service.CommerceInventoryBookedQuantityLocalService;
 import com.liferay.commerce.model.CommerceOrder;
 import com.liferay.commerce.model.CommerceOrderItem;
 import com.liferay.commerce.product.model.CPDefinition;
 import com.liferay.commerce.product.model.CPInstance;
 import com.liferay.commerce.product.model.CPInstanceConstants;
+import com.liferay.commerce.product.model.CommerceChannel;
 import com.liferay.commerce.product.service.CPInstanceLocalService;
 import com.liferay.commerce.product.test.util.CPTestUtil;
 import com.liferay.commerce.service.CommerceOrderItemLocalService;
 import com.liferay.commerce.service.CommerceOrderLocalService;
 import com.liferay.commerce.test.util.CommerceInventoryTestUtil;
+import com.liferay.commerce.test.util.CommerceTestUtil;
 import com.liferay.commerce.test.util.TestCommerceContext;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.ServiceContext;
@@ -54,7 +59,6 @@ import org.frutilla.FrutillaRule;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.ClassRule;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -62,7 +66,6 @@ import org.junit.runner.RunWith;
 /**
  * @author Luca Pellizzon
  */
-@Ignore
 @RunWith(Arquillian.class)
 public class CommerceOrderItemLocalServiceTest {
 
@@ -75,6 +78,20 @@ public class CommerceOrderItemLocalServiceTest {
 
 	@Before
 	public void setUp() throws Exception {
+		List<CommerceInventoryBookedQuantity>
+			commerceInventoryBookedQuantities =
+				_commerceBookedQuantityLocalService.
+					getCommerceInventoryBookedQuantities(
+						QueryUtil.ALL_POS, QueryUtil.ALL_POS);
+
+		for (CommerceInventoryBookedQuantity commerceInventoryBookedQuantity :
+				commerceInventoryBookedQuantities) {
+
+			_commerceBookedQuantityLocalService.
+				deleteCommerceInventoryBookedQuantity(
+					commerceInventoryBookedQuantity);
+		}
+
 		_group = GroupTestUtil.addGroup();
 		_user = UserTestUtil.addUser();
 	}
@@ -101,15 +118,14 @@ public class CommerceOrderItemLocalServiceTest {
 			ServiceContextTestUtil.getServiceContext(_group.getGroupId());
 
 		CommerceInventoryWarehouse commerceInventoryWarehouse =
-			CommerceInventoryTestUtil.addCommerceInventoryWarehouse(
-				_group.getGroupId());
+			CommerceInventoryTestUtil.addCommerceInventoryWarehouse();
 
 		CommerceInventoryTestUtil.addCommerceInventoryWarehouseItem(
 			_user.getUserId(), commerceInventoryWarehouse, cpInstance.getSku(),
 			2);
 
 		CommerceCurrency commerceCurrency =
-			CommerceCurrencyTestUtil.addCommerceCurrency(_group.getGroupId());
+			CommerceCurrencyTestUtil.addCommerceCurrency();
 
 		Assert.assertNotNull(commerceCurrency);
 
@@ -120,14 +136,21 @@ public class CommerceOrderItemLocalServiceTest {
 
 		Assert.assertNotNull(commerceAccount);
 
+		CommerceChannel commerceChannel = CommerceTestUtil.addCommerceChannel(
+			commerceCurrency.getCode());
+
+		CommerceTestUtil.addWarehouseCommerceChannelRel(
+			commerceInventoryWarehouse.getCommerceInventoryWarehouseId(),
+			commerceChannel.getCommerceChannelId());
+
 		CommerceOrder commerceOrder =
 			_commerceOrderLocalService.addCommerceOrder(
-				_group.getGroupId(), _user.getUserId(),
+				_user.getUserId(), commerceChannel.getGroupId(),
 				commerceAccount.getCommerceAccountId(),
 				commerceCurrency.getCommerceCurrencyId());
 
 		CommerceContext commerceContext = new TestCommerceContext(
-			commerceCurrency, null, _group, null, null);
+			commerceCurrency, null, null, _group, null, null);
 
 		CommerceOrderItem commerceOrderItem =
 			_commerceOrderItemLocalService.addCommerceOrderItem(
@@ -174,8 +197,7 @@ public class CommerceOrderItemLocalServiceTest {
 			ServiceContextTestUtil.getServiceContext(_group.getGroupId());
 
 		CommerceInventoryWarehouse commerceInventoryWarehouse =
-			CommerceInventoryTestUtil.addCommerceInventoryWarehouse(
-				_group.getGroupId());
+			CommerceInventoryTestUtil.addCommerceInventoryWarehouse();
 
 		CPInstance cpInstance = _cpInstanceLocalService.getCPInstance(
 			cpDefinition.getCPDefinitionId(), CPInstanceConstants.DEFAULT_SKU);
@@ -185,7 +207,10 @@ public class CommerceOrderItemLocalServiceTest {
 			2);
 
 		CommerceCurrency commerceCurrency =
-			CommerceCurrencyTestUtil.addCommerceCurrency(_group.getGroupId());
+			CommerceCurrencyTestUtil.addCommerceCurrency();
+
+		CommerceChannel commerceChannel = CommerceTestUtil.addCommerceChannel(
+			commerceCurrency.getCode());
 
 		Assert.assertNotNull(commerceCurrency);
 
@@ -196,14 +221,18 @@ public class CommerceOrderItemLocalServiceTest {
 
 		Assert.assertNotNull(commerceAccount);
 
+		CommerceTestUtil.addWarehouseCommerceChannelRel(
+			commerceInventoryWarehouse.getCommerceInventoryWarehouseId(),
+			commerceChannel.getCommerceChannelId());
+
 		CommerceOrder commerceOrder =
 			_commerceOrderLocalService.addCommerceOrder(
-				_group.getGroupId(), _user.getUserId(),
+				_user.getUserId(), commerceChannel.getGroupId(),
 				commerceAccount.getCommerceAccountId(),
 				commerceCurrency.getCommerceCurrencyId());
 
 		CommerceContext commerceContext = new TestCommerceContext(
-			commerceCurrency, null, _group, null, null);
+			commerceCurrency, null, null, _group, null, null);
 
 		_commerceOrderItemLocalService.addCommerceOrderItem(
 			commerceOrder.getCommerceOrderId(), cpInstance.getCPInstanceId(), 1,
@@ -236,15 +265,17 @@ public class CommerceOrderItemLocalServiceTest {
 			WorkflowConstants.STATUS_DRAFT, serviceContext, null);
 
 		CommerceInventoryWarehouse commerceInventoryWarehouse =
-			CommerceInventoryTestUtil.addCommerceInventoryWarehouse(
-				_group.getGroupId());
+			CommerceInventoryTestUtil.addCommerceInventoryWarehouse();
 
 		CommerceInventoryTestUtil.addCommerceInventoryWarehouseItem(
 			_user.getUserId(), commerceInventoryWarehouse, cpInstance.getSku(),
 			2);
 
 		CommerceCurrency commerceCurrency =
-			CommerceCurrencyTestUtil.addCommerceCurrency(_group.getGroupId());
+			CommerceCurrencyTestUtil.addCommerceCurrency();
+
+		CommerceChannel commerceChannel = CommerceTestUtil.addCommerceChannel(
+			commerceCurrency.getCode());
 
 		Assert.assertNotNull(commerceCurrency);
 
@@ -255,14 +286,18 @@ public class CommerceOrderItemLocalServiceTest {
 
 		Assert.assertNotNull(commerceAccount);
 
+		CommerceTestUtil.addWarehouseCommerceChannelRel(
+			commerceInventoryWarehouse.getCommerceInventoryWarehouseId(),
+			commerceChannel.getCommerceChannelId());
+
 		CommerceOrder commerceOrder =
 			_commerceOrderLocalService.addCommerceOrder(
-				_group.getGroupId(), _user.getUserId(),
+				_user.getUserId(), commerceChannel.getGroupId(),
 				commerceAccount.getCommerceAccountId(),
 				commerceCurrency.getCommerceCurrencyId());
 
 		CommerceContext commerceContext = new TestCommerceContext(
-			commerceCurrency, null, _group, null, null);
+			commerceCurrency, null, null, _group, null, null);
 
 		_commerceOrderItemLocalService.addCommerceOrderItem(
 			commerceOrder.getCommerceOrderId(), cpInstance.getCPInstanceId(), 1,
@@ -274,6 +309,10 @@ public class CommerceOrderItemLocalServiceTest {
 
 	@Inject
 	private CommerceAccountLocalService _commerceAccountLocalService;
+
+	@Inject
+	private CommerceInventoryBookedQuantityLocalService
+		_commerceBookedQuantityLocalService;
 
 	@Inject
 	private CommerceOrderItemLocalService _commerceOrderItemLocalService;

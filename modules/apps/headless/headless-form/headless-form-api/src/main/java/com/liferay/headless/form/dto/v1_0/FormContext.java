@@ -72,7 +72,7 @@ public class FormContext {
 		}
 	}
 
-	@GraphQLField
+	@GraphQLField(description = "https://www.schema.org/FormFieldValue")
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected FormFieldValue[] formFieldValues;
 
@@ -102,7 +102,7 @@ public class FormContext {
 		}
 	}
 
-	@GraphQLField
+	@GraphQLField(description = "https://www.schema.org/FormPageContext")
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected FormPageContext[] formPageContexts;
 
@@ -295,6 +295,12 @@ public class FormContext {
 
 		return sb.toString();
 	}
+
+	@Schema(
+		defaultValue = "com.liferay.headless.form.dto.v1_0.FormContext",
+		name = "x-class-name"
+	)
+	public String xClassName;
 
 	private static String _escape(Object object) {
 		String string = String.valueOf(object);

@@ -31,6 +31,7 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.KeyValuePair;
+import com.liferay.portal.kernel.util.ReleaseInfo;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.util.ArrayList;
@@ -39,8 +40,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -69,37 +68,36 @@ public class CPInstanceOptionsValuesDataProvider implements DDMDataProvider {
 			DDMDataProviderRequest ddmDataProviderRequest)
 		throws DDMDataProviderException {
 
-		HttpServletRequest httpServletRequest =
-			ddmDataProviderRequest.getHttpServletRequest();
+		DDMDataProviderResponse.Builder ddmDataProviderResponseBuilder =
+			DDMDataProviderResponse.Builder.newBuilder();
 
-		Locale locale = httpServletRequest.getLocale();
+		long cpDefinitionId = _getParameter(
+			ddmDataProviderRequest, "cpDefinitionId");
 
-		long cpDefinitionId = GetterUtil.getLong(
-			ddmDataProviderRequest.getParameter("cpDefinitionId"));
+		long commerceAccountId = _getParameter(
+			ddmDataProviderRequest, "commerceAccountId");
 
-		long commerceAccountId = GetterUtil.getLong(
-			ddmDataProviderRequest.getParameter("commerceAccountId"));
-
-		long groupId = GetterUtil.getLong(
-			ddmDataProviderRequest.getParameter("groupId"));
+		long groupId = _getParameter(ddmDataProviderRequest, "groupId");
 
 		try {
 			if (!_commerceProductViewPermission.contains(
 					PermissionThreadLocal.getPermissionChecker(),
 					commerceAccountId, groupId, cpDefinitionId)) {
 
-				return DDMDataProviderResponse.of();
+				return ddmDataProviderResponseBuilder.build();
 			}
 		}
 		catch (PortalException pe) {
 			_log.error(pe, pe);
 
-			return DDMDataProviderResponse.of();
+			return ddmDataProviderResponseBuilder.build();
 		}
 
 		if (cpDefinitionId == 0) {
-			return DDMDataProviderResponse.of();
+			return ddmDataProviderResponseBuilder.build();
 		}
+
+		Locale locale = ddmDataProviderRequest.getLocale();
 
 		try {
 
@@ -131,87 +129,120 @@ public class CPInstanceOptionsValuesDataProvider implements DDMDataProvider {
 			for (CPDefinitionOptionRel cpDefinitionOptionRel :
 					cpDefinitionOptionRels) {
 
-				long cpDefinitionOptionRelId =
-					cpDefinitionOptionRel.getCPDefinitionOptionRelId();
-
 				String parameterValue = parameters.get(
-					String.valueOf(cpDefinitionOptionRelId));
+					cpDefinitionOptionRel.getKey());
 
 				// Collect filters and outputs
 
 				if (Validator.isNull(parameterValue)) {
 					outputParameterNames.put(
-						String.valueOf(cpDefinitionOptionRelId),
-						String.valueOf(cpDefinitionOptionRelId));
+						cpDefinitionOptionRel.getKey(),
+						cpDefinitionOptionRel.getKey());
 				}
 				else {
-					filters.put(
-						String.valueOf(cpDefinitionOptionRelId),
-						parameterValue);
+					filters.put(cpDefinitionOptionRel.getKey(), parameterValue);
 				}
 			}
 
 			// Do search and populate the outputs if the outputs are not empty
 
 			if (outputParameterNames.isEmpty()) {
-				return DDMDataProviderResponse.of();
+				return ddmDataProviderResponseBuilder.build();
 			}
 
-			List<DDMDataProviderResponseOutput> ddmDataProviderResponseOutputs =
-				new ArrayList<>();
+			List<Output> outputs = new ArrayList<>();
 
 			for (Map.Entry<String, String> outputParameterNameEntry :
 					outputParameterNames.entrySet()) {
 
-				String fieldName =
-					"ATTRIBUTE_" + outputParameterNameEntry.getKey() +
-						"_VALUE_ID";
-
 				List<CPDefinitionOptionValueRel> cpDefinitionOptionValueRels =
 					_cpInstanceHelper.getCPDefinitionOptionValueRel(
-						cpDefinitionId, fieldName, filters);
+						cpDefinitionId, outputParameterNameEntry.getKey(),
+						filters);
 
 				List<KeyValuePair> data = new ArrayList<>();
 
 				for (CPDefinitionOptionValueRel cpDefinitionOptionValueRel :
 						cpDefinitionOptionValueRels) {
 
-					String key = String.valueOf(
-						cpDefinitionOptionValueRel.
-							getCPDefinitionOptionValueRelId());
-
 					data.add(
 						new KeyValuePair(
-							key, cpDefinitionOptionValueRel.getName(locale)));
+							cpDefinitionOptionValueRel.getKey(),
+							cpDefinitionOptionValueRel.getName(locale)));
 				}
 
-				ddmDataProviderResponseOutputs.add(
-					DDMDataProviderResponseOutput.of(
+				outputs.add(
+					new Output(
 						outputParameterNameEntry.getValue(), "list", data));
 			}
 
-			DDMDataProviderResponseOutput[] ddmDataProviderResponseOutputArray =
-				new DDMDataProviderResponseOutput
-					[ddmDataProviderResponseOutputs.size()];
-
-			ddmDataProviderResponseOutputArray =
-				ddmDataProviderResponseOutputs.toArray(
-					ddmDataProviderResponseOutputArray);
-
-			return DDMDataProviderResponse.of(
-				ddmDataProviderResponseOutputArray);
+			return Output.toDDMDataProviderResponse(outputs);
 		}
 		catch (Exception e) {
 			_log.error(e, e);
 		}
 
-		return DDMDataProviderResponse.of();
+		return ddmDataProviderResponseBuilder.build();
 	}
 
 	@Override
 	public Class<?> getSettings() {
 		throw new UnsupportedOperationException();
 	}
+
+	protected static class Output {
+
+		public static DDMDataProviderResponse toDDMDataProviderResponse(
+			List<Output> outputs) {
+
+			if (ReleaseInfo.getBuildNumber() >= _RELEASE_7_2_0_BUILD_NUMBER) {
+				DDMDataProviderResponse.Builder ddmDataProviderResponseBuilder =
+					DDMDataProviderResponse.Builder.newBuilder();
+
+				for (Output output : outputs) {
+					ddmDataProviderResponseBuilder.withOutput(
+						output._name, output._value);
+				}
+
+				return ddmDataProviderResponseBuilder.build();
+			}
+
+			DDMDataProviderResponseOutput[] ddmDataProviderResponseOutputs =
+				new DDMDataProviderResponseOutput[outputs.size()];
+
+			for (int i = 0; i < outputs.size(); i++) {
+				Output output = outputs.get(i);
+
+				ddmDataProviderResponseOutputs[i] =
+					DDMDataProviderResponseOutput.of(
+						output._name, output._type, output._value);
+			}
+
+			return DDMDataProviderResponse.of(ddmDataProviderResponseOutputs);
+		}
+
+		public Output(String name, String type, Object value) {
+			_name = name;
+			_type = type;
+			_value = value;
+		}
+
+		private final String _name;
+		private final String _type;
+		private final Object _value;
+
+	}
+
+	private long _getParameter(
+		DDMDataProviderRequest ddmDataProviderRequest, String param) {
+
+		Map<String, String> parameters = ddmDataProviderRequest.getParameters();
+
+		return GetterUtil.getLong(parameters.get(param));
+	}
+
+	private static final int _RELEASE_7_2_0_BUILD_NUMBER =
+		ReleaseInfo.RELEASE_7_1_0_BUILD_NUMBER + 100;
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		CPInstanceOptionsValuesDataProvider.class);

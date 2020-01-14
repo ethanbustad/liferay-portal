@@ -192,12 +192,12 @@ name = HtmlUtil.escapeJS(name);
 		destroy: function() {
 			clearInterval(contentChangeHandle);
 
+			window['<%= name %>'].dispose();
+
+			window['<%= name %>'] = null;
+
 			setTimeout(
 				function() {
-					window['<%= name %>'].dispose();
-
-					window['<%= name %>'] = null;
-
 					Liferay.namespace('EDITORS').ckeditor.removeInstance();
 				},
 			0);

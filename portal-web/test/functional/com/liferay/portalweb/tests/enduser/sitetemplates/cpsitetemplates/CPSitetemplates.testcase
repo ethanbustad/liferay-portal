@@ -494,6 +494,8 @@ definition {
 
 		Portlet.addPG(portletName = "Web Content Display");
 
+		ProductMenu.gotoSiteViaLink(site = "Community Site");
+
 		Portlet.dragAndDropPortletToColumnPG(
 			columnNumberFrom = "1",
 			columnNumberTo = "2",

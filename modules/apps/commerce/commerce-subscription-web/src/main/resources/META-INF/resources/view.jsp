@@ -44,11 +44,10 @@ boolean hasManageCommerceSubscriptionEntryPermission = commerceSubscriptionEntry
 		/>
 
 		<li>
-			<aui:form action="<%= String.valueOf(commerceSubscriptionEntryDisplayContext.getPortletURL()) %>" name="searchFm">
-				<liferay-ui:input-search
-					markupView="lexicon"
-				/>
-			</aui:form>
+			<liferay-commerce:search-input
+				actionURL="<%= commerceSubscriptionEntryDisplayContext.getPortletURL() %>"
+				formName="searchFm"
+			/>
 		</li>
 	</liferay-frontend:management-bar-filters>
 
@@ -103,6 +102,8 @@ boolean hasManageCommerceSubscriptionEntryPermission = commerceSubscriptionEntry
 					if (commerceOrderItem != null) {
 						commerceOrder = commerceOrderItem.getCommerceOrder();
 					}
+
+					request.setAttribute(CommerceOrderConstants.COMMERCE_ORDER, commerceOrder);
 					%>
 
 					<liferay-ui:search-container-column-text
@@ -162,6 +163,19 @@ boolean hasManageCommerceSubscriptionEntryPermission = commerceSubscriptionEntry
 					<liferay-ui:search-container-column-text
 						name="customer-id"
 						value="<%= String.valueOf(commerceOrder.getCommerceAccountId()) %>"
+					/>
+
+					<%
+					String paymentMethod = LanguageUtil.get(request, commerceOrder.getCommercePaymentMethodKey());
+
+					if (!commerceSubscriptionEntryDisplayContext.isPaymentMethodActive(commerceOrder.getCommercePaymentMethodKey())) {
+						paymentMethod = LanguageUtil.format(request, "x-inactive", paymentMethod);
+					}
+					%>
+
+					<liferay-ui:search-container-column-text
+						name="payment-method"
+						value="<%= paymentMethod %>"
 					/>
 
 					<liferay-ui:search-container-column-jsp

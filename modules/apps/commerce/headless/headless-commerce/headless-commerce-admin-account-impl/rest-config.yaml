@@ -5,3 +5,4 @@ application:
     className: "HeadlessCommerceAdminAccountApplication"
     name: "Liferay.Headless.Commerce.Admin.Account"
 author: "Alessio Antonio Rendina"
+forcePredictableOperationId: false

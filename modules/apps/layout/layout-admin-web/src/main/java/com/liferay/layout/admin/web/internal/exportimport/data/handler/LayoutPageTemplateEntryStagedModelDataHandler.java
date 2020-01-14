@@ -301,9 +301,8 @@ public class LayoutPageTemplateEntryStagedModelDataHandler
 					layoutPageTemplateEntry.getName(), preloaded);
 
 			if (existingLayoutPageTemplateEntry == null) {
-				importedLayoutPageTemplateEntry =
-					_stagedModelRepository.addStagedModel(
-						portletDataContext, importedLayoutPageTemplateEntry);
+				importedLayoutPageTemplateEntry = _addStagedModel(
+					portletDataContext, importedLayoutPageTemplateEntry);
 
 				_validateLayoutPrototype(
 					portletDataContext, layoutPageTemplateEntry,
@@ -320,9 +319,8 @@ public class LayoutPageTemplateEntryStagedModelDataHandler
 			}
 		}
 		else {
-			importedLayoutPageTemplateEntry =
-				_stagedModelRepository.addStagedModel(
-					portletDataContext, importedLayoutPageTemplateEntry);
+			importedLayoutPageTemplateEntry = _addStagedModel(
+				portletDataContext, importedLayoutPageTemplateEntry);
 		}
 
 		importFragmentEntryLinks(
@@ -405,6 +403,28 @@ public class LayoutPageTemplateEntryStagedModelDataHandler
 	@Reference(unbind = "-")
 	protected void setUserLocalService(UserLocalService userLocalService) {
 		_userLocalService = userLocalService;
+	}
+
+	private LayoutPageTemplateEntry _addStagedModel(
+			PortletDataContext portletDataContext,
+			LayoutPageTemplateEntry layoutPageTemplateEntry)
+		throws PortalException {
+
+		if (layoutPageTemplateEntry.isDefaultTemplate()) {
+			LayoutPageTemplateEntry defaultLayoutPageTemplateEntry =
+				_layoutPageTemplateEntryLocalService.
+					fetchDefaultLayoutPageTemplateEntry(
+						layoutPageTemplateEntry.getGroupId(),
+						layoutPageTemplateEntry.getClassNameId(),
+						layoutPageTemplateEntry.getClassTypeId());
+
+			if (defaultLayoutPageTemplateEntry != null) {
+				layoutPageTemplateEntry.setDefaultTemplate(false);
+			}
+		}
+
+		return _stagedModelRepository.addStagedModel(
+			portletDataContext, layoutPageTemplateEntry);
 	}
 
 	private void _exportAssetDisplayPages(

@@ -18,8 +18,12 @@ import com.liferay.commerce.model.CommerceAddressRestriction;
 import com.liferay.commerce.payment.exception.CommercePaymentMethodGroupRelEngineKeyException;
 import com.liferay.commerce.payment.exception.CommercePaymentMethodGroupRelNameException;
 import com.liferay.commerce.payment.exception.NoSuchPaymentMethodGroupRelException;
+import com.liferay.commerce.payment.method.CommercePaymentMethodRegistry;
 import com.liferay.commerce.payment.model.CommercePaymentMethodGroupRel;
 import com.liferay.commerce.payment.service.base.CommercePaymentMethodGroupRelLocalServiceBaseImpl;
+import com.liferay.commerce.product.service.CPDefinitionLocalService;
+import com.liferay.commerce.product.service.CommerceCatalogService;
+import com.liferay.commerce.product.util.CPDefinitionHelper;
 import com.liferay.commerce.service.CommerceAddressRestrictionLocalService;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.User;
@@ -176,6 +180,14 @@ public class CommercePaymentMethodGroupRelLocalServiceImpl
 	}
 
 	@Override
+	public CommercePaymentMethodGroupRel fetchCommercePaymentMethodGroupRel(
+		long groupId, String engineKey) {
+
+		return commercePaymentMethodGroupRelPersistence.fetchByG_E(
+			groupId, engineKey);
+	}
+
+	@Override
 	public List<CommerceAddressRestriction> getCommerceAddressRestrictions(
 		long commercePaymentMethodGroupRelId, int start, int end,
 		OrderByComparator<CommerceAddressRestriction> orderByComparator) {
@@ -232,6 +244,28 @@ public class CommercePaymentMethodGroupRelLocalServiceImpl
 	@Override
 	public List<CommercePaymentMethodGroupRel>
 		getCommercePaymentMethodGroupRels(
+			long groupId, boolean active, int start, int end,
+			OrderByComparator<CommercePaymentMethodGroupRel>
+				orderByComparator) {
+
+		return commercePaymentMethodGroupRelPersistence.findByG_A(
+			groupId, active, start, end, orderByComparator);
+	}
+
+	@Override
+	public List<CommercePaymentMethodGroupRel>
+		getCommercePaymentMethodGroupRels(
+			long groupId, int start, int end,
+			OrderByComparator<CommercePaymentMethodGroupRel>
+				orderByComparator) {
+
+		return commercePaymentMethodGroupRelPersistence.findByGroupId(
+			groupId, start, end, orderByComparator);
+	}
+
+	@Override
+	public List<CommercePaymentMethodGroupRel>
+		getCommercePaymentMethodGroupRels(
 			long groupId, long commerceCountryId, boolean active) {
 
 		List<CommercePaymentMethodGroupRel>
@@ -258,6 +292,11 @@ public class CommercePaymentMethodGroupRelLocalServiceImpl
 		}
 
 		return filteredCommercePaymentMethodGroupRels;
+	}
+
+	@Override
+	public int getCommercePaymentMethodGroupRelsCount(long groupId) {
+		return commercePaymentMethodGroupRelPersistence.countByGroupId(groupId);
 	}
 
 	@Override
@@ -346,5 +385,17 @@ public class CommercePaymentMethodGroupRelLocalServiceImpl
 	@ServiceReference(type = CommerceAddressRestrictionLocalService.class)
 	private CommerceAddressRestrictionLocalService
 		_commerceAddressRestrictionLocalService;
+
+	@ServiceReference(type = CommerceCatalogService.class)
+	private CommerceCatalogService _commerceCatalogService;
+
+	@ServiceReference(type = CommercePaymentMethodRegistry.class)
+	private CommercePaymentMethodRegistry _commercePaymentMethodRegistry;
+
+	@ServiceReference(type = CPDefinitionHelper.class)
+	private CPDefinitionHelper _cpDefinitionHelper;
+
+	@ServiceReference(type = CPDefinitionLocalService.class)
+	private CPDefinitionLocalService _cpDefinitionLocalService;
 
 }

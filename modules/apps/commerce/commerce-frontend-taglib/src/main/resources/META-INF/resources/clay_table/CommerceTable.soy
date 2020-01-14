@@ -94,7 +94,21 @@
 	{@param? spritemap: string}
 
 	<td class="{$fieldSchema.cssClass}">
-		<img src={$value} />
+		<img src="{$value}" />
+	</td>
+{/deltemplate}
+
+{deltemplate ClayTable.Cell variant="'commerceTableCellActive'"}
+	{@param fieldSchema: ?}
+	{@param item: ?}
+	{@param value: ?}
+	{@param? _handleCellContentClick: any}
+	{@param? spritemap: string}
+
+	<td>
+		<span class="commerce-dot commerce-dot--big commerce-dot--{if $item.active}good{else}bad{/if}">
+			{$item.statusLabel}
+		</span>
 	</td>
 {/deltemplate}
 
@@ -110,7 +124,7 @@
 			{if $item.thumbnail}
 				<div class="col-auto">
 					<span class="image-name-cell__image-container">
-						<img class="image-name-cell__image" src={$item.thumbnail} alt={$value} />
+						<img alt="{$value}" class="image-name-cell__image" src="{$item.thumbnail}" />
 					</span>
 				</div>
 			{/if}
@@ -135,6 +149,28 @@
 	</td>
 {/deltemplate}
 
+{deltemplate ClayTable.Cell variant="'commerceTableCellNameWithError'"}
+	{@param fieldSchema: ?}
+	{@param item: ?}
+	{@param value: ?}
+	{@param? _handleCellContentClick: any}
+	{@param? spritemap: string}
+
+	<td>
+		<span class="text-truncate">
+			{$item.name}
+		</span>
+
+		{if isNonnull($item.errorMessages) and length($item.errorMessages) > 0}
+			{foreach $error in $item.errorMessages}
+				<div class="alert-danger commerce-alert-danger">
+					- {$error}
+				</div>
+			{/foreach}
+		{/if}
+	</td>
+{/deltemplate}
+
 {deltemplate ClayTable.Cell variant="'commerceTablePrice'"}
 	{@param fieldSchema: ?}
 	{@param item: ?}
@@ -145,17 +181,24 @@
 	<td>
 		{if isNonnull($item.promoPrice) and $item.promoPrice != ''}
 			<span class="price">
-				<span class="price__value price__value--promo-price">
+				<span class="price-value price-value-promo">
 					{$item.promoPrice}
 				</span>
-				<span class="price__value price__value--inactive">
+				<span class="price-value price-value-inactive">
 					{$value}
 				</span>
 			</span>
 		{else}
 			<span class="price">
-				<span class="price__value">
+				<span class="price-value">
 					{$value}
+				</span>
+			</span>
+		{/if}
+		{if isNonnull($item.formattedSubscriptionPeriod) and $item.formattedSubscriptionPeriod != ''}
+			<span class="commerce-subscription-info">
+				<span class="product-subscription-period">
+					({$item.formattedSubscriptionPeriod})
 				</span>
 			</span>
 		{/if}

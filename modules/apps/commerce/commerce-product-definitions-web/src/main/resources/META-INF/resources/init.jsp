@@ -21,6 +21,7 @@
 <%@ taglib uri="http://liferay.com/tld/asset" prefix="liferay-asset" %><%@
 taglib uri="http://liferay.com/tld/aui" prefix="aui" %><%@
 taglib uri="http://liferay.com/tld/clay" prefix="clay" %><%@
+taglib uri="http://liferay.com/tld/commerce" prefix="liferay-commerce" %><%@
 taglib uri="http://liferay.com/tld/expando" prefix="liferay-expando" %><%@
 taglib uri="http://liferay.com/tld/frontend" prefix="liferay-frontend" %><%@
 taglib uri="http://liferay.com/tld/item-selector" prefix="liferay-item-selector" %><%@
@@ -48,19 +49,18 @@ page import="com.liferay.commerce.product.definitions.web.internal.display.conte
 page import="com.liferay.commerce.product.definitions.web.internal.display.context.CPDefinitionOptionValueRelDisplayContext" %><%@
 page import="com.liferay.commerce.product.definitions.web.internal.display.context.CPDefinitionShippingInfoDisplayContext" %><%@
 page import="com.liferay.commerce.product.definitions.web.internal.display.context.CPDefinitionSpecificationOptionValueDisplayContext" %><%@
-page import="com.liferay.commerce.product.definitions.web.internal.display.context.CPDefinitionSubscriptionInfoDisplayContext" %><%@
 page import="com.liferay.commerce.product.definitions.web.internal.display.context.CPDefinitionTaxCategoryDisplayContext" %><%@
 page import="com.liferay.commerce.product.definitions.web.internal.display.context.CPDefinitionsDisplayContext" %><%@
 page import="com.liferay.commerce.product.definitions.web.internal.display.context.CPInstanceDisplayContext" %><%@
 page import="com.liferay.commerce.product.definitions.web.internal.display.context.CPInstancePricingInfoDisplayContext" %><%@
 page import="com.liferay.commerce.product.definitions.web.internal.display.context.CPInstanceShippingInfoDisplayContext" %><%@
-page import="com.liferay.commerce.product.definitions.web.internal.display.context.CPInstanceSubscriptionInfoDisplayContext" %><%@
 page import="com.liferay.commerce.product.definitions.web.internal.security.permission.resource.CommerceCatalogPermission" %><%@
 page import="com.liferay.commerce.product.definitions.web.internal.servlet.taglib.ui.CPAttachmentFileEntryFormNavigatorConstants" %><%@
 page import="com.liferay.commerce.product.definitions.web.internal.servlet.taglib.ui.CPDefinitionSpecificationOptionValueFormNavigatorConstants" %><%@
 page import="com.liferay.commerce.product.definitions.web.servlet.taglib.ui.CPDefinitionScreenNavigationConstants" %><%@
 page import="com.liferay.commerce.product.definitions.web.servlet.taglib.ui.CPInstanceScreenNavigationConstants" %><%@
 page import="com.liferay.commerce.product.exception.CPAttachmentFileEntryExpirationDateException" %><%@
+page import="com.liferay.commerce.product.exception.CPDefinitionExpirationDateException" %><%@
 page import="com.liferay.commerce.product.exception.CPDefinitionIgnoreSKUCombinationsException" %><%@
 page import="com.liferay.commerce.product.exception.CPDefinitionMetaDescriptionException" %><%@
 page import="com.liferay.commerce.product.exception.CPDefinitionMetaKeywordsException" %><%@
@@ -100,8 +100,6 @@ page import="com.liferay.commerce.product.model.CommerceChannel" %><%@
 page import="com.liferay.commerce.product.service.CPDefinitionLocalServiceUtil" %><%@
 page import="com.liferay.commerce.product.type.CPType" %><%@
 page import="com.liferay.commerce.product.util.CPNavigationItemRegistryUtil" %><%@
-page import="com.liferay.commerce.product.util.CPSubscriptionType" %><%@
-page import="com.liferay.commerce.product.util.CPSubscriptionTypeJSPContributor" %><%@
 page import="com.liferay.document.library.kernel.exception.NoSuchFileEntryException" %><%@
 page import="com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldType" %><%@
 page import="com.liferay.frontend.js.loader.modules.extender.npm.NPMResolver" %><%@

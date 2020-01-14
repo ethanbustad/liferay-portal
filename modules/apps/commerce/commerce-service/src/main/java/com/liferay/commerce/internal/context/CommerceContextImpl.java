@@ -62,7 +62,8 @@ public class CommerceContextImpl implements CommerceContext {
 				configurationProvider.getConfiguration(
 					CommerceAccountGroupServiceConfiguration.class,
 					new GroupServiceSettingsLocator(
-						_groupId, CommerceAccountConstants.SERVICE_NAME));
+						getCommerceChannelGroupId(),
+						CommerceAccountConstants.SERVICE_NAME));
 		}
 		catch (PortalException pe) {
 			_log.error(pe, pe);
@@ -84,7 +85,7 @@ public class CommerceContextImpl implements CommerceContext {
 	@Override
 	public long[] getCommerceAccountGroupIds() throws PortalException {
 		if (_commerceAccountGroupIds != null) {
-			return _commerceAccountGroupIds;
+			return _commerceAccountGroupIds.clone();
 		}
 
 		CommerceAccount commerceAccount = getCommerceAccount();
@@ -97,7 +98,7 @@ public class CommerceContextImpl implements CommerceContext {
 			_commerceAccountHelper.getCommerceAccountGroupIds(
 				commerceAccount.getCommerceAccountId());
 
-		return _commerceAccountGroupIds;
+		return _commerceAccountGroupIds.clone();
 	}
 
 	@Override

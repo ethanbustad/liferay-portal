@@ -18,6 +18,8 @@ import com.liferay.commerce.account.model.CommerceAccount;
 import com.liferay.commerce.account.util.CommerceAccountHelper;
 import com.liferay.commerce.address.content.web.internal.portlet.action.ActionHelper;
 import com.liferay.commerce.address.content.web.internal.portlet.configuration.CommerceAddressContentPortletInstanceConfiguration;
+import com.liferay.commerce.constants.CommerceWebKeys;
+import com.liferay.commerce.context.CommerceContext;
 import com.liferay.commerce.model.CommerceAddress;
 import com.liferay.commerce.model.CommerceCountry;
 import com.liferay.commerce.model.CommerceRegion;
@@ -97,12 +99,8 @@ public class CommerceAddressDisplayContext {
 	}
 
 	public CommerceAccount getCommerceAccount() throws PortalException {
-		ThemeDisplay themeDisplay =
-			(ThemeDisplay)_httpServletRequest.getAttribute(
-				WebKeys.THEME_DISPLAY);
-
 		return _commerceAccountHelper.getCurrentCommerceAccount(
-			themeDisplay.getScopeGroupId(), _httpServletRequest);
+			_cpRequestHelper.getChannelGroupId(), _httpServletRequest);
 	}
 
 	public CommerceAddress getCommerceAddress() throws PortalException {
@@ -283,6 +281,20 @@ public class CommerceAddressDisplayContext {
 		_searchContainer.setResults(baseModelSearchResult.getBaseModels());
 
 		return _searchContainer;
+	}
+
+	public boolean hasCommerceChannel() throws PortalException {
+		CommerceContext commerceContext =
+			(CommerceContext)_httpServletRequest.getAttribute(
+				CommerceWebKeys.COMMERCE_CONTEXT);
+
+		long commerceChannelId = commerceContext.getCommerceChannelId();
+
+		if (commerceChannelId > 0) {
+			return true;
+		}
+
+		return false;
 	}
 
 	private final ActionHelper _actionHelper;

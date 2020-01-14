@@ -47,7 +47,6 @@ public interface MerisProfile {
 	/**
 	 * Returns the unique ID of the profile
 	 *
-	 * @return
 	 * @review
 	 */
 	public String getMerisProfileId();

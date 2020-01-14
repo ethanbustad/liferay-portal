@@ -67,9 +67,9 @@ public class CPAttachmentFileEntryServiceSoap {
 
 	public static com.liferay.commerce.product.model.CPAttachmentFileEntrySoap
 			addCPAttachmentFileEntry(
-				long classNameId, long classPK, long fileEntryId,
-				int displayDateMonth, int displayDateDay, int displayDateYear,
-				int displayDateHour, int displayDateMinute,
+				long userId, long groupId, long classNameId, long classPK,
+				long fileEntryId, int displayDateMonth, int displayDateDay,
+				int displayDateYear, int displayDateHour, int displayDateMinute,
 				int expirationDateMonth, int expirationDateDay,
 				int expirationDateYear, int expirationDateHour,
 				int expirationDateMinute, boolean neverExpire,
@@ -85,9 +85,9 @@ public class CPAttachmentFileEntryServiceSoap {
 			com.liferay.commerce.product.model.CPAttachmentFileEntry
 				returnValue =
 					CPAttachmentFileEntryServiceUtil.addCPAttachmentFileEntry(
-						classNameId, classPK, fileEntryId, displayDateMonth,
-						displayDateDay, displayDateYear, displayDateHour,
-						displayDateMinute, expirationDateMonth,
+						userId, groupId, classNameId, classPK, fileEntryId,
+						displayDateMonth, displayDateDay, displayDateYear,
+						displayDateHour, displayDateMinute, expirationDateMonth,
 						expirationDateDay, expirationDateYear,
 						expirationDateHour, expirationDateMinute, neverExpire,
 						titleMap, json, priority, type, serviceContext);
@@ -288,9 +288,37 @@ public class CPAttachmentFileEntryServiceSoap {
 		}
 	}
 
+	/**
+	 * @param classNameId
+	 * @param classPK
+	 * @param fileEntryId
+	 * @param displayDateMonth
+	 * @param displayDateDay
+	 * @param displayDateYear
+	 * @param displayDateHour
+	 * @param displayDateMinute
+	 * @param expirationDateMonth
+	 * @param expirationDateDay
+	 * @param expirationDateYear
+	 * @param expirationDateHour
+	 * @param expirationDateMinute
+	 * @param neverExpire
+	 * @param titleMap
+	 * @param json
+	 * @param priority
+	 * @param type
+	 * @param externalReferenceCode
+	 * @param serviceContext
+	 * @throws PortalException
+	 * @deprecated As of Athanasius (7.3.x), use {@link
+	 #upsertCPAttachmentFileEntry(long, long, long, long, int,
+	 int, int, int, int, int, int, int, int, int, boolean, Map,
+	 String, double, int, String, ServiceContext)}
+	 */
+	@Deprecated
 	public static com.liferay.commerce.product.model.CPAttachmentFileEntrySoap
 			upsertCPAttachmentFileEntry(
-				long classNameId, long classPK, long fileEntryId,
+				long groupId, long classNameId, long classPK, long fileEntryId,
 				int displayDateMonth, int displayDateDay, int displayDateYear,
 				int displayDateHour, int displayDateMinute,
 				int expirationDateMonth, int expirationDateDay,
@@ -310,13 +338,57 @@ public class CPAttachmentFileEntryServiceSoap {
 				returnValue =
 					CPAttachmentFileEntryServiceUtil.
 						upsertCPAttachmentFileEntry(
-							classNameId, classPK, fileEntryId, displayDateMonth,
-							displayDateDay, displayDateYear, displayDateHour,
-							displayDateMinute, expirationDateMonth,
-							expirationDateDay, expirationDateYear,
-							expirationDateHour, expirationDateMinute,
-							neverExpire, titleMap, json, priority, type,
-							externalReferenceCode, serviceContext);
+							groupId, classNameId, classPK, fileEntryId,
+							displayDateMonth, displayDateDay, displayDateYear,
+							displayDateHour, displayDateMinute,
+							expirationDateMonth, expirationDateDay,
+							expirationDateYear, expirationDateHour,
+							expirationDateMinute, neverExpire, titleMap, json,
+							priority, type, externalReferenceCode,
+							serviceContext);
+
+			return com.liferay.commerce.product.model.CPAttachmentFileEntrySoap.
+				toSoapModel(returnValue);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
+	public static com.liferay.commerce.product.model.CPAttachmentFileEntrySoap
+			upsertCPAttachmentFileEntry(
+				long groupId, long classNameId, long classPK,
+				long cpAttachmentFileEntryId, long fileEntryId,
+				int displayDateMonth, int displayDateDay, int displayDateYear,
+				int displayDateHour, int displayDateMinute,
+				int expirationDateMonth, int expirationDateDay,
+				int expirationDateYear, int expirationDateHour,
+				int expirationDateMinute, boolean neverExpire,
+				String[] titleMapLanguageIds, String[] titleMapValues,
+				String json, double priority, int type,
+				String externalReferenceCode,
+				com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws RemoteException {
+
+		try {
+			Map<Locale, String> titleMap = LocalizationUtil.getLocalizationMap(
+				titleMapLanguageIds, titleMapValues);
+
+			com.liferay.commerce.product.model.CPAttachmentFileEntry
+				returnValue =
+					CPAttachmentFileEntryServiceUtil.
+						upsertCPAttachmentFileEntry(
+							groupId, classNameId, classPK,
+							cpAttachmentFileEntryId, fileEntryId,
+							displayDateMonth, displayDateDay, displayDateYear,
+							displayDateHour, displayDateMinute,
+							expirationDateMonth, expirationDateDay,
+							expirationDateYear, expirationDateHour,
+							expirationDateMinute, neverExpire, titleMap, json,
+							priority, type, externalReferenceCode,
+							serviceContext);
 
 			return com.liferay.commerce.product.model.CPAttachmentFileEntrySoap.
 				toSoapModel(returnValue);

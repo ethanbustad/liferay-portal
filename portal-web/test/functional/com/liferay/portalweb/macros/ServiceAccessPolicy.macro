@@ -19,10 +19,9 @@ definition {
 	}
 
 	macro gotoServiceAccessPolicy {
-		AssertClick(
-			key_policyName = "${policyName}",
-			locator1 = "ServiceAccessPolicy#POLICY_NAME",
-			value1 = "${policyName}");
+		LexiconEntry.gotoEntryMenuItem(
+			menuItem = "Edit",
+			rowEntry = "${policyName}");
 	}
 
 }

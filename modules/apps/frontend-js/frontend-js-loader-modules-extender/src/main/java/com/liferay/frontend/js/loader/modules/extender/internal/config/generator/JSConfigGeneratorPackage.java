@@ -89,7 +89,6 @@ public class JSConfigGeneratorPackage {
 	 * Returns the path to the web context containing the package (usually
 	 * something like '/o/web-context-name').
 	 *
-	 * @return
 	 * @review
 	 */
 	public String getContextPath() {
@@ -114,7 +113,6 @@ public class JSConfigGeneratorPackage {
 	 * convention for names, it is not enforced by this code so, to be safe,
 	 * we interpret and use each attribute strictly.
 	 *
-	 * @return
 	 * @review
 	 */
 	public String getName() {

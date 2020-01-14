@@ -74,7 +74,7 @@ public class PortletTCKBridge {
 		_handshakeServerFuture = futureTask;
 
 		Thread handshakeServerThread = new Thread(
-			futureTask, "Handshake server thread");
+			futureTask, "Handshake Server Thread");
 
 		handshakeServerThread.setDaemon(true);
 

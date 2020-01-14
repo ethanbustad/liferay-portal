@@ -92,6 +92,16 @@ public class CommerceOrderItemServiceImpl
 	}
 
 	@Override
+	public void deleteCommerceOrderItems(long commerceOrderId)
+		throws PortalException {
+
+		_commerceOrderModelResourcePermission.check(
+			getPermissionChecker(), commerceOrderId, ActionKeys.UPDATE);
+
+		commerceOrderItemLocalService.deleteCommerceOrderItems(commerceOrderId);
+	}
+
+	@Override
 	public CommerceOrderItem fetchByExternalReferenceCode(
 			long companyId, String externalReferenceCode)
 		throws PortalException {
@@ -330,6 +340,52 @@ public class CommerceOrderItemServiceImpl
 			commerceOrderItemId, unitPrice, promoPrice, discountAmount,
 			finalPrice, discountPercentageLevel1, discountPercentageLevel2,
 			discountPercentageLevel3, discountPercentageLevel4);
+	}
+
+	/**
+	 * @deprecated As of Athanasius (7.3.x)
+	 */
+	@Deprecated
+	@Override
+	public CommerceOrderItem updateCommerceOrderItemUnitPrice(
+			long commerceOrderItemId, BigDecimal unitPrice)
+		throws PortalException {
+
+		CommerceOrderItem commerceOrderItem =
+			commerceOrderItemLocalService.getCommerceOrderItem(
+				commerceOrderItemId);
+
+		_commerceOrderModelResourcePermission.check(
+			getPermissionChecker(), commerceOrderItem.getCommerceOrderId(),
+			ActionKeys.UPDATE);
+
+		PortalPermissionUtil.check(
+			getPermissionChecker(),
+			CommerceActionKeys.MANAGE_COMMERCE_ORDER_PRICES);
+
+		return commerceOrderItemLocalService.updateCommerceOrderItemUnitPrice(
+			commerceOrderItemId, unitPrice);
+	}
+
+	@Override
+	public CommerceOrderItem updateCommerceOrderItemUnitPrice(
+			long commerceOrderItemId, BigDecimal unitPrice, int quantity)
+		throws PortalException {
+
+		CommerceOrderItem commerceOrderItem =
+			commerceOrderItemLocalService.getCommerceOrderItem(
+				commerceOrderItemId);
+
+		_commerceOrderModelResourcePermission.check(
+			getPermissionChecker(), commerceOrderItem.getCommerceOrderId(),
+			ActionKeys.UPDATE);
+
+		PortalPermissionUtil.check(
+			getPermissionChecker(),
+			CommerceActionKeys.MANAGE_COMMERCE_ORDER_PRICES);
+
+		return commerceOrderItemLocalService.updateCommerceOrderItemUnitPrice(
+			commerceOrderItemId, unitPrice, quantity);
 	}
 
 	@Override

@@ -17,6 +17,42 @@ definition {
 			value1 = "${applicationName}");
 	}
 
+	macro addPrefixHandlerInSystemSettings {
+		ProductMenu.gotoPortlet(
+			category = "Configuration",
+			panel = "Control Panel",
+			portlet = "System Settings");
+
+		SystemSettings.gotoConfiguration(
+			configurationCategory = "OAuth 2",
+			configurationName = "Bundle PrefixHandlerFactory",
+			configurationScope = "System Scope");
+
+		Click(locator1 = "Button#ADD");
+
+		FormFields.editTextMultiline(
+			fieldName = "osgi.jaxrs.name",
+			fieldValue = "${osgiJaxrsName}");
+
+		if ("${symbolicName}" == "false") {
+			FormFields.disableCheckbox(fieldName = "Include Bundle Symbolic Name");
+		}
+
+		FormFields.editTextMultiline(
+			fieldName = "excluded.scopes",
+			fieldValue = "${excludedScopesName}");
+
+		FormFields.editTextMultiline(
+			fieldName = "service.properties",
+			fieldValue = "${serviceProperties}");
+
+		FormFields.editTextMultiline(
+			fieldName = "separator",
+			fieldValue = "${separator}");
+
+		PortletEntry.save();
+	}
+
 	macro deleteApplication {
 		LexiconEntry.gotoEntryMenuItemNoError(
 			menuItem = "Delete",
@@ -443,6 +479,60 @@ definition {
 			AssertTextEquals(
 				locator1 = "OAuth2#USER_CONNECTED_APP_VIEW_NAME",
 				value1 = "${applicationName}");
+		}
+	}
+
+	macro viewScopeAliases {
+		LexiconEntry.gotoEntryMenuItem(
+			menuItem = "Edit",
+			rowEntry = "${applicationName}");
+
+		Navigator.gotoNavItem(navItem = "Scopes");
+
+		for (var resourcePanel : list "${resourcePanels}") {
+			OAuth2.expandResourcePanel(resourcePanel = "${resourcePanel}");
+		}
+
+		for (var scopeAlias : list "${scopeAliasList}") {
+			AssertElementPresent(
+				key_scopeAlias = "${scopeAlias}",
+				locator1 = "OAuth2#ADMIN_RESOURCE_SCOPE_ALIAS");
+		}
+	}
+
+	macro viewScopeMappings {
+		LexiconEntry.gotoEntryMenuItem(
+			menuItem = "Edit",
+			rowEntry = "${applicationName}");
+
+		Navigator.gotoNavItem(navItem = "Scopes");
+
+		for (var resourcePanel : list "${resourcePanels}") {
+			OAuth2.expandResourcePanel(resourcePanel = "${resourcePanel}");
+		}
+
+		if (isSet(scopeTranslation)) {
+			AssertTextEquals(
+				key_resourcePanel = "${resourcePanel}",
+				locator1 = "OAuth2#ADMIN_RESOURCE_SCOPE_TRANSLATION",
+				value1 = "${scopeTranslation}");
+		}
+
+		if (isSet(globalScopeLinkValue)) {
+			if (contains("${scopeTranslation}", "+")) {
+				var partialScopeTranslation = StringUtil.extractFirst("${scopeTranslation}", "+");
+				partialScopeTranslation = StringUtil.trim("${partialScopeTranslation}");
+
+				key_scopeText = "${partialScopeTranslation}";
+			}
+			else {
+				key_scopeText = "${scopeTranslation}";
+			}
+
+			AssertTextEquals(
+				key_scopeText = "${key_scopeText}",
+				locator1 = "OAuth2#ADMIN_MODAL_GLOBAL_SCOPE_LINK",
+				value1 = "${globalScopeLinkValue}");
 		}
 	}
 

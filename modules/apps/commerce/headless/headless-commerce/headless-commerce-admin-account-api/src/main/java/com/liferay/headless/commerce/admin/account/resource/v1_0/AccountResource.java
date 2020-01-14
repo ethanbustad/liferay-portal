@@ -16,6 +16,8 @@ package com.liferay.headless.commerce.admin.account.resource.v1_0;
 
 import com.liferay.headless.commerce.admin.account.dto.v1_0.Account;
 import com.liferay.portal.kernel.model.Company;
+import com.liferay.portal.kernel.search.Sort;
+import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.vulcan.multipart.MultipartBody;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
@@ -35,18 +37,17 @@ import javax.ws.rs.core.Response;
 @Generated("")
 public interface AccountResource {
 
-	public Response postAccountLogo(Long id, MultipartBody multipartBody)
+	public Response deleteAccountGroupByExternalReferenceCodeAccount(
+			String accountExternalReferenceCode, String externalReferenceCode)
+		throws Exception;
+
+	public Response postAccountGroupByExternalReferenceCodeAccount(
+			String externalReferenceCode, Account account)
 		throws Exception;
 
 	public Response postAccountByExternalReferenceCodeLogo(
 			String externalReferenceCode, MultipartBody multipartBody)
 		throws Exception;
-
-	public Response deleteAccount(Long id) throws Exception;
-
-	public Account getAccount(Long id) throws Exception;
-
-	public Response patchAccount(Long id, Account account) throws Exception;
 
 	public Response deleteAccountByExternalReferenceCode(
 			String externalReferenceCode)
@@ -60,7 +61,17 @@ public interface AccountResource {
 			String externalReferenceCode, Account account)
 		throws Exception;
 
-	public Page<Account> getAccountsPage(Pagination pagination)
+	public Response postAccountLogo(Long id, MultipartBody multipartBody)
+		throws Exception;
+
+	public Response deleteAccount(Long id) throws Exception;
+
+	public Account getAccount(Long id) throws Exception;
+
+	public Response patchAccount(Long id, Account account) throws Exception;
+
+	public Page<Account> getAccountsPage(
+			Filter filter, Pagination pagination, Sort[] sorts)
 		throws Exception;
 
 	public Account postAccount(Account account) throws Exception;

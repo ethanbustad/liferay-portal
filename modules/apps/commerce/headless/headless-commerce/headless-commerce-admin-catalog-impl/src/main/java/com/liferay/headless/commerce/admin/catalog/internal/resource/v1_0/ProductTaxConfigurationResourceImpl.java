@@ -17,12 +17,15 @@ package com.liferay.headless.commerce.admin.catalog.internal.resource.v1_0;
 import com.liferay.commerce.product.exception.NoSuchCPDefinitionException;
 import com.liferay.commerce.product.model.CPDefinition;
 import com.liferay.commerce.product.service.CPDefinitionService;
+import com.liferay.headless.commerce.admin.catalog.dto.v1_0.Product;
 import com.liferay.headless.commerce.admin.catalog.dto.v1_0.ProductTaxConfiguration;
 import com.liferay.headless.commerce.admin.catalog.internal.util.v1_0.ProductTaxConfigurationUtil;
 import com.liferay.headless.commerce.admin.catalog.resource.v1_0.ProductTaxConfigurationResource;
 import com.liferay.headless.commerce.core.dto.v1_0.converter.DTOConverter;
 import com.liferay.headless.commerce.core.dto.v1_0.converter.DTOConverterRegistry;
 import com.liferay.headless.commerce.core.dto.v1_0.converter.DefaultDTOConverterContext;
+import com.liferay.portal.vulcan.fields.NestedField;
+import com.liferay.portal.vulcan.fields.NestedFieldId;
 
 import javax.ws.rs.core.Response;
 
@@ -62,8 +65,10 @@ public class ProductTaxConfigurationResourceImpl
 					cpDefinition.getCPDefinitionId()));
 	}
 
+	@NestedField(parentClass = Product.class, value = "taxConfiguration")
 	@Override
-	public ProductTaxConfiguration getProductIdTaxConfiguration(Long id)
+	public ProductTaxConfiguration getProductIdTaxConfiguration(
+			@NestedFieldId(value = "productId") Long id)
 		throws Exception {
 
 		CPDefinition cpDefinition =

@@ -3,9 +3,8 @@
 {template .render}
 	{@param quantity: int|null}
 	{@param? disabled: bool}
-	{@param? minQuantity: int}
-	{@param? maxQuantity: int}
 	{@param? allowedQuantities: list<number>}
+	{@param? quantitySelectorAdditionalClasses: string}
 	{@param? _prevAvailable: bool}
 	{@param? _nextAvailable: bool}
 	{@param? _handleFormSubmit: any}
@@ -15,92 +14,85 @@
 	{@param? _handleNextQuantityButtonPressed: any}
 	{@param? _handleSelectOption: any}
 
-	{let $prevClass kind="text"}
-		commerce-quantity-selector__btn
-		{if $_prevAvailable == false}
-			{sp}is-disabled
-		{/if}
-	{/let}
-
-	{let $nextClass kind="text"}
-		commerce-quantity-selector__btn
-		{if $_nextAvailable == false}
-			{sp}is-disabled
-		{/if}
-	{/let}
-
 	{let $quantitySelectorClasses kind="text"}
-		commerce-quantity-selector
+		quantity-selector
 
-		{if $disabled == true}
-			{sp}commerce-quantity-selector--disabled
+		{if $quantitySelectorAdditionalClasses}
+			{sp}{$quantitySelectorAdditionalClasses}
+		{/if}
+
+		{if $disabled}
+			{sp}quantity-selector--disabled
 		{/if}
 	{/let}
 
-	<div class="{$quantitySelectorClasses}">
+	<form class="{$quantitySelectorClasses}" data-onsubmit="{$_handleFormSubmit}">
 		{if isNonnull($allowedQuantities)}
 			{let $selectAttributes kind="attributes"}
-				class="commerce-quantity-selector__select"
+				class="form-control"
 				data-onchange="{$_handleSelectOption}"
-				{if $disabled == true}
+				{if $disabled}
 					disabled
 				{/if}
 			{/let}
 
-			<form data-onsubmit="{$_handleFormSubmit}">
-				<select	{$selectAttributes}>
-					{foreach $option in $allowedQuantities}
-						{let $optionAttributes kind="attributes"}
-							value="{$option}"
-							{if $option == $quantity}
-								selected="selected"
-							{/if}
-						{/let}
-						<option {$optionAttributes}>{$option}</option>
-					{/foreach}
-				</select>
-			</form>
+			<select	{$selectAttributes}>
+				{foreach $option in $allowedQuantities}
+					{let $optionAttributes kind="attributes"}
+						value="{$option}"
+						{if $option == $quantity}
+							selected="selected"
+						{/if}
+					{/let}
+					<option {$optionAttributes}>{$option}</option>
+				{/foreach}
+			</select>
 		{else}
-			{let $inputAttributes kind="attributes"}
-				name="quantity"
-				type="number"
-				class="commerce-quantity-selector__input"
-				data-onkeyup="{$_handleInputKeyUp}"
-				data-onkeydown="{$_handleArrowKeys}"
-				value="{$quantity}"
+			<div class="input-group justify-content-center">
+				<div class="input-group-item input-group-item-shrink input-group-prepend">
+					<button
+						class="btn btn-monospaced btn-secondary h-100"
+						type="submit"
+						data-onclick="{$_handlePrevQuantityButtonPressed}"
+						{if $_prevAvailable == false}
+							{sp}disabled
+						{/if}
+					>
+						&ndash;
+					</button>
+				</div>
 
-				{if isNonnull($minQuantity)}
-					{sp}min="{$minQuantity}"
-				{/if}
+				<div class="input-group-item input-group-item-shrink input-group-prepend">
+					<input
+						name="quantity"
+						type="text"
+						class="form-control text-center"
+						data-onkeyup="{$_handleInputKeyUp}"
+						data-onkeydown="{$_handleArrowKeys}"
+						{if $quantity}
+							value="{$quantity}"
+						{else}
+							value="1"
+						{/if}
+						{if $disabled}
+							{sp}disabled
+						{/if}
+					/>
+				</div>
 
-				{if isNonnull($maxQuantity)}
-					{sp}max="{$maxQuantity}"
-				{/if}
-
-				{if $disabled == true}
-					{sp}disabled
-				{/if}
-			{/let}
-
-			<button
-				class="{$prevClass}"
-				data-onclick="{$_handlePrevQuantityButtonPressed}"
-				tabindex="-1"
-			>
-				&ndash;
-			</button>
-
-			<form data-onsubmit="{$_handleFormSubmit}">
-				<input {$inputAttributes} />
-			</form>
-
-			<button
-				class="{$nextClass}"
-				data-onclick="{$_handleNextQuantityButtonPressed}"
-				tabindex="-1"
-			>
-				+
-			</button>
+				<div class="input-group-append input-group-item input-group-item-shrink">
+					<button
+						class="btn btn-monospaced btn-secondary h-100"
+						type="submit"
+						data-onclick="{$_handleNextQuantityButtonPressed}"
+						{if $_nextAvailable == false}
+							{sp}disabled
+						{/if}
+					>
+						+
+					</button>
+				</div>
+			</div>
 		{/if}
-	</div>
+	</form>
 {/template}

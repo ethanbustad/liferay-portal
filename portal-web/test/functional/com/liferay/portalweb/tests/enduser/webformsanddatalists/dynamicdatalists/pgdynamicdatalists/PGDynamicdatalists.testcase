@@ -1280,7 +1280,8 @@ definition {
 
 		DDLRecord.viewViaDDLDisplayPG(
 			ddlListName = "List Name",
-			ddlRecordFieldData = "9/1/18",
+			ddlRecordFieldData = "9/1/2018",
+			ddlRecordFieldData_1 = "9/1/18",
 			field = "Date",
 			fieldFieldLabel = "Date"
 		);
@@ -1309,7 +1310,8 @@ definition {
 
 		DDLRecord.viewViaDDLDisplayPG(
 			ddlListName = "List Name",
-			ddlRecordFieldData = "5/13/17",
+			ddlRecordFieldData = "5/13/2017",
+			ddlRecordFieldData_1 = "5/13/17",
 			field = "Date",
 			fieldFieldLabel = "Date"
 		);

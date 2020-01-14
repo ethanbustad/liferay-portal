@@ -103,7 +103,6 @@ public class CommerceCurrencyLocalServiceImpl
 		CommerceCurrency commerceCurrency = commerceCurrencyPersistence.create(
 			commerceCurrencyId);
 
-		commerceCurrency.setUuid(serviceContext.getUuid());
 		commerceCurrency.setCompanyId(user.getCompanyId());
 		commerceCurrency.setUserId(user.getUserId());
 		commerceCurrency.setUserName(user.getFullName());
@@ -392,7 +391,9 @@ public class CommerceCurrencyLocalServiceImpl
 				primaryCommerceCurrency, commerceCurrency);
 		}
 		catch (Exception e) {
-			_log.error(e, e);
+			if (_log.isDebugEnabled()) {
+				_log.debug(e, e);
+			}
 
 			return;
 		}

@@ -86,6 +86,17 @@
 		</attribute>
 	</tag>
 	<tag>
+		<name>coupon-code</name>
+		<tag-class>com.liferay.commerce.frontend.taglib.servlet.taglib.CouponCodeTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<name>commerceOrderId</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>long</type>
+		</attribute>
+	</tag>
+	<tag>
 		<name>gallery</name>
 		<tag-class>com.liferay.commerce.frontend.taglib.servlet.taglib.GalleryTag</tag-class>
 		<body-content>empty</body-content>
@@ -94,9 +105,99 @@
 			<required>true</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
+	</tag>
+	<tag>
+		<description><![CDATA[Creates a configurable header.]]></description>
+		<name>header</name>
+		<tag-class>com.liferay.commerce.frontend.taglib.servlet.taglib.HeaderTag</tag-class>
+		<body-content>JSP</body-content>
 		<attribute>
-			<name>id</name>
+			<description><![CDATA[A bean associated with the model object.]]></description>
+			<name>bean</name>
 			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>java.lang.Object</type>
+		</attribute>
+		<attribute>
+			<name>cssClasses</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>dropdownItems</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>fullWidth</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>headerActions</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[A class for the bean object.]]></description>
+			<name>model</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>java.lang.Class</type>
+		</attribute>
+		<attribute>
+			<name>previewUrl</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>thumbnailUrl</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>title</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>version</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>wrapperCssClasses</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+	<tag>
+		<name>info-box</name>
+		<tag-class>com.liferay.commerce.frontend.taglib.servlet.taglib.InfoBoxTag</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<name>actionLabel</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>actionTargetId</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>actionUrl</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>elementClasses</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>title</name>
+			<required>true</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 	</tag>
@@ -104,6 +205,56 @@
 		<name>mini-cart</name>
 		<tag-class>com.liferay.commerce.frontend.taglib.servlet.taglib.MiniCartTag</tag-class>
 		<body-content>empty</body-content>
+	</tag>
+	<tag>
+		<name>panel</name>
+		<tag-class>com.liferay.commerce.frontend.taglib.servlet.taglib.PanelTag</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<name>actionIcon</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>actionLabel</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>actionTargetId</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>actionUrl</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>bodyClasses</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>elementClasses</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>showMoreId</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>showMoreUrl</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>title</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
 	</tag>
 	<tag>
 		<name>price</name>
@@ -151,6 +302,21 @@
 		<body-content>empty</body-content>
 		<attribute>
 			<name>id</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+	<tag>
+		<name>step-tracker</name>
+		<tag-class>com.liferay.commerce.frontend.taglib.servlet.taglib.StepTrackerTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<name>spritemap</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>steps</name>
 			<required>true</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>

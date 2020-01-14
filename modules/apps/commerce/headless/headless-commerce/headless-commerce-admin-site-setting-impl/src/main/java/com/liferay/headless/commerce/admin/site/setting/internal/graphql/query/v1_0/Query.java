@@ -115,18 +115,6 @@ public class Query {
 
 	@GraphQLField
 	@GraphQLInvokeDetached
-	public MeasurementUnit getMeasurementUnit(@GraphQLName("id") Long id)
-		throws Exception {
-
-		return _applyComponentServiceObjects(
-			_measurementUnitResourceComponentServiceObjects,
-			this::_populateResourceContext,
-			measurementUnitResource ->
-				measurementUnitResource.getMeasurementUnit(id));
-	}
-
-	@GraphQLField
-	@GraphQLInvokeDetached
 	public Collection<MeasurementUnit>
 			getCommerceAdminSiteSettingGroupMeasurementUnitPage(
 				@GraphQLName("groupId") Long groupId,
@@ -150,13 +138,14 @@ public class Query {
 
 	@GraphQLField
 	@GraphQLInvokeDetached
-	public TaxCategory getTaxCategory(@GraphQLName("id") Long id)
+	public MeasurementUnit getMeasurementUnit(@GraphQLName("id") Long id)
 		throws Exception {
 
 		return _applyComponentServiceObjects(
-			_taxCategoryResourceComponentServiceObjects,
+			_measurementUnitResourceComponentServiceObjects,
 			this::_populateResourceContext,
-			taxCategoryResource -> taxCategoryResource.getTaxCategory(id));
+			measurementUnitResource ->
+				measurementUnitResource.getMeasurementUnit(id));
 	}
 
 	@GraphQLField
@@ -183,11 +172,13 @@ public class Query {
 
 	@GraphQLField
 	@GraphQLInvokeDetached
-	public Warehouse getWarehouse(@GraphQLName("id") Long id) throws Exception {
+	public TaxCategory getTaxCategory(@GraphQLName("id") Long id)
+		throws Exception {
+
 		return _applyComponentServiceObjects(
-			_warehouseResourceComponentServiceObjects,
+			_taxCategoryResourceComponentServiceObjects,
 			this::_populateResourceContext,
-			warehouseResource -> warehouseResource.getWarehouse(id));
+			taxCategoryResource -> taxCategoryResource.getTaxCategory(id));
 	}
 
 	@GraphQLField
@@ -210,6 +201,15 @@ public class Query {
 
 				return paginationPage.getItems();
 			});
+	}
+
+	@GraphQLField
+	@GraphQLInvokeDetached
+	public Warehouse getWarehouse(@GraphQLName("id") Long id) throws Exception {
+		return _applyComponentServiceObjects(
+			_warehouseResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			warehouseResource -> warehouseResource.getWarehouse(id));
 	}
 
 	private <T, R, E1 extends Throwable, E2 extends Throwable> R

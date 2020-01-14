@@ -28,6 +28,7 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.CalendarFactoryUtil;
 import com.liferay.portal.kernel.util.FileUtil;
+import com.liferay.portal.kernel.util.FriendlyURLNormalizer;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.MimeTypes;
 import com.liferay.portal.kernel.util.Portal;
@@ -71,9 +72,6 @@ public class CPAttachmentFileEntryCreator {
 		serviceContext.setScopeGroupId(scopeGroupId);
 		serviceContext.setUserId(userId);
 		serviceContext.setCompanyId(user.getCompanyId());
-
-		long classNameId = _portal.getClassNameId(classedModel.getModelClass());
-		long classPK = GetterUtil.getLong(classedModel.getPrimaryKeyObj());
 
 		Map<Locale, String> titleMap = new HashMap<>();
 
@@ -167,12 +165,17 @@ public class CPAttachmentFileEntryCreator {
 			expirationDateHour += 12;
 		}
 
+		long classNameId = _portal.getClassNameId(classedModel.getModelClass());
+		long classPK = GetterUtil.getLong(classedModel.getPrimaryKeyObj());
+
 		return _cpAttachmentFileEntryLocalService.addCPAttachmentFileEntry(
-			classNameId, classPK, fileEntry.getFileEntryId(), displayDateMonth,
+			serviceContext.getUserId(), fileEntry.getGroupId(), classNameId,
+			classPK, fileEntry.getFileEntryId(), displayDateMonth,
 			displayDateDay, displayDateYear, displayDateHour, displayDateMinute,
 			expirationDateMonth, expirationDateDay, expirationDateYear,
 			expirationDateHour, expirationDateMinute, true, titleMap, null,
-			priority, type, serviceContext);
+			priority, type, _friendlyURLNormalizer.normalize(fileName),
+			serviceContext);
 	}
 
 	private static final String _TEMP_FOLDER_NAME =
@@ -187,6 +190,9 @@ public class CPAttachmentFileEntryCreator {
 
 	@Reference
 	private DLAppService _dlAppService;
+
+	@Reference
+	private FriendlyURLNormalizer _friendlyURLNormalizer;
 
 	@Reference
 	private MimeTypes _mimeTypes;

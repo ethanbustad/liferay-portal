@@ -14,9 +14,10 @@
 
 package com.liferay.headless.delivery.internal.jaxrs.exception.mapper;
 
+import com.liferay.portal.vulcan.jaxrs.exception.mapper.BaseExceptionMapper;
+import com.liferay.portal.vulcan.jaxrs.exception.mapper.Problem;
 import com.liferay.wiki.exception.DuplicateNodeNameException;
 
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 
@@ -36,17 +37,16 @@ import org.osgi.service.component.annotations.Component;
 	service = ExceptionMapper.class
 )
 public class DuplicateWikiNodeNameExceptionExceptionMapper
-	implements ExceptionMapper<DuplicateNodeNameException> {
+	extends BaseExceptionMapper<DuplicateNodeNameException> {
 
 	@Override
-	public Response toResponse(DuplicateNodeNameException dnne) {
-		return Response.status(
-			409
-		).entity(
-			"A wiki node already exists with the name " + dnne.getMessage()
-		).type(
-			MediaType.TEXT_PLAIN
-		).build();
+	protected Problem getProblem(
+		DuplicateNodeNameException duplicateNodeNameException) {
+
+		return new Problem(
+			Response.Status.CONFLICT,
+			"A wiki node already exists with the name " +
+				duplicateNodeNameException.getMessage());
 	}
 
 }

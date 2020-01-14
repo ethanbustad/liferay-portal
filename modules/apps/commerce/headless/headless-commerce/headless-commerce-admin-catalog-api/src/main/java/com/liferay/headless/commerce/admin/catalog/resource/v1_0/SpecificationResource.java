@@ -16,6 +16,8 @@ package com.liferay.headless.commerce.admin.catalog.resource.v1_0;
 
 import com.liferay.headless.commerce.admin.catalog.dto.v1_0.Specification;
 import com.liferay.portal.kernel.model.Company;
+import com.liferay.portal.kernel.search.Sort;
+import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
 
@@ -34,17 +36,18 @@ import javax.ws.rs.core.Response;
 @Generated("")
 public interface SpecificationResource {
 
+	public Page<Specification> getSpecificationsPage(
+			Filter filter, Pagination pagination, Sort[] sorts)
+		throws Exception;
+
+	public Specification postSpecification(Specification specification)
+		throws Exception;
+
 	public Response deleteSpecification(Long id) throws Exception;
 
 	public Specification getSpecification(Long id) throws Exception;
 
 	public Response patchSpecification(Long id, Specification specification)
-		throws Exception;
-
-	public Page<Specification> getSpecificationsPage(Pagination pagination)
-		throws Exception;
-
-	public Specification postSpecification(Specification specification)
 		throws Exception;
 
 	public void setContextCompany(Company contextCompany);

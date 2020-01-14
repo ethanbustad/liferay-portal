@@ -5,6 +5,7 @@
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
+  height: 100%;
   overflow: hidden;
   padding: 10px;
   position: relative;
@@ -12,7 +13,7 @@
   transition: all .2s ease-in-out;
   border-radius: 4px;
 
-  @media only screen and (max-width: 767px) {
+  @media only screen and (max-width: $bp-small) {
     height: 245px;
     margin: 2px 0;
   }
@@ -130,7 +131,7 @@
     font-size: 12px;
     line-height: 1;
     margin-bottom: 0;
-    margin-top: 24px;
+    margin-top: 14px;
   }
 
   &__empty_sku {
@@ -188,7 +189,7 @@
     margin: 0;
     min-height: 26px;
 
-    @media only screen and (max-width: 767px) {
+    @media only screen and (max-width: $bp-small) {
       font-size: 10px;
       line-height: 18px;
       position: absolute;
@@ -199,45 +200,63 @@
   &__price {
     margin: 18px 0 15px 0;
 
-    @media only screen and (max-width: 767px) {
+    @media only screen and (max-width: $bp-small) {
       bottom: calc(20px + 40px);
       margin: 0;
       position: absolute;
     }
 
     .price {
-      &__value {
+      align-items: center;
+      display: flex;
+      flex-direction: row-reverse;
+
+      &-label {
+        display: none;
+      }
+
+      &-value {
         font-size: 20px;
         font-weight: 600;
         line-height: 27px;
 
-        @media only screen and (max-width: 767px) {
+        &-discount,
+        &-inactive {
+          display: none;
+        }
+
+        &-final,
+        &-promo {
+          margin-right: 10px !important;
+        }
+
+        &-inactive:nth-child(2) {
+          display: block !important;
+          font-size: 1em;
+        }
+
+        @media only screen and (max-width: $bp-small) {
           font-size: 14px;
           line-height: 19px;
         }
 
         @include specialPricesStyles;
-
-        &--promo-price {
-          font-size: 20px;
-        }
-
-        &--discount {
-          margin-left: 10px;
-          font-size: 14px;
-        }
       }
     }
   }
 
   &__actions {
-    margin-bottom: 20px;
+		margin-bottom: -10px;
+		margin-left: 0;
+		width: calc(100% + 20px);
 
-    @media only screen and (max-width: 767px) {
-      bottom: 10px;
-      margin: 0;
-      position: absolute;
-    }
+		.btn-add-to-cart {
+			border-top-left-radius: 0px;
+			border-top-right-radius: 0px;
+			display: flex;
+			margin-top: 12px;
+			width: 100%;
+		}
   }
 
   &__add-to-wishlist-button {

@@ -18,8 +18,6 @@ import com.liferay.headless.admin.workflow.dto.v1_0.ChangeTransition;
 import com.liferay.headless.admin.workflow.dto.v1_0.WorkflowTask;
 import com.liferay.headless.admin.workflow.dto.v1_0.WorkflowTaskAssignToMe;
 import com.liferay.headless.admin.workflow.dto.v1_0.WorkflowTaskAssignToUser;
-import com.liferay.portal.kernel.model.Company;
-import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.vulcan.accept.language.AcceptLanguage;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
@@ -80,7 +78,8 @@ public interface WorkflowTaskResource {
 		AcceptLanguage contextAcceptLanguage) {
 	}
 
-	public void setContextCompany(Company contextCompany);
+	public void setContextCompany(
+		com.liferay.portal.kernel.model.Company contextCompany);
 
 	public default void setContextHttpServletRequest(
 		HttpServletRequest contextHttpServletRequest) {
@@ -93,6 +92,7 @@ public interface WorkflowTaskResource {
 	public default void setContextUriInfo(UriInfo contextUriInfo) {
 	}
 
-	public void setContextUser(User contextUser);
+	public void setContextUser(
+		com.liferay.portal.kernel.model.User contextUser);
 
 }

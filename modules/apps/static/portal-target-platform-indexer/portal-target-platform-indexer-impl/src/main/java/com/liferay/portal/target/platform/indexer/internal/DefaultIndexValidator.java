@@ -258,7 +258,7 @@ public class DefaultIndexValidator implements IndexValidator {
 			threadPoolExecutor.setThreadFactory(
 				runnable -> {
 					Thread thread = new Thread(
-						runnable, "bnd-Processor-Thread");
+						runnable, "BND Processor Thread");
 
 					thread.setDaemon(true);
 

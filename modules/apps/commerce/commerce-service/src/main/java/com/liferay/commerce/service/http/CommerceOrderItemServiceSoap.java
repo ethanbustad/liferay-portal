@@ -115,6 +115,20 @@ public class CommerceOrderItemServiceSoap {
 		}
 	}
 
+	public static void deleteCommerceOrderItems(long commerceOrderId)
+		throws RemoteException {
+
+		try {
+			CommerceOrderItemServiceUtil.deleteCommerceOrderItems(
+				commerceOrderId);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
 	public static com.liferay.commerce.model.CommerceOrderItemSoap
 			fetchByExternalReferenceCode(
 				long companyId, String externalReferenceCode)
@@ -379,6 +393,51 @@ public class CommerceOrderItemServiceSoap {
 					finalPrice, discountPercentageLevel1,
 					discountPercentageLevel2, discountPercentageLevel3,
 					discountPercentageLevel4);
+
+			return com.liferay.commerce.model.CommerceOrderItemSoap.toSoapModel(
+				returnValue);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
+	/**
+	 * @deprecated
+	 */
+	@Deprecated
+	public static com.liferay.commerce.model.CommerceOrderItemSoap
+			updateCommerceOrderItemUnitPrice(
+				long commerceOrderItemId, java.math.BigDecimal unitPrice)
+		throws RemoteException {
+
+		try {
+			com.liferay.commerce.model.CommerceOrderItem returnValue =
+				CommerceOrderItemServiceUtil.updateCommerceOrderItemUnitPrice(
+					commerceOrderItemId, unitPrice);
+
+			return com.liferay.commerce.model.CommerceOrderItemSoap.toSoapModel(
+				returnValue);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
+	public static com.liferay.commerce.model.CommerceOrderItemSoap
+			updateCommerceOrderItemUnitPrice(
+				long commerceOrderItemId, java.math.BigDecimal unitPrice,
+				int quantity)
+		throws RemoteException {
+
+		try {
+			com.liferay.commerce.model.CommerceOrderItem returnValue =
+				CommerceOrderItemServiceUtil.updateCommerceOrderItemUnitPrice(
+					commerceOrderItemId, unitPrice, quantity);
 
 			return com.liferay.commerce.model.CommerceOrderItemSoap.toSoapModel(
 				returnValue);

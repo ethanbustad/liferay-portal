@@ -16,6 +16,8 @@ package com.liferay.headless.commerce.admin.inventory.resource.v1_0;
 
 import com.liferay.headless.commerce.admin.inventory.dto.v1_0.Warehouse;
 import com.liferay.portal.kernel.model.Company;
+import com.liferay.portal.kernel.search.Sort;
+import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
 
@@ -34,13 +36,6 @@ import javax.ws.rs.core.Response;
 @Generated("")
 public interface WarehouseResource {
 
-	public Response deleteWarehousId(Long id) throws Exception;
-
-	public Warehouse getWarehousId(Long id) throws Exception;
-
-	public Response patchWarehousId(Long id, Warehouse warehouse)
-		throws Exception;
-
 	public Response deleteWarehousByExternalReferenceCode(
 			String externalReferenceCode)
 		throws Exception;
@@ -53,7 +48,15 @@ public interface WarehouseResource {
 			String externalReferenceCode, Warehouse warehouse)
 		throws Exception;
 
-	public Page<Warehouse> getWarehousesPage(Pagination pagination)
+	public Response deleteWarehousId(Long id) throws Exception;
+
+	public Warehouse getWarehousId(Long id) throws Exception;
+
+	public Response patchWarehousId(Long id, Warehouse warehouse)
+		throws Exception;
+
+	public Page<Warehouse> getWarehousesPage(
+			Filter filter, Pagination pagination, Sort[] sorts)
 		throws Exception;
 
 	public Warehouse postWarehous(Warehouse warehouse) throws Exception;

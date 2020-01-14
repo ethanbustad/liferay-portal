@@ -358,6 +358,10 @@ public class DLContentLocalServiceUtil {
 		return getService().hasContent(companyId, repositoryId, path, version);
 	}
 
+	public static java.io.InputStream openDataInputStream(long contentId) {
+		return getService().openDataInputStream(contentId);
+	}
+
 	/**
 	 * Updates the document library content in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	 *

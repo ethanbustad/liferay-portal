@@ -402,8 +402,8 @@ public class ProductResourceImpl
 		if (attachments != null) {
 			for (Attachment attachment : attachments) {
 				AttachmentUtil.upsertCPAttachmentFileEntry(
-					_cpAttachmentFileEntryService, _uniqueFileNameProvider,
-					attachment,
+					cpDefinition.getGroupId(), _cpAttachmentFileEntryService,
+					_uniqueFileNameProvider, attachment,
 					_classNameLocalService.getClassNameId(
 						cpDefinition.getModelClassName()),
 					cpDefinition.getCPDefinitionId(),
@@ -418,8 +418,8 @@ public class ProductResourceImpl
 		if (images != null) {
 			for (Attachment image : images) {
 				AttachmentUtil.upsertCPAttachmentFileEntry(
-					_cpAttachmentFileEntryService, _uniqueFileNameProvider,
-					image,
+					cpDefinition.getGroupId(), _cpAttachmentFileEntryService,
+					_uniqueFileNameProvider, image,
 					_classNameLocalService.getClassNameId(
 						cpDefinition.getModelClassName()),
 					cpDefinition.getCPDefinitionId(),
@@ -558,11 +558,25 @@ public class ProductResourceImpl
 			serviceContext.setAssetCategoryIds(categoryIds);
 		}
 
+		Map<String, String> shortDescriptionMap = product.getShortDescription();
+
+		if ((cpDefinition != null) && (shortDescriptionMap == null)) {
+			shortDescriptionMap = LanguageUtils.getLanguageIdMap(
+				cpDefinition.getShortDescriptionMap());
+		}
+
+		Map<String, String> descriptionMap = product.getDescription();
+
+		if ((cpDefinition != null) && (descriptionMap == null)) {
+			descriptionMap = LanguageUtils.getLanguageIdMap(
+				cpDefinition.getDescriptionMap());
+		}
+
 		cpDefinition = _cpDefinitionService.updateCPDefinition(
 			cpDefinition.getCPDefinitionId(),
 			LanguageUtils.getLocalizedMap(product.getName()),
-			LanguageUtils.getLocalizedMap(product.getShortDescription()),
-			LanguageUtils.getLocalizedMap(product.getDescription()),
+			LanguageUtils.getLocalizedMap(shortDescriptionMap),
+			LanguageUtils.getLocalizedMap(descriptionMap),
 			cpDefinition.getUrlTitleMap(), cpDefinition.getMetaTitleMap(),
 			cpDefinition.getMetaDescriptionMap(),
 			cpDefinition.getMetaKeywordsMap(),
@@ -575,6 +589,17 @@ public class ProductResourceImpl
 			expirationDateConfig.getHour(), expirationDateConfig.getMinute(),
 			GetterUtil.getBoolean(product.getNeverExpire(), true),
 			serviceContext);
+
+		// Workflow
+
+		if (!product.getActive()) {
+			Map<String, Serializable> workflowContext = new HashMap<>();
+
+			_cpDefinitionService.updateStatus(
+				_user.getUserId(), cpDefinition.getCPDefinitionId(),
+				WorkflowConstants.STATUS_INACTIVE, serviceContext,
+				workflowContext);
+		}
 
 		// Expando
 
@@ -635,15 +660,35 @@ public class ProductResourceImpl
 			serviceContext.setAssetCategoryIds(categoryIds);
 		}
 
+		Map<String, String> shortDescriptionMap = product.getShortDescription();
+
+		if ((cpDefinition != null) && (shortDescriptionMap == null)) {
+			shortDescriptionMap = LanguageUtils.getLanguageIdMap(
+				cpDefinition.getShortDescriptionMap());
+		}
+
+		Map<String, String> descriptionMap = product.getDescription();
+
+		if ((cpDefinition != null) && (descriptionMap == null)) {
+			descriptionMap = LanguageUtils.getLanguageIdMap(
+				cpDefinition.getDescriptionMap());
+		}
+
+		boolean ignoreSKUCombinations = true;
+
+		if (cpDefinition != null) {
+			ignoreSKUCombinations = cpDefinition.isIgnoreSKUCombinations();
+		}
+
 		cpDefinition = _cpDefinitionService.upsertCPDefinition(
 			commerceCatalog.getGroupId(), _user.getUserId(),
 			LanguageUtils.getLocalizedMap(product.getName()),
-			LanguageUtils.getLocalizedMap(product.getShortDescription()),
-			LanguageUtils.getLocalizedMap(product.getDescription()), null,
+			LanguageUtils.getLocalizedMap(shortDescriptionMap),
+			LanguageUtils.getLocalizedMap(descriptionMap), null,
 			LanguageUtils.getLocalizedMap(product.getMetaTitle()),
 			LanguageUtils.getLocalizedMap(product.getMetaDescription()),
 			LanguageUtils.getLocalizedMap(product.getMetaKeyword()),
-			product.getProductType(), true,
+			product.getProductType(), ignoreSKUCombinations,
 			GetterUtil.getBoolean(shippingConfiguration.getShippable(), true),
 			GetterUtil.getBoolean(
 				shippingConfiguration.getFreeShipping(), true),

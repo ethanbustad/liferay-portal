@@ -35,6 +35,9 @@ definition {
 		else if ("${widgetName}" == "Blogs") {
 			var portletId = "com_liferay_blogs_web_portlet_BlogsPortlet";
 		}
+		else if ("${widgetName}" == "Contacts Center") {
+			var portletId = "com_liferay_contacts_web_portlet_ContactsCenterPortlet";
+		}
 		else if ("${widgetName}" == "Web Content Display") {
 			var portletId = "com_liferay_journal_content_web_portlet_JournalContentPortlet";
 		}

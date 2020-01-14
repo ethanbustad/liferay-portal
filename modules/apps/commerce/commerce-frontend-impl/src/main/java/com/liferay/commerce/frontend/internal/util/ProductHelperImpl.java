@@ -17,6 +17,7 @@ package com.liferay.commerce.frontend.internal.util;
 import com.liferay.commerce.constants.CPDefinitionInventoryConstants;
 import com.liferay.commerce.context.CommerceContext;
 import com.liferay.commerce.currency.model.CommerceMoney;
+import com.liferay.commerce.currency.util.CommercePriceFormatter;
 import com.liferay.commerce.discount.CommerceDiscountValue;
 import com.liferay.commerce.frontend.model.PriceModel;
 import com.liferay.commerce.frontend.model.ProductSettingsModel;
@@ -32,6 +33,8 @@ import com.liferay.portal.kernel.exception.PortalException;
 
 import java.math.BigDecimal;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import org.osgi.service.component.annotations.Component;
@@ -77,8 +80,19 @@ public class ProductHelperImpl implements ProductHelper {
 
 		if (discountValue != null) {
 			CommerceMoney discountAmount = discountValue.getDiscountAmount();
+			CommerceMoney finalPrice = commerceProductPrice.getFinalPrice();
 
 			priceModel.setDiscount(discountAmount.format(locale));
+
+			priceModel.setDiscountPercentage(
+				_commercePriceFormatter.format(
+					discountValue.getDiscountPercentage(), locale));
+
+			priceModel.setDiscountPercentages(
+				_getFormattedDiscountPercentages(
+					discountValue.getPercentages(), locale));
+
+			priceModel.setFinalPrice(finalPrice.format(locale));
 		}
 
 		return priceModel;
@@ -135,6 +149,23 @@ public class ProductHelperImpl implements ProductHelper {
 
 		return productSettingsModel;
 	}
+
+	private String[] _getFormattedDiscountPercentages(
+			BigDecimal[] discountPercentages, Locale locale)
+		throws PortalException {
+
+		List<String> formattedDiscountPercentages = new ArrayList<>();
+
+		for (BigDecimal percentage : discountPercentages) {
+			formattedDiscountPercentages.add(
+				_commercePriceFormatter.format(percentage, locale));
+		}
+
+		return formattedDiscountPercentages.toArray(new String[0]);
+	}
+
+	@Reference
+	private CommercePriceFormatter _commercePriceFormatter;
 
 	@Reference
 	private CommerceProductPriceCalculation _commerceProductPriceCalculation;

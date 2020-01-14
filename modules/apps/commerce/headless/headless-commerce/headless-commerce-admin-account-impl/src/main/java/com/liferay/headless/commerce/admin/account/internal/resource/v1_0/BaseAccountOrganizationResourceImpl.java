@@ -58,83 +58,6 @@ public abstract class BaseAccountOrganizationResourceImpl
 	implements AccountOrganizationResource {
 
 	@Override
-	@GET
-	@Parameters(
-		value = {
-			@Parameter(in = ParameterIn.PATH, name = "id"),
-			@Parameter(in = ParameterIn.QUERY, name = "page"),
-			@Parameter(in = ParameterIn.QUERY, name = "pageSize")
-		}
-	)
-	@Path("/accounts/{id}/accountOrganizations/")
-	@Produces({"application/json", "application/xml"})
-	@Tags(value = {@Tag(name = "AccountOrganization")})
-	public Page<AccountOrganization> getAccountIdAccountOrganizationsPage(
-			@NotNull @Parameter(hidden = true) @PathParam("id") Long id,
-			@Context Pagination pagination)
-		throws Exception {
-
-		return Page.of(Collections.emptyList());
-	}
-
-	@Override
-	@Consumes({"application/json", "application/xml"})
-	@POST
-	@Parameters(value = {@Parameter(in = ParameterIn.PATH, name = "id")})
-	@Path("/accounts/{id}/accountOrganizations/")
-	@Produces({"application/json", "application/xml"})
-	@Tags(value = {@Tag(name = "AccountOrganization")})
-	public AccountOrganization postAccountIdAccountOrganization(
-			@NotNull @Parameter(hidden = true) @PathParam("id") Long id,
-			AccountOrganization accountOrganization)
-		throws Exception {
-
-		return new AccountOrganization();
-	}
-
-	@Override
-	@DELETE
-	@Parameters(
-		value = {
-			@Parameter(in = ParameterIn.PATH, name = "id"),
-			@Parameter(in = ParameterIn.PATH, name = "organizationId")
-		}
-	)
-	@Path("/accounts/{id}/accountOrganizations/{organizationId}")
-	@Produces({"application/json", "application/xml"})
-	@Tags(value = {@Tag(name = "AccountOrganization")})
-	public Response deleteAccountIdAccountOrganization(
-			@NotNull @Parameter(hidden = true) @PathParam("id") Long id,
-			@NotNull @Parameter(hidden = true) @PathParam("organizationId") Long
-				organizationId)
-		throws Exception {
-
-		Response.ResponseBuilder responseBuilder = Response.ok();
-
-		return responseBuilder.build();
-	}
-
-	@Override
-	@GET
-	@Parameters(
-		value = {
-			@Parameter(in = ParameterIn.PATH, name = "id"),
-			@Parameter(in = ParameterIn.PATH, name = "organizationId")
-		}
-	)
-	@Path("/accounts/{id}/accountOrganizations/{organizationId}")
-	@Produces({"application/json", "application/xml"})
-	@Tags(value = {@Tag(name = "AccountOrganization")})
-	public AccountOrganization getAccountIdAccountOrganization(
-			@NotNull @Parameter(hidden = true) @PathParam("id") Long id,
-			@NotNull @Parameter(hidden = true) @PathParam("organizationId") Long
-				organizationId)
-		throws Exception {
-
-		return new AccountOrganization();
-	}
-
-	@Override
 	@DELETE
 	@Parameters(
 		value = {
@@ -194,7 +117,7 @@ public abstract class BaseAccountOrganizationResourceImpl
 		}
 	)
 	@Path(
-		"/accounts/by-externalReferenceCode/{externalReferenceCode}/accountOrganizations/"
+		"/accounts/by-externalReferenceCode/{externalReferenceCode}/accountOrganizations"
 	)
 	@Produces({"application/json", "application/xml"})
 	@Tags(value = {@Tag(name = "AccountOrganization")})
@@ -218,7 +141,7 @@ public abstract class BaseAccountOrganizationResourceImpl
 		}
 	)
 	@Path(
-		"/accounts/by-externalReferenceCode/{externalReferenceCode}/accountOrganizations/"
+		"/accounts/by-externalReferenceCode/{externalReferenceCode}/accountOrganizations"
 	)
 	@Produces({"application/json", "application/xml"})
 	@Tags(value = {@Tag(name = "AccountOrganization")})
@@ -228,6 +151,83 @@ public abstract class BaseAccountOrganizationResourceImpl
 				@PathParam("externalReferenceCode") String
 					externalReferenceCode,
 				AccountOrganization accountOrganization)
+		throws Exception {
+
+		return new AccountOrganization();
+	}
+
+	@Override
+	@DELETE
+	@Parameters(
+		value = {
+			@Parameter(in = ParameterIn.PATH, name = "id"),
+			@Parameter(in = ParameterIn.PATH, name = "organizationId")
+		}
+	)
+	@Path("/accounts/{id}/accountOrganizations/{organizationId}")
+	@Produces({"application/json", "application/xml"})
+	@Tags(value = {@Tag(name = "AccountOrganization")})
+	public Response deleteAccountIdAccountOrganization(
+			@NotNull @Parameter(hidden = true) @PathParam("id") Long id,
+			@NotNull @Parameter(hidden = true) @PathParam("organizationId") Long
+				organizationId)
+		throws Exception {
+
+		Response.ResponseBuilder responseBuilder = Response.ok();
+
+		return responseBuilder.build();
+	}
+
+	@Override
+	@GET
+	@Parameters(
+		value = {
+			@Parameter(in = ParameterIn.PATH, name = "id"),
+			@Parameter(in = ParameterIn.PATH, name = "organizationId")
+		}
+	)
+	@Path("/accounts/{id}/accountOrganizations/{organizationId}")
+	@Produces({"application/json", "application/xml"})
+	@Tags(value = {@Tag(name = "AccountOrganization")})
+	public AccountOrganization getAccountIdAccountOrganization(
+			@NotNull @Parameter(hidden = true) @PathParam("id") Long id,
+			@NotNull @Parameter(hidden = true) @PathParam("organizationId") Long
+				organizationId)
+		throws Exception {
+
+		return new AccountOrganization();
+	}
+
+	@Override
+	@GET
+	@Parameters(
+		value = {
+			@Parameter(in = ParameterIn.PATH, name = "id"),
+			@Parameter(in = ParameterIn.QUERY, name = "page"),
+			@Parameter(in = ParameterIn.QUERY, name = "pageSize")
+		}
+	)
+	@Path("/accounts/{id}/accountOrganizations")
+	@Produces({"application/json", "application/xml"})
+	@Tags(value = {@Tag(name = "AccountOrganization")})
+	public Page<AccountOrganization> getAccountIdAccountOrganizationsPage(
+			@NotNull @Parameter(hidden = true) @PathParam("id") Long id,
+			@Context Pagination pagination)
+		throws Exception {
+
+		return Page.of(Collections.emptyList());
+	}
+
+	@Override
+	@Consumes({"application/json", "application/xml"})
+	@POST
+	@Parameters(value = {@Parameter(in = ParameterIn.PATH, name = "id")})
+	@Path("/accounts/{id}/accountOrganizations")
+	@Produces({"application/json", "application/xml"})
+	@Tags(value = {@Tag(name = "AccountOrganization")})
+	public AccountOrganization postAccountIdAccountOrganization(
+			@NotNull @Parameter(hidden = true) @PathParam("id") Long id,
+			AccountOrganization accountOrganization)
 		throws Exception {
 
 		return new AccountOrganization();

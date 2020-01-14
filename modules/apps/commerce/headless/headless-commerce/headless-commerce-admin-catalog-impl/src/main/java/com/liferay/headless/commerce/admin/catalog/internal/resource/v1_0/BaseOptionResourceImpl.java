@@ -18,6 +18,8 @@ import com.liferay.headless.commerce.admin.catalog.dto.v1_0.Option;
 import com.liferay.headless.commerce.admin.catalog.resource.v1_0.OptionResource;
 import com.liferay.petra.function.UnsafeFunction;
 import com.liferay.portal.kernel.model.Company;
+import com.liferay.portal.kernel.search.Sort;
+import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.vulcan.accept.language.AcceptLanguage;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
@@ -58,48 +60,34 @@ import javax.ws.rs.core.UriInfo;
 public abstract class BaseOptionResourceImpl implements OptionResource {
 
 	@Override
-	@DELETE
-	@Parameters(value = {@Parameter(in = ParameterIn.PATH, name = "id")})
-	@Path("/options/{id}")
-	@Produces({"application/json", "application/xml"})
-	@Tags(value = {@Tag(name = "Option")})
-	public Response deleteOption(
-			@NotNull @Parameter(hidden = true) @PathParam("id") Long id)
-		throws Exception {
-
-		Response.ResponseBuilder responseBuilder = Response.ok();
-
-		return responseBuilder.build();
-	}
-
-	@Override
 	@GET
-	@Parameters(value = {@Parameter(in = ParameterIn.PATH, name = "id")})
-	@Path("/options/{id}")
+	@Parameters(
+		value = {
+			@Parameter(in = ParameterIn.QUERY, name = "filter"),
+			@Parameter(in = ParameterIn.QUERY, name = "page"),
+			@Parameter(in = ParameterIn.QUERY, name = "pageSize"),
+			@Parameter(in = ParameterIn.QUERY, name = "sort")
+		}
+	)
+	@Path("/options/")
 	@Produces({"application/json", "application/xml"})
 	@Tags(value = {@Tag(name = "Option")})
-	public Option getOption(
-			@NotNull @Parameter(hidden = true) @PathParam("id") Long id)
+	public Page<Option> getOptionsPage(
+			@Context Filter filter, @Context Pagination pagination,
+			@Context Sort[] sorts)
 		throws Exception {
 
-		return new Option();
+		return Page.of(Collections.emptyList());
 	}
 
 	@Override
 	@Consumes({"application/json", "application/xml"})
-	@PATCH
-	@Parameters(value = {@Parameter(in = ParameterIn.PATH, name = "id")})
-	@Path("/options/{id}")
+	@POST
+	@Path("/options/")
 	@Produces({"application/json", "application/xml"})
 	@Tags(value = {@Tag(name = "Option")})
-	public Response patchOption(
-			@NotNull @Parameter(hidden = true) @PathParam("id") Long id,
-			Option option)
-		throws Exception {
-
-		Response.ResponseBuilder responseBuilder = Response.ok();
-
-		return responseBuilder.build();
+	public Option postOption(Option option) throws Exception {
+		return new Option();
 	}
 
 	@Override
@@ -163,30 +151,48 @@ public abstract class BaseOptionResourceImpl implements OptionResource {
 	}
 
 	@Override
-	@GET
-	@Parameters(
-		value = {
-			@Parameter(in = ParameterIn.QUERY, name = "page"),
-			@Parameter(in = ParameterIn.QUERY, name = "pageSize")
-		}
-	)
-	@Path("/options/")
+	@DELETE
+	@Parameters(value = {@Parameter(in = ParameterIn.PATH, name = "id")})
+	@Path("/options/{id}")
 	@Produces({"application/json", "application/xml"})
 	@Tags(value = {@Tag(name = "Option")})
-	public Page<Option> getOptionsPage(@Context Pagination pagination)
+	public Response deleteOption(
+			@NotNull @Parameter(hidden = true) @PathParam("id") Long id)
 		throws Exception {
 
-		return Page.of(Collections.emptyList());
+		Response.ResponseBuilder responseBuilder = Response.ok();
+
+		return responseBuilder.build();
+	}
+
+	@Override
+	@GET
+	@Parameters(value = {@Parameter(in = ParameterIn.PATH, name = "id")})
+	@Path("/options/{id}")
+	@Produces({"application/json", "application/xml"})
+	@Tags(value = {@Tag(name = "Option")})
+	public Option getOption(
+			@NotNull @Parameter(hidden = true) @PathParam("id") Long id)
+		throws Exception {
+
+		return new Option();
 	}
 
 	@Override
 	@Consumes({"application/json", "application/xml"})
-	@POST
-	@Path("/options/")
+	@PATCH
+	@Parameters(value = {@Parameter(in = ParameterIn.PATH, name = "id")})
+	@Path("/options/{id}")
 	@Produces({"application/json", "application/xml"})
 	@Tags(value = {@Tag(name = "Option")})
-	public Option postOption(Option option) throws Exception {
-		return new Option();
+	public Response patchOption(
+			@NotNull @Parameter(hidden = true) @PathParam("id") Long id,
+			Option option)
+		throws Exception {
+
+		Response.ResponseBuilder responseBuilder = Response.ok();
+
+		return responseBuilder.build();
 	}
 
 	public void setContextCompany(Company contextCompany) {

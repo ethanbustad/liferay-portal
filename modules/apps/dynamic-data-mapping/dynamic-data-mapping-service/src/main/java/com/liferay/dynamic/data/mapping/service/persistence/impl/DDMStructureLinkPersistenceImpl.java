@@ -1998,6 +1998,18 @@ public class DDMStructureLinkPersistenceImpl
 		}
 	}
 
+	public void clearCache(Set<Serializable> primaryKeys) {
+		finderCache.clearCache(FINDER_CLASS_NAME_ENTITY);
+		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
+		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
+
+		for (Serializable primaryKey : primaryKeys) {
+			entityCache.removeResult(
+				DDMStructureLinkModelImpl.ENTITY_CACHE_ENABLED,
+				DDMStructureLinkImpl.class, primaryKey);
+		}
+	}
+
 	protected void cacheUniqueFindersCache(
 		DDMStructureLinkModelImpl ddmStructureLinkModelImpl) {
 

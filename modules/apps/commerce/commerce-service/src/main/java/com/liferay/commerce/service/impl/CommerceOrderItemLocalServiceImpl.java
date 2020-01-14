@@ -91,18 +91,14 @@ public class CommerceOrderItemLocalServiceImpl
 			commerceOrderLocalService.getCommerceOrder(commerceOrderId);
 		User user = userLocalService.getUser(serviceContext.getUserId());
 
-		CPDefinition cpDefinition = null;
-
-		CPInstance cpInstance = _cpInstanceLocalService.fetchCPInstance(
+		CPInstance cpInstance = _cpInstanceLocalService.getCPInstance(
 			cpInstanceId);
 
-		if (cpInstance != null) {
-			cpDefinition = _cpDefinitionLocalService.getCPDefinition(
-				cpInstance.getCPDefinitionId());
+		CPDefinition cpDefinition = _cpDefinitionLocalService.getCPDefinition(
+			cpInstance.getCPDefinitionId());
 
-			if (Validator.isNull(json) || json.equals("[]")) {
-				json = cpInstance.getJson();
-			}
+		if (Validator.isNull(json) || json.equals("[]")) {
+			json = cpInstance.getJson();
 		}
 
 		validate(
@@ -146,6 +142,7 @@ public class CommerceOrderItemLocalServiceImpl
 		commerceOrderItem.setFinalPrice(finalPriceMoney.getPrice());
 		commerceOrderItem.setNameMap(cpDefinition.getNameMap());
 		commerceOrderItem.setSku(cpInstance.getSku());
+		commerceOrderItem.setManuallyAdjusted(false);
 		commerceOrderItem.setExpandoBridgeAttributes(serviceContext);
 
 		_setCommerceOrderItemDiscountValue(
@@ -594,6 +591,37 @@ public class CommerceOrderItemLocalServiceImpl
 		commerceOrderItem.setDiscountPercentageLevel2(discountPercentageLevel2);
 		commerceOrderItem.setDiscountPercentageLevel3(discountPercentageLevel3);
 		commerceOrderItem.setDiscountPercentageLevel4(discountPercentageLevel4);
+
+		return commerceOrderItemPersistence.update(commerceOrderItem);
+	}
+
+	/**
+	 * @deprecated As of Athanasius (7.3.x)
+	 */
+	@Deprecated
+	@Override
+	public CommerceOrderItem updateCommerceOrderItemUnitPrice(
+			long commerceOrderItemId, BigDecimal unitPrice)
+		throws PortalException {
+
+		CommerceOrderItem commerceOrderItem =
+			commerceOrderItemPersistence.findByPrimaryKey(commerceOrderItemId);
+
+		commerceOrderItem.setUnitPrice(unitPrice);
+
+		return commerceOrderItemPersistence.update(commerceOrderItem);
+	}
+
+	@Override
+	public CommerceOrderItem updateCommerceOrderItemUnitPrice(
+			long commerceOrderItemId, BigDecimal unitPrice, int quantity)
+		throws PortalException {
+
+		CommerceOrderItem commerceOrderItem =
+			commerceOrderItemPersistence.findByPrimaryKey(commerceOrderItemId);
+
+		commerceOrderItem.setQuantity(quantity);
+		commerceOrderItem.setUnitPrice(unitPrice);
 
 		return commerceOrderItemPersistence.update(commerceOrderItem);
 	}

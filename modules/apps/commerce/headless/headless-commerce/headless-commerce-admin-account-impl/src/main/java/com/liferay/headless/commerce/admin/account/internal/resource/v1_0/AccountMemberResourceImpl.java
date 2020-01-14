@@ -20,6 +20,7 @@ import com.liferay.commerce.account.model.CommerceAccountUserRel;
 import com.liferay.commerce.account.service.CommerceAccountService;
 import com.liferay.commerce.account.service.CommerceAccountUserRelService;
 import com.liferay.commerce.account.service.persistence.CommerceAccountUserRelPK;
+import com.liferay.headless.commerce.admin.account.dto.v1_0.Account;
 import com.liferay.headless.commerce.admin.account.dto.v1_0.AccountMember;
 import com.liferay.headless.commerce.admin.account.dto.v1_0.AccountRole;
 import com.liferay.headless.commerce.admin.account.internal.util.v1_0.AccountMemberUtil;
@@ -32,6 +33,7 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.UserGroupRoleLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
+import com.liferay.portal.vulcan.fields.NestedField;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
 
@@ -162,6 +164,7 @@ public class AccountMemberResourceImpl extends BaseAccountMemberResourceImpl {
 				new CommerceAccountUserRelPK(id, userId)));
 	}
 
+	@NestedField(parentClass = Account.class, value = "users")
 	@Override
 	public Page<AccountMember> getAccountIdAccountMembersPage(
 			Long id, Pagination pagination)

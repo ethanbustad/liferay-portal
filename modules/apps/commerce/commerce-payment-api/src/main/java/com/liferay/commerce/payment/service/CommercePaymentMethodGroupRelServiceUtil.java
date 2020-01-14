@@ -94,6 +94,16 @@ public class CommercePaymentMethodGroupRelServiceUtil {
 			commercePaymentMethodGroupRelId);
 	}
 
+	public static
+		com.liferay.commerce.payment.model.CommercePaymentMethodGroupRel
+				fetchCommercePaymentMethodGroupRel(
+					long groupId, String engineKey)
+			throws com.liferay.portal.kernel.exception.PortalException {
+
+		return getService().fetchCommercePaymentMethodGroupRel(
+			groupId, engineKey);
+	}
+
 	public static java.util.List
 		<com.liferay.commerce.model.CommerceAddressRestriction>
 				getCommerceAddressRestrictions(
@@ -161,11 +171,43 @@ public class CommercePaymentMethodGroupRelServiceUtil {
 	public static java.util.List
 		<com.liferay.commerce.payment.model.CommercePaymentMethodGroupRel>
 				getCommercePaymentMethodGroupRels(
+					long groupId, boolean active, int start, int end,
+					com.liferay.portal.kernel.util.OrderByComparator
+						<com.liferay.commerce.payment.model.
+							CommercePaymentMethodGroupRel> orderByComparator)
+			throws com.liferay.portal.kernel.exception.PortalException {
+
+		return getService().getCommercePaymentMethodGroupRels(
+			groupId, active, start, end, orderByComparator);
+	}
+
+	public static java.util.List
+		<com.liferay.commerce.payment.model.CommercePaymentMethodGroupRel>
+				getCommercePaymentMethodGroupRels(
+					long groupId, int start, int end,
+					com.liferay.portal.kernel.util.OrderByComparator
+						<com.liferay.commerce.payment.model.
+							CommercePaymentMethodGroupRel> orderByComparator)
+			throws com.liferay.portal.kernel.exception.PortalException {
+
+		return getService().getCommercePaymentMethodGroupRels(
+			groupId, start, end, orderByComparator);
+	}
+
+	public static java.util.List
+		<com.liferay.commerce.payment.model.CommercePaymentMethodGroupRel>
+				getCommercePaymentMethodGroupRels(
 					long groupId, long commerceCountryId, boolean active)
 			throws com.liferay.portal.kernel.exception.PortalException {
 
 		return getService().getCommercePaymentMethodGroupRels(
 			groupId, commerceCountryId, active);
+	}
+
+	public static int getCommercePaymentMethodGroupRelsCount(long groupId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return getService().getCommercePaymentMethodGroupRelsCount(groupId);
 	}
 
 	public static int getCommercePaymentMethodGroupRelsCount(

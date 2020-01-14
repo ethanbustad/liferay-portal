@@ -67,7 +67,7 @@ public abstract class BaseTierPriceResourceImpl implements TierPriceResource {
 		}
 	)
 	@Path(
-		"/priceEntries/by-externalReferenceCode/{externalReferenceCode}/tierPrices/"
+		"/priceEntries/by-externalReferenceCode/{externalReferenceCode}/tierPrices"
 	)
 	@Produces({"application/json", "application/xml"})
 	@Tags(value = {@Tag(name = "TierPrice")})
@@ -89,7 +89,7 @@ public abstract class BaseTierPriceResourceImpl implements TierPriceResource {
 		}
 	)
 	@Path(
-		"/priceEntries/by-externalReferenceCode/{externalReferenceCode}/tierPrices/"
+		"/priceEntries/by-externalReferenceCode/{externalReferenceCode}/tierPrices"
 	)
 	@Produces({"application/json", "application/xml"})
 	@Tags(value = {@Tag(name = "TierPrice")})
@@ -111,7 +111,7 @@ public abstract class BaseTierPriceResourceImpl implements TierPriceResource {
 			@Parameter(in = ParameterIn.QUERY, name = "pageSize")
 		}
 	)
-	@Path("/priceEntries/{id}/tierPrices/")
+	@Path("/priceEntries/{id}/tierPrices")
 	@Produces({"application/json", "application/xml"})
 	@Tags(value = {@Tag(name = "TierPrice")})
 	public Page<TierPrice> getPriceEntryIdTierPricesPage(
@@ -126,7 +126,7 @@ public abstract class BaseTierPriceResourceImpl implements TierPriceResource {
 	@Consumes({"application/json", "application/xml"})
 	@POST
 	@Parameters(value = {@Parameter(in = ParameterIn.PATH, name = "id")})
-	@Path("/priceEntries/{id}/tierPrices/")
+	@Path("/priceEntries/{id}/tierPrices")
 	@Produces({"application/json", "application/xml"})
 	@Tags(value = {@Tag(name = "TierPrice")})
 	public TierPrice postPriceEntryIdTierPrice(

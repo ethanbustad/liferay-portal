@@ -17,8 +17,6 @@ package com.liferay.headless.delivery.internal.resource.v1_0;
 import com.liferay.headless.delivery.dto.v1_0.WikiNode;
 import com.liferay.headless.delivery.resource.v1_0.WikiNodeResource;
 import com.liferay.petra.function.UnsafeFunction;
-import com.liferay.portal.kernel.model.Company;
-import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.vulcan.accept.language.AcceptLanguage;
@@ -66,7 +64,7 @@ public abstract class BaseWikiNodeResourceImpl implements WikiNodeResource {
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -X 'GET' 'http://localhost:8080/o/headless-delivery/v1.0/sites/{siteId}/wiki-nodes/'  -u 'test@liferay.com:test'
+	 * curl -X 'GET' 'http://localhost:8080/o/headless-delivery/v1.0/sites/{siteId}/wiki-nodes'  -u 'test@liferay.com:test'
 	 */
 	@Override
 	@GET
@@ -83,7 +81,7 @@ public abstract class BaseWikiNodeResourceImpl implements WikiNodeResource {
 			@Parameter(in = ParameterIn.QUERY, name = "sort")
 		}
 	)
-	@Path("/sites/{siteId}/wiki-nodes/")
+	@Path("/sites/{siteId}/wiki-nodes")
 	@Produces({"application/json", "application/xml"})
 	@Tags(value = {@Tag(name = "WikiNode")})
 	public Page<WikiNode> getSiteWikiNodesPage(
@@ -99,14 +97,14 @@ public abstract class BaseWikiNodeResourceImpl implements WikiNodeResource {
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -X 'POST' 'http://localhost:8080/o/headless-delivery/v1.0/sites/{siteId}/wiki-nodes/' -d $'{"description": ___, "name": ___, "viewableBy": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
+	 * curl -X 'POST' 'http://localhost:8080/o/headless-delivery/v1.0/sites/{siteId}/wiki-nodes' -d $'{"description": ___, "name": ___, "viewableBy": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
 	 */
 	@Override
 	@Consumes({"application/json", "application/xml"})
 	@Operation(description = "Creates a new wiki node")
 	@POST
 	@Parameters(value = {@Parameter(in = ParameterIn.PATH, name = "siteId")})
-	@Path("/sites/{siteId}/wiki-nodes/")
+	@Path("/sites/{siteId}/wiki-nodes")
 	@Produces({"application/json", "application/xml"})
 	@Tags(value = {@Tag(name = "WikiNode")})
 	public WikiNode postSiteWikiNode(
@@ -229,7 +227,9 @@ public abstract class BaseWikiNodeResourceImpl implements WikiNodeResource {
 		this.contextAcceptLanguage = contextAcceptLanguage;
 	}
 
-	public void setContextCompany(Company contextCompany) {
+	public void setContextCompany(
+		com.liferay.portal.kernel.model.Company contextCompany) {
+
 		this.contextCompany = contextCompany;
 	}
 
@@ -249,7 +249,9 @@ public abstract class BaseWikiNodeResourceImpl implements WikiNodeResource {
 		this.contextUriInfo = contextUriInfo;
 	}
 
-	public void setContextUser(User contextUser) {
+	public void setContextUser(
+		com.liferay.portal.kernel.model.User contextUser) {
+
 		this.contextUser = contextUser;
 	}
 
@@ -285,10 +287,10 @@ public abstract class BaseWikiNodeResourceImpl implements WikiNodeResource {
 	}
 
 	protected AcceptLanguage contextAcceptLanguage;
-	protected Company contextCompany;
+	protected com.liferay.portal.kernel.model.Company contextCompany;
+	protected com.liferay.portal.kernel.model.User contextUser;
 	protected HttpServletRequest contextHttpServletRequest;
 	protected HttpServletResponse contextHttpServletResponse;
 	protected UriInfo contextUriInfo;
-	protected User contextUser;
 
 }

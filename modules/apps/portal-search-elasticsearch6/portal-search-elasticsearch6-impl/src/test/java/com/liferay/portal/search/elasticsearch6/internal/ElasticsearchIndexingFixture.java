@@ -191,8 +191,8 @@ public class ElasticsearchIndexingFixture implements IndexingFixture {
 
 		return new ElasticsearchIndexWriter() {
 			{
-				searchEngineAdapter = searchEngineAdapter1;
 				indexNameBuilder = indexNameBuilder1;
+				searchEngineAdapter = searchEngineAdapter1;
 
 				setSpellCheckIndexWriter(
 					createElasticsearchSpellCheckIndexWriter(

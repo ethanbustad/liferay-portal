@@ -3147,6 +3147,18 @@ public class PowwowMeetingPersistenceImpl
 		}
 	}
 
+	public void clearCache(Set<Serializable> primaryKeys) {
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
+
+		for (Serializable primaryKey : primaryKeys) {
+			EntityCacheUtil.removeResult(
+				PowwowMeetingModelImpl.ENTITY_CACHE_ENABLED,
+				PowwowMeetingImpl.class, primaryKey);
+		}
+	}
+
 	/**
 	 * Creates a new powwow meeting with the primary key. Does not add the powwow meeting to the database.
 	 *

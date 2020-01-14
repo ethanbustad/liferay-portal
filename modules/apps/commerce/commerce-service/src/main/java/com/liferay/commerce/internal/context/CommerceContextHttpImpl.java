@@ -56,26 +56,37 @@ public class CommerceContextHttpImpl implements CommerceContext {
 		_portal = portal;
 
 		try {
-			_commerceAccountGroupServiceConfiguration =
-				configurationProvider.getConfiguration(
-					CommerceAccountGroupServiceConfiguration.class,
-					new GroupServiceSettingsLocator(
-						_portal.getScopeGroupId(httpServletRequest),
-						CommerceAccountConstants.SERVICE_NAME));
+			CommerceChannel commerceChannel = fetchCommerceChannel();
+
+			if (commerceChannel != null) {
+				_commerceAccountGroupServiceConfiguration =
+					configurationProvider.getConfiguration(
+						CommerceAccountGroupServiceConfiguration.class,
+						new GroupServiceSettingsLocator(
+							commerceChannel.getGroupId(),
+							CommerceAccountConstants.SERVICE_NAME));
+			}
 		}
 		catch (PortalException pe) {
 			_log.error(pe, pe);
 		}
 	}
 
+	public CommerceChannel fetchCommerceChannel() throws PortalException {
+		return _commerceChannelLocalService.fetchCommerceChannelBySiteGroupId(
+			getSiteGroupId());
+	}
+
 	@Override
 	public CommerceAccount getCommerceAccount() throws PortalException {
-		if (_commerceAccount != null) {
+		CommerceChannel commerceChannel = fetchCommerceChannel();
+
+		if ((_commerceAccount != null) || (commerceChannel == null)) {
 			return _commerceAccount;
 		}
 
 		_commerceAccount = _commerceAccountHelper.getCurrentCommerceAccount(
-			_httpServletRequest);
+			commerceChannel.getGroupId(), _httpServletRequest);
 
 		return _commerceAccount;
 	}
@@ -83,7 +94,7 @@ public class CommerceContextHttpImpl implements CommerceContext {
 	@Override
 	public long[] getCommerceAccountGroupIds() throws PortalException {
 		if (_commerceAccountGroupIds != null) {
-			return _commerceAccountGroupIds;
+			return _commerceAccountGroupIds.clone();
 		}
 
 		CommerceAccount commerceAccount = getCommerceAccount();
@@ -96,7 +107,7 @@ public class CommerceContextHttpImpl implements CommerceContext {
 			_commerceAccountHelper.getCommerceAccountGroupIds(
 				commerceAccount.getCommerceAccountId());
 
-		return _commerceAccountGroupIds;
+		return _commerceAccountGroupIds.clone();
 	}
 
 	@Override

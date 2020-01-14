@@ -22005,6 +22005,18 @@ public class WikiPagePersistenceImpl
 		}
 	}
 
+	public void clearCache(Set<Serializable> primaryKeys) {
+		finderCache.clearCache(FINDER_CLASS_NAME_ENTITY);
+		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
+		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
+
+		for (Serializable primaryKey : primaryKeys) {
+			entityCache.removeResult(
+				WikiPageModelImpl.ENTITY_CACHE_ENABLED, WikiPageImpl.class,
+				primaryKey);
+		}
+	}
+
 	protected void cacheUniqueFindersCache(
 		WikiPageModelImpl wikiPageModelImpl) {
 

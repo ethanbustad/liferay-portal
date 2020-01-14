@@ -19868,6 +19868,18 @@ public class LayoutPageTemplateEntryPersistenceImpl
 		}
 	}
 
+	public void clearCache(Set<Serializable> primaryKeys) {
+		finderCache.clearCache(FINDER_CLASS_NAME_ENTITY);
+		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
+		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
+
+		for (Serializable primaryKey : primaryKeys) {
+			entityCache.removeResult(
+				LayoutPageTemplateEntryModelImpl.ENTITY_CACHE_ENABLED,
+				LayoutPageTemplateEntryImpl.class, primaryKey);
+		}
+	}
+
 	protected void cacheUniqueFindersCache(
 		LayoutPageTemplateEntryModelImpl layoutPageTemplateEntryModelImpl) {
 

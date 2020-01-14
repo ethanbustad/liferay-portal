@@ -26,6 +26,7 @@ import com.liferay.headless.commerce.core.dto.v1_0.converter.DTOConverter;
 import com.liferay.headless.commerce.core.dto.v1_0.converter.DTOConverterRegistry;
 import com.liferay.headless.commerce.core.dto.v1_0.converter.DefaultDTOConverterContext;
 import com.liferay.headless.commerce.core.util.ServiceContextHelper;
+import com.liferay.portal.vulcan.fields.NestedField;
 
 import javax.ws.rs.core.Response;
 
@@ -70,14 +71,19 @@ public class BillingAddressResourceImpl extends BaseBillingAddressResourceImpl {
 				commerceAddress.getCommerceAddressId()));
 	}
 
+	@NestedField("billingAddress")
 	@Override
 	public BillingAddress getOrderIdBillingAddress(Long id) throws Exception {
 		CommerceOrder commerceOrder = _commerceOrderService.getCommerceOrder(
 			id);
 
 		CommerceAddress commerceAddress =
-			_commerceAddressService.getCommerceAddress(
+			_commerceAddressService.fetchCommerceAddress(
 				commerceOrder.getBillingAddressId());
+
+		if (commerceAddress == null) {
+			return new BillingAddress();
+		}
 
 		DTOConverter billingAddressDTOConverter =
 			_dtoConverterRegistry.getDTOConverter("BillingAddress");
@@ -107,7 +113,7 @@ public class BillingAddressResourceImpl extends BaseBillingAddressResourceImpl {
 			_commerceAddressService, _commerceOrderService, commerceOrder,
 			billingAddress, _serviceContextHelper.getServiceContext());
 
-		Response.ResponseBuilder responseBuilder = Response.ok();
+		Response.ResponseBuilder responseBuilder = Response.noContent();
 
 		return responseBuilder.build();
 	}
@@ -122,7 +128,7 @@ public class BillingAddressResourceImpl extends BaseBillingAddressResourceImpl {
 			_commerceOrderService.getCommerceOrder(id), billingAddress,
 			_serviceContextHelper.getServiceContext());
 
-		Response.ResponseBuilder responseBuilder = Response.ok();
+		Response.ResponseBuilder responseBuilder = Response.noContent();
 
 		return responseBuilder.build();
 	}

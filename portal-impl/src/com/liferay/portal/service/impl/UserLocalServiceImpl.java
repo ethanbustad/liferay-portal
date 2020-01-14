@@ -1772,7 +1772,7 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 		Company company = companyPersistence.findByPrimaryKey(
 			user.getCompanyId());
 
-		if (company.isStrangersVerify()) {
+		if (company.isStrangersVerify() && (user.getLdapServerId() < 0)) {
 			sendEmailAddressVerification(
 				user, user.getEmailAddress(), serviceContext);
 		}
@@ -6390,12 +6390,26 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 					user.getCompanyId(), User.class.getName(), user.getUserId(),
 					TicketConstants.TYPE_PASSWORD, null, null, serviceContext);
 
-				String plid = String.valueOf(serviceContext.getPlid());
+				String updatePasswordURL = "/portal/update_password?";
+
+				long plid = serviceContext.getPlid();
+
+				if (plid > 0) {
+					Layout layout = layoutLocalService.fetchLayout(plid);
+
+					if (layout != null) {
+						Group group = layout.getGroup();
+
+						if (!layout.isPrivateLayout() && !group.isUser()) {
+							updatePasswordURL +=
+								"p_l_id=" + serviceContext.getPlid() + "&";
+						}
+					}
+				}
 
 				passwordResetURL = StringBundler.concat(
 					serviceContext.getPortalURL(), serviceContext.getPathMain(),
-					"/portal/update_password?p_l_id=", plid, "&ticketKey=",
-					ticket.getKey());
+					updatePasswordURL, "ticketKey=", ticket.getKey());
 
 				localizedBodyMap = LocalizationUtil.getLocalizationMap(
 					companyPortletPreferences,
@@ -6543,12 +6557,9 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 			PrefsPropsUtil.getPreferences(companyId, true);
 
 		Company company = null;
-		String portalURL = null;
 
 		try {
 			company = companyLocalService.getCompany(user.getCompanyId());
-
-			portalURL = company.getPortalURL(0);
 		}
 		catch (PortalException pe) {
 			ReflectionUtil.throwException(pe);
@@ -6605,7 +6616,8 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 			"[$FROM_NAME$]", HtmlUtil.escape(fromName));
 		mailTemplateContextBuilder.put(
 			"[$PASSWORD_RESET_URL$]", passwordResetURL);
-		mailTemplateContextBuilder.put("[$PORTAL_URL$]", portalURL);
+		mailTemplateContextBuilder.put(
+			"[$PORTAL_URL$]", serviceContext.getPortalURL());
 		mailTemplateContextBuilder.put(
 			"[$REMOTE_ADDRESS$]", serviceContext.getRemoteAddr());
 		mailTemplateContextBuilder.put(

@@ -4,11 +4,19 @@
 <look-and-feel>
 	<compatibility>
 		<version>7.1.0+</version>
+		<version>7.2.0+</version>
 	</compatibility>
 	<theme id="minium" name="Minium">
 		<template-extension>ftl</template-extension>
 		<settings>
+			<setting configurable="true" key="is-login-page" type="checkbox" value="false" />
+			<setting configurable="true" key="redirect-to-private-layouts" type="checkbox" value="false" />
+			<setting configurable="true" key="show-account-selector" type="checkbox" value="true" />
+			<setting configurable="true" key="show-mini-cart" type="checkbox" value="true" />
+			<setting configurable="true" key="show-search-bar" type="checkbox" value="true" />
+			<setting configurable="true" key="show-sidebar" type="checkbox" value="true" />
 			<setting configurable="true" key="show-top-menu" type="checkbox" value="false" />
+			<setting configurable="true" key="show-topbar" type="checkbox" value="true" />
 			<setting configurable="true" key="wide-layout" type="checkbox" value="false" />
 		</settings>
 		<layout-templates>

@@ -20,6 +20,7 @@
 
 <%@ taglib uri="http://liferay.com/tld/aui" prefix="aui" %><%@
 taglib uri="http://liferay.com/tld/clay" prefix="clay" %><%@
+taglib uri="http://liferay.com/tld/commerce" prefix="liferay-commerce" %><%@
 taglib uri="http://liferay.com/tld/expando" prefix="liferay-expando" %><%@
 taglib uri="http://liferay.com/tld/frontend" prefix="liferay-frontend" %><%@
 taglib uri="http://liferay.com/tld/portlet" prefix="liferay-portlet" %><%@
@@ -34,12 +35,14 @@ page import="com.liferay.commerce.currency.model.CommerceCurrency" %><%@
 page import="com.liferay.commerce.currency.model.CommerceMoney" %><%@
 page import="com.liferay.commerce.exception.CommerceOrderBillingAddressException" %><%@
 page import="com.liferay.commerce.exception.CommerceOrderNoteContentException" %><%@
+page import="com.liferay.commerce.exception.CommerceOrderValidatorException" %><%@
 page import="com.liferay.commerce.exception.NoSuchOrderException" %><%@
 page import="com.liferay.commerce.exception.NoSuchOrderNoteException" %><%@
 page import="com.liferay.commerce.model.CommerceAddress" %><%@
 page import="com.liferay.commerce.model.CommerceOrder" %><%@
 page import="com.liferay.commerce.model.CommerceOrderItem" %><%@
 page import="com.liferay.commerce.model.CommerceOrderNote" %><%@
+page import="com.liferay.commerce.order.CommerceOrderValidatorResult" %><%@
 page import="com.liferay.commerce.order.web.internal.display.context.CommerceOrderEditDisplayContext" %><%@
 page import="com.liferay.commerce.order.web.internal.display.context.CommerceOrderListDisplayContext" %><%@
 page import="com.liferay.commerce.order.web.internal.display.context.CommerceOrderNoteEditDisplayContext" %><%@

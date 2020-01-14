@@ -329,8 +329,10 @@ public class FriendlyURLEntryLocalServiceImpl
 		int maxLength = ModelHintsUtil.getMaxLength(
 			FriendlyURLEntryLocalization.class.getName(), "urlTitle");
 
-		String curUrlTitle = normalizedUrlTitle.substring(
-			0, Math.min(maxLength, normalizedUrlTitle.length()));
+		String curUrlTitle = _getURLEncodedSubstring(
+			urlTitle, normalizedUrlTitle, maxLength);
+
+		String prefix = curUrlTitle;
 
 		for (int i = 1;; i++) {
 			FriendlyURLEntryLocalization friendlyURLEntryLocalization =
@@ -345,13 +347,10 @@ public class FriendlyURLEntryLocalServiceImpl
 
 			String suffix = StringPool.DASH + i;
 
-			String prefix = normalizedUrlTitle.substring(
-				0,
-				Math.min(
-					maxLength - suffix.length(), normalizedUrlTitle.length()));
+			prefix = _getURLEncodedSubstring(
+				urlTitle, prefix, maxLength - suffix.length());
 
-			curUrlTitle = FriendlyURLNormalizerUtil.normalizeWithEncoding(
-				prefix + suffix);
+			curUrlTitle = prefix + suffix;
 		}
 
 		return curUrlTitle;
@@ -507,6 +506,27 @@ public class FriendlyURLEntryLocalServiceImpl
 		}
 
 		return true;
+	}
+
+	private String _getURLEncodedSubstring(
+		String decodedString, String encodedString, int maxLength) {
+
+		int endPos = decodedString.length();
+
+		while (encodedString.length() > maxLength) {
+			endPos--;
+
+			if ((endPos > 0) &&
+				Character.isHighSurrogate(decodedString.charAt(endPos - 1))) {
+
+				endPos--;
+			}
+
+			encodedString = FriendlyURLNormalizerUtil.normalizeWithEncoding(
+				decodedString.substring(0, endPos));
+		}
+
+		return encodedString;
 	}
 
 	private void _updateFriendlyURLEntryLocalizations(

@@ -172,7 +172,7 @@ public abstract class BasePriceEntryResourceImpl implements PriceEntryResource {
 		}
 	)
 	@Path(
-		"/priceLists/by-externalReferenceCode/{externalReferenceCode}/priceEntries/"
+		"/priceLists/by-externalReferenceCode/{externalReferenceCode}/priceEntries"
 	)
 	@Produces({"application/json", "application/xml"})
 	@Tags(value = {@Tag(name = "PriceEntry")})
@@ -194,7 +194,7 @@ public abstract class BasePriceEntryResourceImpl implements PriceEntryResource {
 		}
 	)
 	@Path(
-		"/priceLists/by-externalReferenceCode/{externalReferenceCode}/priceEntries/"
+		"/priceLists/by-externalReferenceCode/{externalReferenceCode}/priceEntries"
 	)
 	@Produces({"application/json", "application/xml"})
 	@Tags(value = {@Tag(name = "PriceEntry")})
@@ -216,7 +216,7 @@ public abstract class BasePriceEntryResourceImpl implements PriceEntryResource {
 			@Parameter(in = ParameterIn.QUERY, name = "pageSize")
 		}
 	)
-	@Path("/priceLists/{id}/priceEntries/")
+	@Path("/priceLists/{id}/priceEntries")
 	@Produces({"application/json", "application/xml"})
 	@Tags(value = {@Tag(name = "PriceEntry")})
 	public Page<PriceEntry> getPriceListIdPriceEntriesPage(
@@ -231,7 +231,7 @@ public abstract class BasePriceEntryResourceImpl implements PriceEntryResource {
 	@Consumes({"application/json", "application/xml"})
 	@POST
 	@Parameters(value = {@Parameter(in = ParameterIn.PATH, name = "id")})
-	@Path("/priceLists/{id}/priceEntries/")
+	@Path("/priceLists/{id}/priceEntries")
 	@Produces({"application/json", "application/xml"})
 	@Tags(value = {@Tag(name = "PriceEntry")})
 	public PriceEntry postPriceListIdPriceEntry(

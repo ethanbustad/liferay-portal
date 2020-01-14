@@ -2786,6 +2786,18 @@ public class UserGroupGroupRolePersistenceImpl
 		}
 	}
 
+	public void clearCache(Set<Serializable> primaryKeys) {
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
+
+		for (Serializable primaryKey : primaryKeys) {
+			EntityCacheUtil.removeResult(
+				UserGroupGroupRoleModelImpl.ENTITY_CACHE_ENABLED,
+				UserGroupGroupRoleImpl.class, primaryKey);
+		}
+	}
+
 	/**
 	 * Creates a new user group group role with the primary key. Does not add the user group group role to the database.
 	 *

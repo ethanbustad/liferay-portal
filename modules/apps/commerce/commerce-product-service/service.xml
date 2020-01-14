@@ -291,6 +291,10 @@
 		<finder name="CPTaxCategoryId" return-type="Collection">
 			<finder-column name="CPTaxCategoryId" />
 		</finder>
+		<finder name="G_SE" return-type="Collection">
+			<finder-column name="groupId" />
+			<finder-column name="subscriptionEnabled" />
+		</finder>
 		<finder name="G_S" return-type="Collection">
 			<finder-column name="groupId" />
 			<finder-column name="status" />
@@ -398,6 +402,7 @@
 		<column name="facetable" type="boolean" />
 		<column name="required" type="boolean" />
 		<column name="skuContributor" type="boolean" />
+		<column name="key" type="String" />
 
 		<!-- Order -->
 
@@ -423,6 +428,10 @@
 		<finder name="C_SC" return-type="Collection">
 			<finder-column name="CPDefinitionId" />
 			<finder-column name="skuContributor" />
+		</finder>
+		<finder name="C_K" return-type="CPDefinitionOptionRel" unique="true">
+			<finder-column name="CPDefinitionId" />
+			<finder-column name="key" />
 		</finder>
 
 		<!-- References -->
@@ -579,6 +588,10 @@
 		<finder name="G_C" return-type="Collection">
 			<finder-column name="groupId" />
 			<finder-column name="classNameId" />
+		</finder>
+		<finder name="G_L" return-type="Collection">
+			<finder-column name="groupId" />
+			<finder-column name="layoutUuid" />
 		</finder>
 		<finder name="C_C" return-type="CPDisplayLayout" unique="true">
 			<finder-column name="classNameId" />
@@ -1094,6 +1107,7 @@
 		<exception>CPTaxCategoryName</exception>
 		<exception>DuplicateCommerceChannelRel</exception>
 		<exception>DuplicateCPAttachmentFileEntry</exception>
+		<exception>DuplicateCPDefinitionOptionRelKey</exception>
 		<exception>DuplicateCPFriendlyURLEntry</exception>
 		<exception>DuplicateCProduct</exception>
 		<exception>NoSuchSkuContributorCPDefinitionOptionRel</exception>

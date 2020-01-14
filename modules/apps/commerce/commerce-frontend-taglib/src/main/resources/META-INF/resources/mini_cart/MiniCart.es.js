@@ -6,11 +6,20 @@ import Soy, {Config} from 'metal-soy';
 
 import template from './MiniCart.soy';
 
+import './CartFlusher.es';
 import './CommerceCartItem.es';
 import './Summary.es';
 
-const COMMERCE_TOPBAR_CLASS = 'commerce-topbar',
+const ALL = 'all',
+	COMMERCE_TOPBAR_CLASS = 'commerce-topbar',
 	OPEN_CART_CLASS = 'cart-open';
+
+function notifyProductRemoval(productId = ALL) {
+	Liferay.fire(
+		'productRemovedFromCart',
+		{productId}
+	);
+}
 
 class Cart extends Component {
 
@@ -20,6 +29,9 @@ class Cart extends Component {
 		this._refreshCartUsingData = this._refreshCartUsingData.bind(this);
 		this.reset = this.reset.bind(this);
 		this._setAndRefreshOrder = this._setAndRefreshOrder.bind(this);
+
+		this.flushCartUrl = `${this.cartAPI}/${this.orderId}?commerceAccountId=${this.commerceAccountId}&
+			groupId=${themeDisplay.getScopeGroupId()}&p_auth=${Liferay.authToken}`;
 	}
 
 	_handleClickOutside(e) {
@@ -64,6 +76,7 @@ class Cart extends Component {
 			this.orderId = evt.orderId;
 			this.products = evt.products;
 			this.summary = evt.summary;
+			this.valid = evt.valid;
 			this.detailsUrl = evt.detailsUrl || null;
 			this._loading = false;
 			this.pendingOperations = [];
@@ -135,6 +148,7 @@ class Cart extends Component {
 		this.orderId = null;
 		this.products = null;
 		this.summary = null;
+		this.valid = true;
 		if (this._open === true) {
 			this.close();
 		}
@@ -192,16 +206,25 @@ class Cart extends Component {
 		return this._updateProductQuantity(productId, quantity);
 	}
 
-	_deleteProduct(productId) {
-		return this._setProductProperties(
-			productId,
-			{
-				collapsed: true,
-				deleteDisabled: true,
-				inputChanged: false,
-				updating: false
-			}
-		);
+	_removeProductsFromCart(products = []) {
+		products.length && products.forEach(product => {
+			const {
+				id: orderProductId,
+				cpinstanceId: catalogProductId
+			} = product;
+
+			notifyProductRemoval(catalogProductId.toString());
+
+			this._setProductProperties(
+				orderProductId,
+				{
+					collapsed: true,
+					deleteDisabled: true,
+					inputChanged: false,
+					updating: false
+				}
+			);
+		});
 	}
 
 	_setProductProperties(productId, newProperties) {
@@ -226,13 +249,26 @@ class Cart extends Component {
 	}
 
 	_subtractProducts(orArray, subArray) {
-		const result = subArray.reduce(
-			(arrayToBeFiltered, elToRemove) => {
-				return arrayToBeFiltered.filter((elToCheck) => elToCheck.id !== elToRemove.id);
-			},
-			orArray
+		return new Promise(resolve => {
+			const result = subArray.reduce(
+				(arrayToBeFiltered, elToRemove) => {
+					return arrayToBeFiltered.filter((elToCheck) => elToCheck.id !== elToRemove.id);
+				},
+				orArray
+			);
+
+			return resolve(result);
+		});
+	}
+
+	_handleDeleteAllItems({products, summary}) {
+		this.products = products;
+		this.summary = Object.assign({},
+			this.summary,
+			summary
 		);
-		return !subArray.length && result;
+
+		notifyProductRemoval();
 	}
 
 	_handleDeleteItem(productId) {
@@ -377,6 +413,7 @@ class Cart extends Component {
 				updatedCart => {
 					this.products = updatedCart.products;
 					this.summary = updatedCart.summary;
+					this.valid = updatedCart.valid;
 					return !!(this.products && this.summary);
 				}
 			)
@@ -398,12 +435,15 @@ class Cart extends Component {
 			0;
 	}
 
-	_sendDeleteRequest(productId) {
-		this._addPendingOperation(productId);
-
-		return fetch(
+	_sendDeleteRequest(productId = null) {
+		const endpoint = productId ?
 			`${this.cartAPI}/cart-item/${productId}?commerceAccountId=${this.commerceAccountId}&
-				groupId=${themeDisplay.getScopeGroupId()}&p_auth=${Liferay.authToken}`,
+				groupId=${themeDisplay.getScopeGroupId()}&p_auth=${Liferay.authToken}` :
+			'';
+
+		!!productId && this._addPendingOperation(productId);
+
+		return fetch(endpoint,
 			{
 				method: 'DELETE'
 			}
@@ -412,31 +452,32 @@ class Cart extends Component {
 			.then(
 				(jsonresponse) => {
 					if (jsonresponse.success) {
-						this._removePendingOperation(productId);
-						this._setProductProperties(
-							productId,
-							{
-								deleteDisabled: false
-							}
-						);
+
+						if (productId) {
+							this._removePendingOperation(productId);
+							this._setProductProperties(
+								productId,
+								{
+									deleteDisabled: false
+								}
+							);
+						}
 
 						this.summary = jsonresponse.summary;
 
-						const productsToBeRemoved = this._subtractProducts(this.products, jsonresponse.products);
-						productsToBeRemoved.forEach(
-							product => {
-								this._deleteProduct(product.id);
-							}
-						);
+						this._subtractProducts(this.products, jsonresponse.products)
+							.then(
+								products => {
+									setTimeout(() => this._removeProductsFromCart(products), 50);
+								});
 					}
 
 					this._handleResponseErrors(productId, jsonresponse);
-					return this._removePendingOperation(productId);
 				}
 			)
 			.catch(
 				err => {
-					this._removePendingOperation(productId);
+					!!productId && this._removePendingOperation(productId);
 				}
 			);
 	}
@@ -468,10 +509,23 @@ Cart.STATE = {
 		]
 	),
 	detailsUrl: Config.string(),
+	valid: Config.bool(),
 	disabled: Config.bool().value(false),
+	displayDiscountLevels: Config.bool().value(false),
+	flushCartUrl: Config.string(),
 	pendingOperations: Config.array().value(
 		[]
 	),
+
+	/**
+	 * For each product in the cart,
+	 * the related object received from the endpoint
+	 * contains 2 ID's:
+	 *
+	 * @param productId The id of the product relative to the cart.
+	 * @param cpinstanceId The id of the product relative to the catalog.
+	 */
+
 	products: {
 		setter: 'normalizeProducts',
 		value: null

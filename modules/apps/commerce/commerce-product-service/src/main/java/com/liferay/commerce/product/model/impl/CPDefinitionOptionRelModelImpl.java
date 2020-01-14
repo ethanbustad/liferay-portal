@@ -90,7 +90,7 @@ public class CPDefinitionOptionRelModelImpl
 		{"name", Types.VARCHAR}, {"description", Types.VARCHAR},
 		{"DDMFormFieldTypeName", Types.VARCHAR}, {"priority", Types.DOUBLE},
 		{"facetable", Types.BOOLEAN}, {"required", Types.BOOLEAN},
-		{"skuContributor", Types.BOOLEAN}
+		{"skuContributor", Types.BOOLEAN}, {"key_", Types.VARCHAR}
 	};
 
 	public static final Map<String, Integer> TABLE_COLUMNS_MAP =
@@ -114,10 +114,11 @@ public class CPDefinitionOptionRelModelImpl
 		TABLE_COLUMNS_MAP.put("facetable", Types.BOOLEAN);
 		TABLE_COLUMNS_MAP.put("required", Types.BOOLEAN);
 		TABLE_COLUMNS_MAP.put("skuContributor", Types.BOOLEAN);
+		TABLE_COLUMNS_MAP.put("key_", Types.VARCHAR);
 	}
 
 	public static final String TABLE_SQL_CREATE =
-		"create table CPDefinitionOptionRel (uuid_ VARCHAR(75) null,CPDefinitionOptionRelId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,CPDefinitionId LONG,CPOptionId LONG,name STRING null,description STRING null,DDMFormFieldTypeName VARCHAR(75) null,priority DOUBLE,facetable BOOLEAN,required BOOLEAN,skuContributor BOOLEAN)";
+		"create table CPDefinitionOptionRel (uuid_ VARCHAR(75) null,CPDefinitionOptionRelId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,CPDefinitionId LONG,CPOptionId LONG,name STRING null,description STRING null,DDMFormFieldTypeName VARCHAR(75) null,priority DOUBLE,facetable BOOLEAN,required BOOLEAN,skuContributor BOOLEAN,key_ VARCHAR(75) null)";
 
 	public static final String TABLE_SQL_DROP =
 		"drop table CPDefinitionOptionRel";
@@ -157,11 +158,13 @@ public class CPDefinitionOptionRelModelImpl
 
 	public static final long GROUPID_COLUMN_BITMASK = 8L;
 
-	public static final long SKUCONTRIBUTOR_COLUMN_BITMASK = 16L;
+	public static final long KEY_COLUMN_BITMASK = 16L;
 
-	public static final long UUID_COLUMN_BITMASK = 32L;
+	public static final long SKUCONTRIBUTOR_COLUMN_BITMASK = 32L;
 
-	public static final long PRIORITY_COLUMN_BITMASK = 64L;
+	public static final long UUID_COLUMN_BITMASK = 64L;
+
+	public static final long PRIORITY_COLUMN_BITMASK = 128L;
 
 	/**
 	 * Converts the soap model instance into a normal model instance.
@@ -196,6 +199,7 @@ public class CPDefinitionOptionRelModelImpl
 		model.setFacetable(soapModel.isFacetable());
 		model.setRequired(soapModel.isRequired());
 		model.setSkuContributor(soapModel.isSkuContributor());
+		model.setKey(soapModel.getKey());
 
 		return model;
 	}
@@ -375,9 +379,10 @@ public class CPDefinitionOptionRelModelImpl
 
 				@Override
 				public void accept(
-					CPDefinitionOptionRel cpDefinitionOptionRel, Object uuid) {
+					CPDefinitionOptionRel cpDefinitionOptionRel,
+					Object uuidObject) {
 
-					cpDefinitionOptionRel.setUuid((String)uuid);
+					cpDefinitionOptionRel.setUuid((String)uuidObject);
 				}
 
 			});
@@ -400,10 +405,10 @@ public class CPDefinitionOptionRelModelImpl
 				@Override
 				public void accept(
 					CPDefinitionOptionRel cpDefinitionOptionRel,
-					Object CPDefinitionOptionRelId) {
+					Object CPDefinitionOptionRelIdObject) {
 
 					cpDefinitionOptionRel.setCPDefinitionOptionRelId(
-						(Long)CPDefinitionOptionRelId);
+						(Long)CPDefinitionOptionRelIdObject);
 				}
 
 			});
@@ -426,9 +431,9 @@ public class CPDefinitionOptionRelModelImpl
 				@Override
 				public void accept(
 					CPDefinitionOptionRel cpDefinitionOptionRel,
-					Object groupId) {
+					Object groupIdObject) {
 
-					cpDefinitionOptionRel.setGroupId((Long)groupId);
+					cpDefinitionOptionRel.setGroupId((Long)groupIdObject);
 				}
 
 			});
@@ -451,9 +456,9 @@ public class CPDefinitionOptionRelModelImpl
 				@Override
 				public void accept(
 					CPDefinitionOptionRel cpDefinitionOptionRel,
-					Object companyId) {
+					Object companyIdObject) {
 
-					cpDefinitionOptionRel.setCompanyId((Long)companyId);
+					cpDefinitionOptionRel.setCompanyId((Long)companyIdObject);
 				}
 
 			});
@@ -476,9 +481,9 @@ public class CPDefinitionOptionRelModelImpl
 				@Override
 				public void accept(
 					CPDefinitionOptionRel cpDefinitionOptionRel,
-					Object userId) {
+					Object userIdObject) {
 
-					cpDefinitionOptionRel.setUserId((Long)userId);
+					cpDefinitionOptionRel.setUserId((Long)userIdObject);
 				}
 
 			});
@@ -501,9 +506,9 @@ public class CPDefinitionOptionRelModelImpl
 				@Override
 				public void accept(
 					CPDefinitionOptionRel cpDefinitionOptionRel,
-					Object userName) {
+					Object userNameObject) {
 
-					cpDefinitionOptionRel.setUserName((String)userName);
+					cpDefinitionOptionRel.setUserName((String)userNameObject);
 				}
 
 			});
@@ -526,9 +531,9 @@ public class CPDefinitionOptionRelModelImpl
 				@Override
 				public void accept(
 					CPDefinitionOptionRel cpDefinitionOptionRel,
-					Object createDate) {
+					Object createDateObject) {
 
-					cpDefinitionOptionRel.setCreateDate((Date)createDate);
+					cpDefinitionOptionRel.setCreateDate((Date)createDateObject);
 				}
 
 			});
@@ -551,9 +556,10 @@ public class CPDefinitionOptionRelModelImpl
 				@Override
 				public void accept(
 					CPDefinitionOptionRel cpDefinitionOptionRel,
-					Object modifiedDate) {
+					Object modifiedDateObject) {
 
-					cpDefinitionOptionRel.setModifiedDate((Date)modifiedDate);
+					cpDefinitionOptionRel.setModifiedDate(
+						(Date)modifiedDateObject);
 				}
 
 			});
@@ -576,10 +582,10 @@ public class CPDefinitionOptionRelModelImpl
 				@Override
 				public void accept(
 					CPDefinitionOptionRel cpDefinitionOptionRel,
-					Object CPDefinitionId) {
+					Object CPDefinitionIdObject) {
 
 					cpDefinitionOptionRel.setCPDefinitionId(
-						(Long)CPDefinitionId);
+						(Long)CPDefinitionIdObject);
 				}
 
 			});
@@ -602,9 +608,9 @@ public class CPDefinitionOptionRelModelImpl
 				@Override
 				public void accept(
 					CPDefinitionOptionRel cpDefinitionOptionRel,
-					Object CPOptionId) {
+					Object CPOptionIdObject) {
 
-					cpDefinitionOptionRel.setCPOptionId((Long)CPOptionId);
+					cpDefinitionOptionRel.setCPOptionId((Long)CPOptionIdObject);
 				}
 
 			});
@@ -626,9 +632,10 @@ public class CPDefinitionOptionRelModelImpl
 
 				@Override
 				public void accept(
-					CPDefinitionOptionRel cpDefinitionOptionRel, Object name) {
+					CPDefinitionOptionRel cpDefinitionOptionRel,
+					Object nameObject) {
 
-					cpDefinitionOptionRel.setName((String)name);
+					cpDefinitionOptionRel.setName((String)nameObject);
 				}
 
 			});
@@ -651,9 +658,10 @@ public class CPDefinitionOptionRelModelImpl
 				@Override
 				public void accept(
 					CPDefinitionOptionRel cpDefinitionOptionRel,
-					Object description) {
+					Object descriptionObject) {
 
-					cpDefinitionOptionRel.setDescription((String)description);
+					cpDefinitionOptionRel.setDescription(
+						(String)descriptionObject);
 				}
 
 			});
@@ -676,10 +684,10 @@ public class CPDefinitionOptionRelModelImpl
 				@Override
 				public void accept(
 					CPDefinitionOptionRel cpDefinitionOptionRel,
-					Object DDMFormFieldTypeName) {
+					Object DDMFormFieldTypeNameObject) {
 
 					cpDefinitionOptionRel.setDDMFormFieldTypeName(
-						(String)DDMFormFieldTypeName);
+						(String)DDMFormFieldTypeNameObject);
 				}
 
 			});
@@ -702,9 +710,9 @@ public class CPDefinitionOptionRelModelImpl
 				@Override
 				public void accept(
 					CPDefinitionOptionRel cpDefinitionOptionRel,
-					Object priority) {
+					Object priorityObject) {
 
-					cpDefinitionOptionRel.setPriority((Double)priority);
+					cpDefinitionOptionRel.setPriority((Double)priorityObject);
 				}
 
 			});
@@ -727,9 +735,10 @@ public class CPDefinitionOptionRelModelImpl
 				@Override
 				public void accept(
 					CPDefinitionOptionRel cpDefinitionOptionRel,
-					Object facetable) {
+					Object facetableObject) {
 
-					cpDefinitionOptionRel.setFacetable((Boolean)facetable);
+					cpDefinitionOptionRel.setFacetable(
+						(Boolean)facetableObject);
 				}
 
 			});
@@ -752,9 +761,9 @@ public class CPDefinitionOptionRelModelImpl
 				@Override
 				public void accept(
 					CPDefinitionOptionRel cpDefinitionOptionRel,
-					Object required) {
+					Object requiredObject) {
 
-					cpDefinitionOptionRel.setRequired((Boolean)required);
+					cpDefinitionOptionRel.setRequired((Boolean)requiredObject);
 				}
 
 			});
@@ -777,10 +786,35 @@ public class CPDefinitionOptionRelModelImpl
 				@Override
 				public void accept(
 					CPDefinitionOptionRel cpDefinitionOptionRel,
-					Object skuContributor) {
+					Object skuContributorObject) {
 
 					cpDefinitionOptionRel.setSkuContributor(
-						(Boolean)skuContributor);
+						(Boolean)skuContributorObject);
+				}
+
+			});
+		attributeGetterFunctions.put(
+			"key",
+			new Function<CPDefinitionOptionRel, Object>() {
+
+				@Override
+				public Object apply(
+					CPDefinitionOptionRel cpDefinitionOptionRel) {
+
+					return cpDefinitionOptionRel.getKey();
+				}
+
+			});
+		attributeSetterBiConsumers.put(
+			"key",
+			new BiConsumer<CPDefinitionOptionRel, Object>() {
+
+				@Override
+				public void accept(
+					CPDefinitionOptionRel cpDefinitionOptionRel,
+					Object keyObject) {
+
+					cpDefinitionOptionRel.setKey((String)keyObject);
 				}
 
 			});
@@ -1294,6 +1328,32 @@ public class CPDefinitionOptionRelModelImpl
 		return _originalSkuContributor;
 	}
 
+	@JSON
+	@Override
+	public String getKey() {
+		if (_key == null) {
+			return "";
+		}
+		else {
+			return _key;
+		}
+	}
+
+	@Override
+	public void setKey(String key) {
+		_columnBitmask |= KEY_COLUMN_BITMASK;
+
+		if (_originalKey == null) {
+			_originalKey = _key;
+		}
+
+		_key = key;
+	}
+
+	public String getOriginalKey() {
+		return GetterUtil.getString(_originalKey);
+	}
+
 	@Override
 	public StagedModelType getStagedModelType() {
 		return new StagedModelType(
@@ -1445,6 +1505,7 @@ public class CPDefinitionOptionRelModelImpl
 		cpDefinitionOptionRelImpl.setFacetable(isFacetable());
 		cpDefinitionOptionRelImpl.setRequired(isRequired());
 		cpDefinitionOptionRelImpl.setSkuContributor(isSkuContributor());
+		cpDefinitionOptionRelImpl.setKey(getKey());
 
 		cpDefinitionOptionRelImpl.resetOriginalValues();
 
@@ -1544,6 +1605,9 @@ public class CPDefinitionOptionRelModelImpl
 
 		cpDefinitionOptionRelModelImpl._setOriginalSkuContributor = false;
 
+		cpDefinitionOptionRelModelImpl._originalKey =
+			cpDefinitionOptionRelModelImpl._key;
+
 		cpDefinitionOptionRelModelImpl._columnBitmask = 0;
 	}
 
@@ -1635,6 +1699,14 @@ public class CPDefinitionOptionRelModelImpl
 		cpDefinitionOptionRelCacheModel.required = isRequired();
 
 		cpDefinitionOptionRelCacheModel.skuContributor = isSkuContributor();
+
+		cpDefinitionOptionRelCacheModel.key = getKey();
+
+		String key = cpDefinitionOptionRelCacheModel.key;
+
+		if ((key != null) && (key.length() == 0)) {
+			cpDefinitionOptionRelCacheModel.key = null;
+		}
 
 		return cpDefinitionOptionRelCacheModel;
 	}
@@ -1742,6 +1814,8 @@ public class CPDefinitionOptionRelModelImpl
 	private boolean _skuContributor;
 	private boolean _originalSkuContributor;
 	private boolean _setOriginalSkuContributor;
+	private String _key;
+	private String _originalKey;
 	private long _columnBitmask;
 	private CPDefinitionOptionRel _escapedModel;
 

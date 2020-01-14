@@ -78,7 +78,6 @@ public class CPOptionCategoryLocalServiceImpl
 		CPOptionCategory cpOptionCategory = cpOptionCategoryPersistence.create(
 			cpOptionCategoryId);
 
-		cpOptionCategory.setUuid(serviceContext.getUuid());
 		cpOptionCategory.setCompanyId(user.getCompanyId());
 		cpOptionCategory.setUserId(user.getUserId());
 		cpOptionCategory.setUserName(user.getFullName());
@@ -241,9 +240,9 @@ public class CPOptionCategoryLocalServiceImpl
 
 		Map<String, Serializable> attributes = new HashMap<>();
 
+		attributes.put(Field.DESCRIPTION, keywords);
 		attributes.put(Field.ENTRY_CLASS_PK, keywords);
 		attributes.put(Field.TITLE, keywords);
-		attributes.put(Field.DESCRIPTION, keywords);
 
 		attributes.put(CPOptionCategoryIndexer.FIELD_KEY, keywords);
 		attributes.put("params", params);
@@ -312,13 +311,8 @@ public class CPOptionCategoryLocalServiceImpl
 		for (int i = 0; i < 10; i++) {
 			Hits hits = indexer.search(searchContext, _SELECTED_FIELD_NAMES);
 
-			List<CPOptionCategory> cpOptionCategories = getCPOptionCategories(
-				hits);
-
-			if (cpOptionCategories != null) {
-				return new BaseModelSearchResult<>(
-					cpOptionCategories, hits.getLength());
-			}
+			return new BaseModelSearchResult<>(
+				getCPOptionCategories(hits), hits.getLength());
 		}
 
 		throw new SearchException(

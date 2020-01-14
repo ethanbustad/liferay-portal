@@ -16,9 +16,15 @@ package com.liferay.headless.commerce.admin.account.internal.resource.v1_0;
 
 import com.liferay.commerce.account.constants.CommerceAccountConstants;
 import com.liferay.commerce.account.exception.NoSuchAccountException;
+import com.liferay.commerce.account.exception.NoSuchAccountGroupException;
 import com.liferay.commerce.account.model.CommerceAccount;
+import com.liferay.commerce.account.model.CommerceAccountGroup;
+import com.liferay.commerce.account.model.CommerceAccountGroupCommerceAccountRel;
 import com.liferay.commerce.account.model.CommerceAccountOrganizationRel;
 import com.liferay.commerce.account.model.CommerceAccountUserRel;
+import com.liferay.commerce.account.service.CommerceAccountGroupCommerceAccountRelService;
+import com.liferay.commerce.account.service.CommerceAccountGroupRelService;
+import com.liferay.commerce.account.service.CommerceAccountGroupService;
 import com.liferay.commerce.account.service.CommerceAccountOrganizationRelService;
 import com.liferay.commerce.account.service.CommerceAccountService;
 import com.liferay.commerce.account.service.CommerceAccountUserRelService;
@@ -34,6 +40,7 @@ import com.liferay.headless.commerce.admin.account.dto.v1_0.Account;
 import com.liferay.headless.commerce.admin.account.dto.v1_0.AccountAddress;
 import com.liferay.headless.commerce.admin.account.dto.v1_0.AccountMember;
 import com.liferay.headless.commerce.admin.account.dto.v1_0.AccountOrganization;
+import com.liferay.headless.commerce.admin.account.internal.odata.entity.v1_0.AccountEntityModel;
 import com.liferay.headless.commerce.admin.account.internal.util.v1_0.AccountMemberUtil;
 import com.liferay.headless.commerce.admin.account.internal.util.v1_0.AccountOrganizationUtil;
 import com.liferay.headless.commerce.admin.account.resource.v1_0.AccountResource;
@@ -42,25 +49,34 @@ import com.liferay.headless.commerce.core.dto.v1_0.converter.DTOConverterRegistr
 import com.liferay.headless.commerce.core.dto.v1_0.converter.DefaultDTOConverterContext;
 import com.liferay.headless.commerce.core.util.ExpandoUtil;
 import com.liferay.headless.commerce.core.util.ServiceContextHelper;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.search.Field;
+import com.liferay.portal.kernel.search.Sort;
+import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.service.OrganizationLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.odata.entity.EntityModel;
 import com.liferay.portal.vulcan.multipart.MultipartBody;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
+import com.liferay.portal.vulcan.resource.EntityModelResource;
+import com.liferay.portal.vulcan.util.SearchUtil;
 
 import java.io.IOException;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.validation.constraints.NotNull;
+
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
 import org.osgi.service.component.annotations.Component;
@@ -74,13 +90,14 @@ import org.osgi.service.component.annotations.ServiceScope;
 	properties = "OSGI-INF/liferay/rest/v1_0/account.properties",
 	scope = ServiceScope.PROTOTYPE, service = AccountResource.class
 )
-public class AccountResourceImpl extends BaseAccountResourceImpl {
+public class AccountResourceImpl
+	extends BaseAccountResourceImpl implements EntityModelResource {
 
 	@Override
 	public Response deleteAccount(Long id) throws Exception {
 		_commerceAccountService.deleteCommerceAccount(id);
 
-		Response.ResponseBuilder responseBuilder = Response.ok();
+		Response.ResponseBuilder responseBuilder = Response.noContent();
 
 		return responseBuilder.build();
 	}
@@ -103,7 +120,50 @@ public class AccountResourceImpl extends BaseAccountResourceImpl {
 		_commerceAccountService.deleteCommerceAccount(
 			commerceAccount.getCommerceAccountId());
 
-		Response.ResponseBuilder responseBuilder = Response.ok();
+		Response.ResponseBuilder responseBuilder = Response.noContent();
+
+		return responseBuilder.build();
+	}
+
+	@Override
+	public Response deleteAccountGroupByExternalReferenceCodeAccount(
+			@NotNull String accountExternalReferenceCode,
+			@NotNull String externalReferenceCode)
+		throws Exception {
+
+		CommerceAccountGroup commerceAccountGroup =
+			_commerceAccountGroupService.fetchByExternalReferenceCode(
+				contextCompany.getCompanyId(), externalReferenceCode);
+
+		if (commerceAccountGroup == null) {
+			throw new NoSuchAccountGroupException(
+				"Unable to find AccountGroup with externalReferenceCode: " +
+					externalReferenceCode);
+		}
+
+		CommerceAccount commerceAccount =
+			_commerceAccountService.fetchByExternalReferenceCode(
+				contextCompany.getCompanyId(), accountExternalReferenceCode);
+
+		if (commerceAccount == null) {
+			throw new NoSuchAccountException(
+				"Unable to find Account with external reference code: " +
+					accountExternalReferenceCode);
+		}
+
+		CommerceAccountGroupCommerceAccountRel
+			commerceAccountGroupCommerceAccountRel =
+				_commerceAccountGroupCommerceAccountRelService.
+					getCommerceAccountGroupCommerceAccountRel(
+						commerceAccountGroup.getCommerceAccountGroupId(),
+						commerceAccount.getCommerceAccountId());
+
+		_commerceAccountGroupCommerceAccountRelService.
+			deleteCommerceAccountGroupCommerceAccountRel(
+				commerceAccountGroupCommerceAccountRel.
+					getCommerceAccountGroupCommerceAccountRelId());
+
+		Response.ResponseBuilder responseBuilder = Response.noContent();
 
 		return responseBuilder.build();
 	}
@@ -146,29 +206,35 @@ public class AccountResourceImpl extends BaseAccountResourceImpl {
 	}
 
 	@Override
-	public Page<Account> getAccountsPage(Pagination pagination)
+	public Page<Account> getAccountsPage(
+			Filter filter, Pagination pagination, Sort[] sorts)
 		throws Exception {
 
-		List<CommerceAccount> commerceAccounts =
-			_commerceAccountService.getUserCommerceAccounts(
-				_user.getUserId(),
-				CommerceAccountConstants.DEFAULT_PARENT_ACCOUNT_ID,
-				CommerceAccountConstants.SITE_TYPE_B2C_B2B, null,
-				pagination.getStartPosition(), pagination.getEndPosition());
+		return SearchUtil.search(
+			booleanQuery -> booleanQuery.getPreBooleanFilter(), filter,
+			CommerceAccount.class, StringPool.BLANK, pagination,
+			queryConfig -> queryConfig.setSelectedFieldNames(
+				Field.ENTRY_CLASS_PK),
+			searchContext -> searchContext.setCompanyId(
+				contextCompany.getCompanyId()),
+			document -> _toAccount(
+				_commerceAccountService.getCommerceAccount(
+					GetterUtil.getLong(document.get(Field.ENTRY_CLASS_PK)))),
+			sorts);
+	}
 
-		int totalItems = _commerceAccountService.getUserCommerceAccountsCount(
-			_user.getUserId(),
-			CommerceAccountConstants.DEFAULT_PARENT_ACCOUNT_ID,
-			CommerceAccountConstants.SITE_TYPE_B2C_B2B, null);
+	@Override
+	public EntityModel getEntityModel(MultivaluedMap multivaluedMap)
+		throws Exception {
 
-		return Page.of(_toAccounts(commerceAccounts), pagination, totalItems);
+		return _entityModel;
 	}
 
 	@Override
 	public Response patchAccount(Long id, Account account) throws Exception {
 		_updateAccount(id, account);
 
-		Response.ResponseBuilder responseBuilder = Response.ok();
+		Response.ResponseBuilder responseBuilder = Response.noContent();
 
 		return responseBuilder.build();
 	}
@@ -190,7 +256,7 @@ public class AccountResourceImpl extends BaseAccountResourceImpl {
 
 		_updateAccount(commerceAccount.getCommerceAccountId(), account);
 
-		Response.ResponseBuilder responseBuilder = Response.ok();
+		Response.ResponseBuilder responseBuilder = Response.noContent();
 
 		return responseBuilder.build();
 	}
@@ -251,7 +317,52 @@ public class AccountResourceImpl extends BaseAccountResourceImpl {
 
 		updateAccountLogo(commerceAccount, multipartBody);
 
-		Response.ResponseBuilder responseBuilder = Response.ok();
+		Response.ResponseBuilder responseBuilder = Response.noContent();
+
+		return responseBuilder.build();
+	}
+
+	@Override
+	public Response postAccountGroupByExternalReferenceCodeAccount(
+			@NotNull String externalReferenceCode, Account account)
+		throws Exception {
+
+		CommerceAccountGroup commerceAccountGroup =
+			_commerceAccountGroupService.fetchByExternalReferenceCode(
+				contextCompany.getCompanyId(), externalReferenceCode);
+
+		if (commerceAccountGroup == null) {
+			throw new NoSuchAccountGroupException(
+				"Unable to find AccountGroup with externalReferenceCode: " +
+					externalReferenceCode);
+		}
+
+		CommerceAccount commerceAccount = null;
+
+		if (account.getId() != null) {
+			commerceAccount = _commerceAccountService.fetchCommerceAccount(
+				account.getId());
+		}
+		else if (account.getExternalReferenceCode() != null) {
+			commerceAccount =
+				_commerceAccountService.fetchByExternalReferenceCode(
+					contextCompany.getCompanyId(),
+					account.getExternalReferenceCode());
+		}
+
+		if (commerceAccount == null) {
+			throw new NoSuchAccountException(
+				"Unable to find Account with external reference code: " +
+					account.getExternalReferenceCode());
+		}
+
+		_commerceAccountGroupCommerceAccountRelService.
+			addCommerceAccountGroupCommerceAccountRel(
+				commerceAccountGroup.getCommerceAccountGroupId(),
+				commerceAccount.getCommerceAccountId(),
+				_serviceContextHelper.getServiceContext());
+
+		Response.ResponseBuilder responseBuilder = Response.noContent();
 
 		return responseBuilder.build();
 	}
@@ -263,7 +374,7 @@ public class AccountResourceImpl extends BaseAccountResourceImpl {
 		updateAccountLogo(
 			_commerceAccountService.getCommerceAccount(id), multipartBody);
 
-		Response.ResponseBuilder responseBuilder = Response.ok();
+		Response.ResponseBuilder responseBuilder = Response.noContent();
 
 		return responseBuilder.build();
 	}
@@ -319,24 +430,17 @@ public class AccountResourceImpl extends BaseAccountResourceImpl {
 		return commerceAccount.getEmail();
 	}
 
-	private List<Account> _toAccounts(List<CommerceAccount> commerceAccounts)
+	private Account _toAccount(CommerceAccount commerceAccount)
 		throws Exception {
-
-		List<Account> accounts = new ArrayList<>();
 
 		DTOConverter accountDTOConverter =
 			_dtoConverterRegistry.getDTOConverter(
 				CommerceAccount.class.getName());
 
-		for (CommerceAccount commerceAccount : commerceAccounts) {
-			accounts.add(
-				(Account)accountDTOConverter.toDTO(
-					new DefaultDTOConverterContext(
-						contextAcceptLanguage.getPreferredLocale(),
-						commerceAccount.getCommerceAccountId())));
-		}
-
-		return accounts;
+		return (Account)accountDTOConverter.toDTO(
+			new DefaultDTOConverterContext(
+				contextAcceptLanguage.getPreferredLocale(),
+				commerceAccount.getCommerceAccountId()));
 	}
 
 	private CommerceAccount _updateAccount(Long id, Account account)
@@ -352,7 +456,10 @@ public class AccountResourceImpl extends BaseAccountResourceImpl {
 			commerceAccount.getCommerceAccountId(), account.getName(), true,
 			null, _getEmailAddress(account, commerceAccount),
 			GetterUtil.get(account.getTaxId(), commerceAccount.getTaxId()),
-			commerceAccount.isActive(), serviceContext);
+			commerceAccount.isActive(),
+			commerceAccount.getDefaultBillingAddressId(),
+			commerceAccount.getDefaultShippingAddressId(),
+			account.getExternalReferenceCode(), serviceContext);
 
 		// Expando
 
@@ -398,19 +505,38 @@ public class AccountResourceImpl extends BaseAccountResourceImpl {
 						commerceAccount.getCompanyId(),
 						accountAddress.getCountryISOCode());
 
-				_commerceAddressService.addCommerceAddress(
-					commerceAccount.getModelClassName(),
-					commerceAccount.getCommerceAccountId(),
-					accountAddress.getName(), accountAddress.getDescription(),
-					accountAddress.getStreet1(), accountAddress.getStreet2(),
-					accountAddress.getStreet3(), accountAddress.getCity(),
-					accountAddress.getZip(),
-					_getCommerceRegionId(commerceCountry, accountAddress),
-					commerceCountry.getCommerceCountryId(),
-					accountAddress.getPhoneNumber(),
-					GetterUtil.get(accountAddress.getDefaultBilling(), false),
-					GetterUtil.get(accountAddress.getDefaultShipping(), false),
-					serviceContext);
+				CommerceAddress commerceAddress =
+					_commerceAddressService.addCommerceAddress(
+						commerceAccount.getModelClassName(),
+						commerceAccount.getCommerceAccountId(),
+						accountAddress.getName(),
+						accountAddress.getDescription(),
+						accountAddress.getStreet1(),
+						accountAddress.getStreet2(),
+						accountAddress.getStreet3(), accountAddress.getCity(),
+						accountAddress.getZip(),
+						_getCommerceRegionId(commerceCountry, accountAddress),
+						commerceCountry.getCommerceCountryId(),
+						accountAddress.getPhoneNumber(),
+						GetterUtil.get(
+							accountAddress.getDefaultBilling(), false),
+						GetterUtil.get(
+							accountAddress.getDefaultShipping(), false),
+						serviceContext);
+
+				if (GetterUtil.get(accountAddress.getDefaultBilling(), false)) {
+					_commerceAccountService.updateDefaultBillingAddress(
+						commerceAccount.getCommerceAccountId(),
+						commerceAddress.getCommerceAddressId());
+				}
+
+				if (GetterUtil.get(
+						accountAddress.getDefaultShipping(), false)) {
+
+					_commerceAccountService.updateDefaultShippingAddress(
+						commerceAccount.getCommerceAccountId(),
+						commerceAddress.getCommerceAddressId());
+				}
 			}
 		}
 
@@ -472,6 +598,18 @@ public class AccountResourceImpl extends BaseAccountResourceImpl {
 
 		return commerceAccount;
 	}
+
+	private static final EntityModel _entityModel = new AccountEntityModel();
+
+	@Reference
+	private CommerceAccountGroupCommerceAccountRelService
+		_commerceAccountGroupCommerceAccountRelService;
+
+	@Reference
+	private CommerceAccountGroupRelService _commerceAccountGroupRelService;
+
+	@Reference
+	private CommerceAccountGroupService _commerceAccountGroupService;
 
 	@Reference
 	private CommerceAccountOrganizationRelService

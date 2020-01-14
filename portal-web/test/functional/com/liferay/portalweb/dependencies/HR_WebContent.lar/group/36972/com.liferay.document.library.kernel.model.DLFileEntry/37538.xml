@@ -1,0 +1,104 @@
+<com.liferay.portal.repository.liferayrepository.model.LiferayFileEntry>
+  <__dlFileEntry class="DLFileEntry">
+    <__cachedModel>false</__cachedModel>
+    <__new>false</__new>
+    <__uuid>cc56d2bf-6742-b121-3b6f-8679b8dc5ebd</__uuid>
+    <__fileEntryId>37538</__fileEntryId>
+    <__groupId>36972</__groupId>
+    <__originalGroupId>0</__originalGroupId>
+    <__setOriginalGroupId>true</__setOriginalGroupId>
+    <__companyId>20099</__companyId>
+    <__originalCompanyId>0</__originalCompanyId>
+    <__setOriginalCompanyId>true</__setOriginalCompanyId>
+    <__userId>20139</__userId>
+    <__originalUserId>0</__originalUserId>
+    <__setOriginalUserId>true</__setOriginalUserId>
+    <__userName>Test Test</__userName>
+    <__createDate class="sql-timestamp">2019-03-05 02:32:35.49</__createDate>
+    <__modifiedDate class="sql-timestamp">2019-03-05 02:32:35.497</__modifiedDate>
+    <__setModifiedDate>true</__setModifiedDate>
+    <__classNameId>20401</__classNameId>
+    <__classPK>37536</__classPK>
+    <__repositoryId>37073</__repositoryId>
+    <__originalRepositoryId>0</__originalRepositoryId>
+    <__setOriginalRepositoryId>true</__setOriginalRepositoryId>
+    <__folderId>37537</__folderId>
+    <__originalFolderId>0</__originalFolderId>
+    <__setOriginalFolderId>true</__setOriginalFolderId>
+    <__treePath>/37074/37537/</__treePath>
+    <__name>118</__name>
+    <__fileName>front page picture (1).jpg</__fileName>
+    <__extension>jpg</__extension>
+    <__mimeType>image/jpeg</__mimeType>
+    <__title>front page picture (1).jpg</__title>
+    <__extraSettings></__extraSettings>
+    <__fileEntryTypeId>0</__fileEntryTypeId>
+    <__originalFileEntryTypeId>0</__originalFileEntryTypeId>
+    <__setOriginalFileEntryTypeId>true</__setOriginalFileEntryTypeId>
+    <__version>1.0</__version>
+    <__size>413904</__size>
+    <__readCount>0</__readCount>
+    <__smallImageId>0</__smallImageId>
+    <__originalSmallImageId>0</__originalSmallImageId>
+    <__setOriginalSmallImageId>true</__setOriginalSmallImageId>
+    <__largeImageId>0</__largeImageId>
+    <__originalLargeImageId>0</__originalLargeImageId>
+    <__setOriginalLargeImageId>true</__setOriginalLargeImageId>
+    <__custom1ImageId>0</__custom1ImageId>
+    <__originalCustom1ImageId>0</__originalCustom1ImageId>
+    <__setOriginalCustom1ImageId>true</__setOriginalCustom1ImageId>
+    <__custom2ImageId>0</__custom2ImageId>
+    <__originalCustom2ImageId>0</__originalCustom2ImageId>
+    <__setOriginalCustom2ImageId>true</__setOriginalCustom2ImageId>
+    <__manualCheckInRequired>false</__manualCheckInRequired>
+    <__columnBitmask>-1</__columnBitmask>
+  </__dlFileEntry>
+  <__dlFileVersion class="com.liferay.portlet.documentlibrary.model.impl.DLFileVersionImpl">
+    <__cachedModel>true</__cachedModel>
+    <__new>false</__new>
+    <__uuid>9e3d7284-6c04-c997-1d2b-abe68cd62ddd</__uuid>
+    <__originalUuid>9e3d7284-6c04-c997-1d2b-abe68cd62ddd</__originalUuid>
+    <__fileVersionId>37539</__fileVersionId>
+    <__groupId>36972</__groupId>
+    <__originalGroupId>36972</__originalGroupId>
+    <__setOriginalGroupId>false</__setOriginalGroupId>
+    <__companyId>20099</__companyId>
+    <__originalCompanyId>20099</__originalCompanyId>
+    <__setOriginalCompanyId>false</__setOriginalCompanyId>
+    <__userId>20139</__userId>
+    <__userName>Test Test</__userName>
+    <__createDate>2019-03-05 02:32:35.493 UTC</__createDate>
+    <__modifiedDate>2019-03-05 02:32:35.497 UTC</__modifiedDate>
+    <__setModifiedDate>false</__setModifiedDate>
+    <__repositoryId>37073</__repositoryId>
+    <__folderId>37537</__folderId>
+    <__originalFolderId>37537</__originalFolderId>
+    <__setOriginalFolderId>false</__setOriginalFolderId>
+    <__fileEntryId>37538</__fileEntryId>
+    <__originalFileEntryId>37538</__originalFileEntryId>
+    <__setOriginalFileEntryId>false</__setOriginalFileEntryId>
+    <__treePath>/37074/37537/</__treePath>
+    <__fileName>front page picture (1).jpg</__fileName>
+    <__extension>jpg</__extension>
+    <__mimeType>image/jpeg</__mimeType>
+    <__originalMimeType>image/jpeg</__originalMimeType>
+    <__title>front page picture (1).jpg</__title>
+    <__originalTitle>front page picture (1).jpg</__originalTitle>
+    <__description></__description>
+    <__changeLog></__changeLog>
+    <__extraSettings></__extraSettings>
+    <__fileEntryTypeId>0</__fileEntryTypeId>
+    <__version>1.0</__version>
+    <__originalVersion>1.0</__originalVersion>
+    <__size>413904</__size>
+    <__checksum></__checksum>
+    <__status>0</__status>
+    <__originalStatus>0</__originalStatus>
+    <__setOriginalStatus>false</__setOriginalStatus>
+    <__statusByUserId>20139</__statusByUserId>
+    <__statusByUserName>Test Test</__statusByUserName>
+    <__statusDate>2019-03-05 02:32:35.497 UTC</__statusDate>
+    <__columnBitmask>0</__columnBitmask>
+  </__dlFileVersion>
+  <__escapedModel>false</__escapedModel>
+</com.liferay.portal.repository.liferayrepository.model.LiferayFileEntry>

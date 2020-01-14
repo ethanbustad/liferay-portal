@@ -10,9 +10,9 @@
 
 	<target name="build-db">
 		<if>
-			<available file="${project.dir}/modules/private/apps/portal/portal-dao-db" type="dir" />
+			<equals arg1="${build.profile}" arg2="dxp" />
 			<then>
-				<gradle-execute dir="${project.dir}/modules" task=":private:apps:portal:portal-dao-db:jar" />
+				<gradle-execute dir="${project.dir}/modules" task=":dxp:apps:portal:portal-dao-db:jar" />
 
 				<path id="db.builder.classpath">
 					<fileset

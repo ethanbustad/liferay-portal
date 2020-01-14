@@ -5,17 +5,10 @@
 		"metal-soy": "^2.13.2",
 		"metal-state": "^2.13.2"
 	},
-	"devDependencies": {
-		"check-source-formatting": "^2.0.6",
-		"liferay-npm-scripts": "7.1.0",
-		"metal-tools-soy": "^4.3.2"
-	},
 	"name": "commerce-product-content-web",
 	"scripts": {
 		"build": "liferay-npm-scripts build",
-		"checkFormat": "npm run csf",
-		"csf": "csf src/**/*.js src/**/*.scss src/**/*.soy",
-		"format": "npm run csf -- -i"
+		"checkFormat": "liferay-npm-scripts check"
 	},
-	"version": "1.0.22"
+	"version": "1.0.25"
 }

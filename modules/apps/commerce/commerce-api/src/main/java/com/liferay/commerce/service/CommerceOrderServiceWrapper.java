@@ -245,20 +245,6 @@ public class CommerceOrderServiceWrapper
 	@Override
 	public java.util.List<com.liferay.commerce.model.CommerceOrder>
 			getPendingCommerceOrders(
-				long companyId, long groupId, int start, int end)
-		throws com.liferay.portal.kernel.exception.PortalException {
-
-		return _commerceOrderService.getPendingCommerceOrders(
-			companyId, groupId, start, end);
-	}
-
-	/**
-	 * @deprecated As of Mueller (7.2.x)
-	 */
-	@Deprecated
-	@Override
-	public java.util.List<com.liferay.commerce.model.CommerceOrder>
-			getPendingCommerceOrders(
 				long groupId, long commerceAccountId, String keywords,
 				int start, int end)
 		throws com.liferay.portal.kernel.exception.PortalException {
@@ -275,10 +261,6 @@ public class CommerceOrderServiceWrapper
 			companyId, groupId);
 	}
 
-	/**
-	 * @deprecated As of Mueller (7.2.x)
-	 */
-	@Deprecated
 	@Override
 	public int getPendingCommerceOrdersCount(
 			long groupId, long commerceAccountId, String keywords)
@@ -298,10 +280,6 @@ public class CommerceOrderServiceWrapper
 			companyId, groupId, start, end);
 	}
 
-	/**
-	 * @deprecated As of Mueller (7.2.x)
-	 */
-	@Deprecated
 	@Override
 	public java.util.List<com.liferay.commerce.model.CommerceOrder>
 			getPlacedCommerceOrders(
@@ -321,10 +299,6 @@ public class CommerceOrderServiceWrapper
 			companyId, groupId);
 	}
 
-	/**
-	 * @deprecated As of Mueller (7.2.x)
-	 */
-	@Deprecated
 	@Override
 	public int getPlacedCommerceOrdersCount(
 			long groupId, long commerceAccountId, String keywords)
@@ -332,6 +306,46 @@ public class CommerceOrderServiceWrapper
 
 		return _commerceOrderService.getPlacedCommerceOrdersCount(
 			groupId, commerceAccountId, keywords);
+	}
+
+	@Override
+	public java.util.List<com.liferay.commerce.model.CommerceOrder>
+			getUserPendingCommerceOrders(
+				long companyId, long groupId, String keywords, int start,
+				int end)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _commerceOrderService.getUserPendingCommerceOrders(
+			companyId, groupId, keywords, start, end);
+	}
+
+	@Override
+	public long getUserPendingCommerceOrdersCount(
+			long companyId, long groupId, String keywords)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _commerceOrderService.getUserPendingCommerceOrdersCount(
+			companyId, groupId, keywords);
+	}
+
+	@Override
+	public java.util.List<com.liferay.commerce.model.CommerceOrder>
+			getUserPlacedCommerceOrders(
+				long companyId, long groupId, String keywords, int start,
+				int end)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _commerceOrderService.getUserPlacedCommerceOrders(
+			companyId, groupId, keywords, start, end);
+	}
+
+	@Override
+	public long getUserPlacedCommerceOrdersCount(
+			long companyId, long groupId, String keywords)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _commerceOrderService.getUserPlacedCommerceOrdersCount(
+			companyId, groupId, keywords);
 	}
 
 	@Override
@@ -485,6 +499,18 @@ public class CommerceOrderServiceWrapper
 	}
 
 	@Override
+	public com.liferay.commerce.model.CommerceOrder updateOrderDate(
+			long commerceOrderId, int orderDateMonth, int orderDateDay,
+			int orderDateYear, int orderDateHour, int orderDateMinute,
+			com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _commerceOrderService.updateOrderDate(
+			commerceOrderId, orderDateMonth, orderDateDay, orderDateYear,
+			orderDateHour, orderDateMinute, serviceContext);
+	}
+
+	@Override
 	public com.liferay.commerce.model.CommerceOrder updateOrderStatus(
 			long commerceOrderId, int orderStatus)
 		throws com.liferay.portal.kernel.exception.PortalException {
@@ -510,6 +536,15 @@ public class CommerceOrderServiceWrapper
 
 		return _commerceOrderService.updatePaymentStatusAndTransactionId(
 			commerceOrderId, paymentStatus, transactionId);
+	}
+
+	@Override
+	public com.liferay.commerce.model.CommerceOrder updatePrintedNote(
+			long commerceOrderId, String printedNote)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _commerceOrderService.updatePrintedNote(
+			commerceOrderId, printedNote);
 	}
 
 	@Override

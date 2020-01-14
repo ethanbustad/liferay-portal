@@ -148,7 +148,6 @@ public class CommercePriceListLocalServiceImpl
 		CommercePriceList commercePriceList =
 			commercePriceListPersistence.create(commercePriceListId);
 
-		commercePriceList.setUuid(serviceContext.getUuid());
 		commercePriceList.setGroupId(groupId);
 		commercePriceList.setCompanyId(user.getCompanyId());
 		commercePriceList.setUserId(user.getUserId());
@@ -605,8 +604,6 @@ public class CommercePriceListLocalServiceImpl
 
 		Date modifiedDate = serviceContext.getModifiedDate(now);
 
-		commercePriceList.setModifiedDate(modifiedDate);
-
 		if (status == WorkflowConstants.STATUS_APPROVED) {
 			Date expirationDate = commercePriceList.getExpirationDate();
 
@@ -657,7 +654,6 @@ public class CommercePriceListLocalServiceImpl
 	 *         matching reference code one will be updated
 	 * @param  neverExpire
 	 * @param  serviceContext
-	 * @return
 	 * @throws PortalException
 	 */
 	@Indexable(type = IndexableType.REINDEX)
@@ -793,8 +789,8 @@ public class CommercePriceListLocalServiceImpl
 
 		attributes.put(Field.ENTRY_CLASS_PK, keywords);
 		attributes.put(Field.NAME, keywords);
-		attributes.put(Field.USER_NAME, keywords);
 		attributes.put(Field.STATUS, status);
+		attributes.put(Field.USER_NAME, keywords);
 		attributes.put("params", params);
 
 		searchContext.setAttributes(attributes);

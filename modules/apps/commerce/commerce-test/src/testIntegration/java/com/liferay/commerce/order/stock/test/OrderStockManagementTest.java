@@ -16,6 +16,7 @@ package com.liferay.commerce.order.stock.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.commerce.currency.model.CommerceCurrency;
+import com.liferay.commerce.currency.service.CommerceCurrencyLocalService;
 import com.liferay.commerce.currency.test.util.CommerceCurrencyTestUtil;
 import com.liferay.commerce.exception.CommerceOrderValidatorException;
 import com.liferay.commerce.inventory.model.CommerceInventoryWarehouse;
@@ -25,26 +26,30 @@ import com.liferay.commerce.model.CommerceOrder;
 import com.liferay.commerce.model.CommerceOrderItem;
 import com.liferay.commerce.product.model.CPDefinition;
 import com.liferay.commerce.product.model.CPInstance;
+import com.liferay.commerce.product.model.CommerceChannel;
+import com.liferay.commerce.product.service.CommerceChannelLocalService;
 import com.liferay.commerce.product.test.util.CPTestUtil;
+import com.liferay.commerce.service.CommerceOrderLocalService;
 import com.liferay.commerce.shipment.test.util.CommerceShipmentTestUtil;
 import com.liferay.commerce.test.util.CommerceInventoryTestUtil;
 import com.liferay.commerce.test.util.CommerceTestUtil;
-import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
-import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
-import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.test.util.UserTestUtil;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerTestRule;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.frutilla.FrutillaRule;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.ClassRule;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -52,7 +57,6 @@ import org.junit.runner.RunWith;
 /**
  * @author Luca Pellizzon
  */
-@Ignore
 @RunWith(Arquillian.class)
 public class OrderStockManagementTest {
 
@@ -65,8 +69,24 @@ public class OrderStockManagementTest {
 
 	@Before
 	public void setUp() throws Exception {
-		_group = GroupTestUtil.addGroup();
-		_user = UserTestUtil.addUser(_group.getGroupId());
+		_user = UserTestUtil.addUser();
+		_commerceOrders = new ArrayList<>();
+
+		_commerceCurrency = CommerceCurrencyTestUtil.addCommerceCurrency();
+
+		_commerceChannel = CommerceTestUtil.addCommerceChannel(
+			_commerceCurrency.getCode());
+	}
+
+	@After
+	public void tearDown() throws Exception {
+		for (CommerceOrder commerceOrder : _commerceOrders) {
+			_commerceOrderLocalService.deleteCommerceOrder(commerceOrder);
+		}
+
+		_commerceCurrencyLocalService.deleteCommerceCurrency(_commerceCurrency);
+		_commerceChannelLocalService.deleteCommerceChannel(_commerceChannel);
+		_userLocalService.deleteUser(_user);
 	}
 
 	@Test
@@ -82,13 +102,13 @@ public class OrderStockManagementTest {
 			"The product will be added even if no stock is available"
 		);
 
-		CommerceCurrency commerceCurrency =
-			CommerceCurrencyTestUtil.addCommerceCurrency(_group.getGroupId());
-
 		CommerceOrder commerceOrder = CommerceTestUtil.addB2CCommerceOrder(
-			_group.getGroupId(), 0, commerceCurrency.getCommerceCurrencyId());
+			_user.getUserId(), _commerceChannel.getSiteGroupId(),
+			_commerceCurrency);
 
-		CPInstance cpInstance = CPTestUtil.addCPInstance(_group.getGroupId());
+		_commerceOrders.add(commerceOrder);
+
+		CPInstance cpInstance = CPTestUtil.addCPInstance();
 
 		CPDefinition cpDefinition = cpInstance.getCPDefinition();
 
@@ -121,17 +141,20 @@ public class OrderStockManagementTest {
 			"The product's stock availability is updated"
 		);
 
-		CommerceCurrency commerceCurrency =
-			CommerceCurrencyTestUtil.addCommerceCurrency(_group.getGroupId());
-
 		CommerceOrder commerceOrder = CommerceTestUtil.addB2CCommerceOrder(
-			_group.getGroupId(), 0, commerceCurrency.getCommerceCurrencyId());
+			_user.getUserId(), _commerceChannel.getSiteGroupId(),
+			_commerceCurrency);
 
-		CPInstance cpInstance = CPTestUtil.addCPInstance(_group.getGroupId());
+		_commerceOrders.add(commerceOrder);
+
+		CPInstance cpInstance = CPTestUtil.addCPInstance();
 
 		CommerceInventoryWarehouse commerceInventoryWarehouse =
-			CommerceInventoryTestUtil.addCommerceInventoryWarehouse(
-				_group.getGroupId());
+			CommerceInventoryTestUtil.addCommerceInventoryWarehouse();
+
+		CommerceTestUtil.addWarehouseCommerceChannelRel(
+			commerceInventoryWarehouse.getCommerceInventoryWarehouseId(),
+			_commerceChannel.getCommerceChannelId());
 
 		int quantity = 10;
 		int orderedQuantity = 4;
@@ -161,7 +184,7 @@ public class OrderStockManagementTest {
 			commerceInventoryWarehouseItem.getQuantity());
 
 		CommerceShipmentTestUtil.createOrderShipment(
-			_group.getGroupId(), commerceOrder.getCommerceOrderId(),
+			commerceOrder.getCommerceOrderId(),
 			commerceInventoryWarehouse.getCommerceInventoryWarehouseId());
 
 		commerceInventoryWarehouseItem =
@@ -188,17 +211,20 @@ public class OrderStockManagementTest {
 			"The product will be successfully added to the order"
 		);
 
-		CommerceCurrency commerceCurrency =
-			CommerceCurrencyTestUtil.addCommerceCurrency(_group.getGroupId());
-
 		CommerceOrder commerceOrder = CommerceTestUtil.addB2CCommerceOrder(
-			_group.getGroupId(), 0, commerceCurrency.getCommerceCurrencyId());
+			_user.getUserId(), _commerceChannel.getSiteGroupId(),
+			_commerceCurrency);
 
-		CPInstance cpInstance = CPTestUtil.addCPInstance(_group.getGroupId());
+		_commerceOrders.add(commerceOrder);
+
+		CPInstance cpInstance = CPTestUtil.addCPInstance();
 
 		CommerceInventoryWarehouse commerceInventoryWarehouse =
-			CommerceInventoryTestUtil.addCommerceInventoryWarehouse(
-				_group.getGroupId());
+			CommerceInventoryTestUtil.addCommerceInventoryWarehouse();
+
+		CommerceTestUtil.addWarehouseCommerceChannelRel(
+			commerceInventoryWarehouse.getCommerceInventoryWarehouseId(),
+			_commerceChannel.getCommerceChannelId());
 
 		CommerceInventoryTestUtil.addCommerceInventoryWarehouseItem(
 			_user.getUserId(), commerceInventoryWarehouse, cpInstance.getSku(),
@@ -228,13 +254,13 @@ public class OrderStockManagementTest {
 			"The action will fail due to stock unavailability"
 		);
 
-		CommerceCurrency commerceCurrency =
-			CommerceCurrencyTestUtil.addCommerceCurrency(_group.getGroupId());
-
 		CommerceOrder commerceOrder = CommerceTestUtil.addB2CCommerceOrder(
-			_group.getGroupId(), 0, commerceCurrency.getCommerceCurrencyId());
+			_user.getUserId(), _commerceChannel.getSiteGroupId(),
+			_commerceCurrency);
 
-		CPInstance cpInstance = CPTestUtil.addCPInstance(_group.getGroupId());
+		_commerceOrders.add(commerceOrder);
+
+		CPInstance cpInstance = CPTestUtil.addCPInstance();
 
 		CommerceTestUtil.addCommerceOrderItem(
 			commerceOrder.getCommerceOrderId(), cpInstance.getCPInstanceId(),
@@ -257,17 +283,20 @@ public class OrderStockManagementTest {
 			"The action will fail due to stock unavailability"
 		);
 
-		CommerceCurrency commerceCurrency =
-			CommerceCurrencyTestUtil.addCommerceCurrency(_group.getGroupId());
-
 		CommerceOrder commerceOrder = CommerceTestUtil.addB2CCommerceOrder(
-			_group.getGroupId(), 0, commerceCurrency.getCommerceCurrencyId());
+			_user.getUserId(), _commerceChannel.getSiteGroupId(),
+			_commerceCurrency);
 
-		CPInstance cpInstance = CPTestUtil.addCPInstance(_group.getGroupId());
+		_commerceOrders.add(commerceOrder);
+
+		CPInstance cpInstance = CPTestUtil.addCPInstance();
 
 		CommerceInventoryWarehouse commerceInventoryWarehouse =
-			CommerceInventoryTestUtil.addCommerceInventoryWarehouse(
-				_group.getGroupId());
+			CommerceInventoryTestUtil.addCommerceInventoryWarehouse();
+
+		CommerceTestUtil.addWarehouseCommerceChannelRel(
+			commerceInventoryWarehouse.getCommerceInventoryWarehouseId(),
+			_commerceChannel.getCommerceChannelId());
 
 		CommerceInventoryTestUtil.addCommerceInventoryWarehouseItem(
 			_user.getUserId(), commerceInventoryWarehouse, cpInstance.getSku(),
@@ -294,20 +323,26 @@ public class OrderStockManagementTest {
 			"The action will fail due to stock unavailability"
 		);
 
-		CommerceCurrency commerceCurrency =
-			CommerceCurrencyTestUtil.addCommerceCurrency(_group.getGroupId());
-
 		CommerceOrder commerceOrder1 = CommerceTestUtil.addB2CCommerceOrder(
-			_group.getGroupId(), 0, commerceCurrency.getCommerceCurrencyId());
+			_user.getUserId(), _commerceChannel.getSiteGroupId(),
+			_commerceCurrency);
+
+		_commerceOrders.add(commerceOrder1);
 
 		CommerceOrder commerceOrder2 = CommerceTestUtil.addB2CCommerceOrder(
-			_group.getGroupId(), 0, commerceCurrency.getCommerceCurrencyId());
+			_user.getUserId(), commerceOrder1.getCommerceAccountId(),
+			_commerceChannel.getSiteGroupId(), _commerceCurrency);
 
-		CPInstance cpInstance = CPTestUtil.addCPInstance(_group.getGroupId());
+		_commerceOrders.add(commerceOrder2);
+
+		CPInstance cpInstance = CPTestUtil.addCPInstance();
 
 		CommerceInventoryWarehouse commerceInventoryWarehouse =
-			CommerceInventoryTestUtil.addCommerceInventoryWarehouse(
-				_group.getGroupId());
+			CommerceInventoryTestUtil.addCommerceInventoryWarehouse();
+
+		CommerceTestUtil.addWarehouseCommerceChannelRel(
+			commerceInventoryWarehouse.getCommerceInventoryWarehouseId(),
+			_commerceChannel.getCommerceChannelId());
 
 		CommerceInventoryTestUtil.addCommerceInventoryWarehouseItem(
 			_user.getUserId(), commerceInventoryWarehouse, cpInstance.getSku(),
@@ -317,6 +352,10 @@ public class OrderStockManagementTest {
 			commerceOrder1.getCommerceOrderId(), cpInstance.getCPInstanceId(),
 			4);
 
+		CommerceShipmentTestUtil.createOrderShipment(
+			commerceOrder1.getCommerceOrderId(),
+			commerceInventoryWarehouse.getCommerceInventoryWarehouseId());
+
 		CommerceTestUtil.addCommerceOrderItem(
 			commerceOrder2.getCommerceOrderId(), cpInstance.getCPInstanceId(),
 			8);
@@ -325,14 +364,27 @@ public class OrderStockManagementTest {
 	@Rule
 	public FrutillaRule frutillaRule = new FrutillaRule();
 
+	private CommerceChannel _commerceChannel;
+
+	@Inject
+	private CommerceChannelLocalService _commerceChannelLocalService;
+
+	private CommerceCurrency _commerceCurrency;
+
+	@Inject
+	private CommerceCurrencyLocalService _commerceCurrencyLocalService;
+
 	@Inject
 	private CommerceInventoryWarehouseItemLocalService
 		_commerceInventoryWarehouseItemLocalService;
 
-	@DeleteAfterTestRun
-	private Group _group;
+	@Inject
+	private CommerceOrderLocalService _commerceOrderLocalService;
 
-	@DeleteAfterTestRun
+	private List<CommerceOrder> _commerceOrders;
 	private User _user;
+
+	@Inject
+	private UserLocalService _userLocalService;
 
 }

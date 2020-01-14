@@ -90,19 +90,12 @@ public class CommerceAccountOrganizationClayTable
 				themeDisplay.getPermissionChecker(), commerceAccountId,
 				CommerceAccountActionKeys.MANAGE_ORGANIZATIONS)) {
 
-			StringBundler sb = new StringBundler(7);
-
-			sb.append("javascript:deleteCommerceAccountOrganization");
-			sb.append(StringPool.OPEN_PARENTHESIS);
-			sb.append(StringPool.APOSTROPHE);
-			sb.append(organization.getOrganizationId());
-			sb.append(StringPool.APOSTROPHE);
-			sb.append(StringPool.CLOSE_PARENTHESIS);
-			sb.append(StringPool.SEMICOLON);
-
 			ClayTableAction deleteClayTableAction = new ClayTableAction(
-				sb.toString(), StringPool.BLANK,
-				LanguageUtil.get(httpServletRequest, "delete"), false, false);
+				StringPool.BLANK, StringPool.POUND, StringPool.BLANK,
+				LanguageUtil.get(httpServletRequest, "delete"),
+				"deleteCommerceAccountOrganization('" +
+					organization.getOrganizationId() + "')",
+				false, false);
 
 			clayTableActions.add(deleteClayTableAction);
 		}
@@ -114,11 +107,11 @@ public class CommerceAccountOrganizationClayTable
 	public int countItems(HttpServletRequest httpServletRequest, Filter filter)
 		throws PortalException {
 
-		AccountFilterImpl accountFilter = (AccountFilterImpl)filter;
+		AccountFilterImpl accountFilterImpl = (AccountFilterImpl)filter;
 
 		return _commerceAccountOrganizationRelService.
 			getCommerceAccountOrganizationRelsCount(
-				accountFilter.getAccountId());
+				accountFilterImpl.getAccountId());
 	}
 
 	@Override
@@ -143,15 +136,15 @@ public class CommerceAccountOrganizationClayTable
 			Pagination pagination, Sort sort)
 		throws PortalException {
 
-		AccountFilterImpl accountFilter = (AccountFilterImpl)filter;
+		AccountFilterImpl accountFilterImpl = (AccountFilterImpl)filter;
 
 		List<Organization> organizations = new ArrayList<>();
 
 		List<CommerceAccountOrganizationRel> commerceAccountOrganizationRels =
 			_commerceAccountOrganizationRelService.
 				getCommerceAccountOrganizationRels(
-					accountFilter.getAccountId(), pagination.getStartPosition(),
-					pagination.getEndPosition());
+					accountFilterImpl.getAccountId(),
+					pagination.getStartPosition(), pagination.getEndPosition());
 
 		for (CommerceAccountOrganizationRel commerceAccountOrganizationRel :
 				commerceAccountOrganizationRels) {

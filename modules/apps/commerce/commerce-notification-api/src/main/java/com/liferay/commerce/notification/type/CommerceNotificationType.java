@@ -16,10 +16,7 @@ package com.liferay.commerce.notification.type;
 
 import aQute.bnd.annotation.ProviderType;
 
-import com.liferay.portal.kernel.exception.PortalException;
-
 import java.util.Locale;
-import java.util.Map;
 
 /**
  * @author Alessio Antonio Rendina
@@ -27,10 +24,9 @@ import java.util.Map;
 @ProviderType
 public interface CommerceNotificationType {
 
-	public Map<String, String> getDefinitionTerms(Locale locale);
+	public String getClassName(Object object);
 
-	public String getFilledTerm(String term, Object object, Locale locale)
-		throws PortalException;
+	public long getClassPK(Object object);
 
 	public String getKey();
 

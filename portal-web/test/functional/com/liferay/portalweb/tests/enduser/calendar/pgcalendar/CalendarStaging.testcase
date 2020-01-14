@@ -137,6 +137,8 @@ definition {
 
 		CalendarScheduler.gotoAddViaDayView();
 
+		CalendarNavigator.gotoAddEvent();
+
 		CalendarEvent.viewUnavailableCalendarsNotPresent(unavailableCalendarList = "Site Name");
 
 		CalendarEvent.viewAvailableCalendars(availableCalendarList = "Test Test");

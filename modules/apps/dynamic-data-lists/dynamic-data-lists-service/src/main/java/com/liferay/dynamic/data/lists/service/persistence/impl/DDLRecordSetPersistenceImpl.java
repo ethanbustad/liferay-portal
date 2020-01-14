@@ -3185,6 +3185,18 @@ public class DDLRecordSetPersistenceImpl
 		}
 	}
 
+	public void clearCache(Set<Serializable> primaryKeys) {
+		finderCache.clearCache(FINDER_CLASS_NAME_ENTITY);
+		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
+		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
+
+		for (Serializable primaryKey : primaryKeys) {
+			entityCache.removeResult(
+				DDLRecordSetModelImpl.ENTITY_CACHE_ENABLED,
+				DDLRecordSetImpl.class, primaryKey);
+		}
+	}
+
 	protected void cacheUniqueFindersCache(
 		DDLRecordSetModelImpl ddlRecordSetModelImpl) {
 

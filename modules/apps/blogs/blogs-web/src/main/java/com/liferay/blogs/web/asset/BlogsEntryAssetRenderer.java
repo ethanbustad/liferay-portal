@@ -22,9 +22,13 @@ import com.liferay.blogs.model.BlogsEntry;
 import com.liferay.blogs.web.internal.security.permission.resource.BlogsEntryPermission;
 import com.liferay.blogs.web.internal.util.BlogsEntryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
+import com.liferay.portal.kernel.portlet.PortletLayoutFinder;
+import com.liferay.portal.kernel.portlet.PortletLayoutFinderRegistryUtil;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
@@ -236,6 +240,16 @@ public class BlogsEntryAssetRenderer
 		LiferayPortletResponse liferayPortletResponse,
 		String noSuchEntryRedirect) {
 
+		ThemeDisplay themeDisplay =
+			(ThemeDisplay)liferayPortletRequest.getAttribute(
+				WebKeys.THEME_DISPLAY);
+
+		long groupId = _entry.getGroupId();
+
+		if (!_hasViewInContextGroupLayout(groupId, themeDisplay)) {
+			return null;
+		}
+
 		return getURLViewInContext(
 			liferayPortletRequest, noSuchEntryRedirect, "/blogs/find_entry",
 			"entryId", _entry.getEntryId());
@@ -294,6 +308,35 @@ public class BlogsEntryAssetRenderer
 	public boolean isPrintable() {
 		return true;
 	}
+
+	private boolean _hasViewInContextGroupLayout(
+		long groupId, ThemeDisplay themeDisplay) {
+
+		try {
+			PortletLayoutFinder portletLayoutFinder =
+				PortletLayoutFinderRegistryUtil.getPortletLayoutFinder(
+					BlogsEntry.class.getName());
+
+			PortletLayoutFinder.Result result = portletLayoutFinder.find(
+				themeDisplay, groupId);
+
+			if (result == null) {
+				return false;
+			}
+
+			return true;
+		}
+		catch (PortalException pe) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(pe, pe);
+			}
+
+			return false;
+		}
+	}
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		BlogsEntryAssetRenderer.class);
 
 	private final BlogsEntry _entry;
 	private final ResourceBundleLoader _resourceBundleLoader;

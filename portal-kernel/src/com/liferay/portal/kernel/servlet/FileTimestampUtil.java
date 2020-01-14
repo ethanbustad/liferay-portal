@@ -100,7 +100,7 @@ public class FileTimestampUtil {
 
 	/**
 	 * @deprecated As of Mueller (7.2.x), replaced by {@link
-	 *             #reset(ServletContext)
+	 *             #reset(ServletContext)}
 	 */
 	@Deprecated
 	public static void reset() {

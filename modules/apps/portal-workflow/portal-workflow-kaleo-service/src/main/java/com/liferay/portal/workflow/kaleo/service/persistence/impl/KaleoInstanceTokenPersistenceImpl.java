@@ -2949,6 +2949,18 @@ public class KaleoInstanceTokenPersistenceImpl
 		}
 	}
 
+	public void clearCache(Set<Serializable> primaryKeys) {
+		finderCache.clearCache(FINDER_CLASS_NAME_ENTITY);
+		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
+		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
+
+		for (Serializable primaryKey : primaryKeys) {
+			entityCache.removeResult(
+				KaleoInstanceTokenModelImpl.ENTITY_CACHE_ENABLED,
+				KaleoInstanceTokenImpl.class, primaryKey);
+		}
+	}
+
 	/**
 	 * Creates a new kaleo instance token with the primary key. Does not add the kaleo instance token to the database.
 	 *

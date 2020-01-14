@@ -1705,6 +1705,18 @@ public class UserTrackerPersistenceImpl
 		}
 	}
 
+	public void clearCache(Set<Serializable> primaryKeys) {
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
+
+		for (Serializable primaryKey : primaryKeys) {
+			EntityCacheUtil.removeResult(
+				UserTrackerModelImpl.ENTITY_CACHE_ENABLED,
+				UserTrackerImpl.class, primaryKey);
+		}
+	}
+
 	/**
 	 * Creates a new user tracker with the primary key. Does not add the user tracker to the database.
 	 *

@@ -59,104 +59,6 @@ public abstract class BaseAccountMemberResourceImpl
 	implements AccountMemberResource {
 
 	@Override
-	@GET
-	@Parameters(
-		value = {
-			@Parameter(in = ParameterIn.PATH, name = "id"),
-			@Parameter(in = ParameterIn.QUERY, name = "page"),
-			@Parameter(in = ParameterIn.QUERY, name = "pageSize")
-		}
-	)
-	@Path("/accounts/{id}/accountMembers/")
-	@Produces({"application/json", "application/xml"})
-	@Tags(value = {@Tag(name = "AccountMember")})
-	public Page<AccountMember> getAccountIdAccountMembersPage(
-			@NotNull @Parameter(hidden = true) @PathParam("id") Long id,
-			@Context Pagination pagination)
-		throws Exception {
-
-		return Page.of(Collections.emptyList());
-	}
-
-	@Override
-	@Consumes({"application/json", "application/xml"})
-	@POST
-	@Parameters(value = {@Parameter(in = ParameterIn.PATH, name = "id")})
-	@Path("/accounts/{id}/accountMembers/")
-	@Produces({"application/json", "application/xml"})
-	@Tags(value = {@Tag(name = "AccountMember")})
-	public AccountMember postAccountIdAccountMember(
-			@NotNull @Parameter(hidden = true) @PathParam("id") Long id,
-			AccountMember accountMember)
-		throws Exception {
-
-		return new AccountMember();
-	}
-
-	@Override
-	@DELETE
-	@Parameters(
-		value = {
-			@Parameter(in = ParameterIn.PATH, name = "id"),
-			@Parameter(in = ParameterIn.PATH, name = "userId")
-		}
-	)
-	@Path("/accounts/{id}/accountMembers/{userId}")
-	@Produces({"application/json", "application/xml"})
-	@Tags(value = {@Tag(name = "AccountMember")})
-	public Response deleteAccountIdAccountMember(
-			@NotNull @Parameter(hidden = true) @PathParam("id") Long id,
-			@NotNull @Parameter(hidden = true) @PathParam("userId") Long userId)
-		throws Exception {
-
-		Response.ResponseBuilder responseBuilder = Response.ok();
-
-		return responseBuilder.build();
-	}
-
-	@Override
-	@GET
-	@Parameters(
-		value = {
-			@Parameter(in = ParameterIn.PATH, name = "id"),
-			@Parameter(in = ParameterIn.PATH, name = "userId")
-		}
-	)
-	@Path("/accounts/{id}/accountMembers/{userId}")
-	@Produces({"application/json", "application/xml"})
-	@Tags(value = {@Tag(name = "AccountMember")})
-	public AccountMember getAccountIdAccountMember(
-			@NotNull @Parameter(hidden = true) @PathParam("id") Long id,
-			@NotNull @Parameter(hidden = true) @PathParam("userId") Long userId)
-		throws Exception {
-
-		return new AccountMember();
-	}
-
-	@Override
-	@Consumes({"application/json", "application/xml"})
-	@PATCH
-	@Parameters(
-		value = {
-			@Parameter(in = ParameterIn.PATH, name = "id"),
-			@Parameter(in = ParameterIn.PATH, name = "userId")
-		}
-	)
-	@Path("/accounts/{id}/accountMembers/{userId}")
-	@Produces({"application/json", "application/xml"})
-	@Tags(value = {@Tag(name = "AccountMember")})
-	public Response patchAccountIdAccountMember(
-			@NotNull @Parameter(hidden = true) @PathParam("id") Long id,
-			@NotNull @Parameter(hidden = true) @PathParam("userId") Long userId,
-			AccountMember accountMember)
-		throws Exception {
-
-		Response.ResponseBuilder responseBuilder = Response.ok();
-
-		return responseBuilder.build();
-	}
-
-	@Override
 	@DELETE
 	@Parameters(
 		value = {
@@ -238,7 +140,7 @@ public abstract class BaseAccountMemberResourceImpl
 		}
 	)
 	@Path(
-		"/accounts/by-externalReferenceCode/{externalReferenceCode}/accountMembers/"
+		"/accounts/by-externalReferenceCode/{externalReferenceCode}/accountMembers"
 	)
 	@Produces({"application/json", "application/xml"})
 	@Tags(value = {@Tag(name = "AccountMember")})
@@ -262,13 +164,111 @@ public abstract class BaseAccountMemberResourceImpl
 		}
 	)
 	@Path(
-		"/accounts/by-externalReferenceCode/{externalReferenceCode}/accountMembers/"
+		"/accounts/by-externalReferenceCode/{externalReferenceCode}/accountMembers"
 	)
 	@Produces({"application/json", "application/xml"})
 	@Tags(value = {@Tag(name = "AccountMember")})
 	public AccountMember postAccountByExternalReferenceCodeAccountMember(
 			@NotNull @Parameter(hidden = true)
 			@PathParam("externalReferenceCode") String externalReferenceCode,
+			AccountMember accountMember)
+		throws Exception {
+
+		return new AccountMember();
+	}
+
+	@Override
+	@DELETE
+	@Parameters(
+		value = {
+			@Parameter(in = ParameterIn.PATH, name = "id"),
+			@Parameter(in = ParameterIn.PATH, name = "userId")
+		}
+	)
+	@Path("/accounts/{id}/accountMembers/{userId}")
+	@Produces({"application/json", "application/xml"})
+	@Tags(value = {@Tag(name = "AccountMember")})
+	public Response deleteAccountIdAccountMember(
+			@NotNull @Parameter(hidden = true) @PathParam("id") Long id,
+			@NotNull @Parameter(hidden = true) @PathParam("userId") Long userId)
+		throws Exception {
+
+		Response.ResponseBuilder responseBuilder = Response.ok();
+
+		return responseBuilder.build();
+	}
+
+	@Override
+	@GET
+	@Parameters(
+		value = {
+			@Parameter(in = ParameterIn.PATH, name = "id"),
+			@Parameter(in = ParameterIn.PATH, name = "userId")
+		}
+	)
+	@Path("/accounts/{id}/accountMembers/{userId}")
+	@Produces({"application/json", "application/xml"})
+	@Tags(value = {@Tag(name = "AccountMember")})
+	public AccountMember getAccountIdAccountMember(
+			@NotNull @Parameter(hidden = true) @PathParam("id") Long id,
+			@NotNull @Parameter(hidden = true) @PathParam("userId") Long userId)
+		throws Exception {
+
+		return new AccountMember();
+	}
+
+	@Override
+	@Consumes({"application/json", "application/xml"})
+	@PATCH
+	@Parameters(
+		value = {
+			@Parameter(in = ParameterIn.PATH, name = "id"),
+			@Parameter(in = ParameterIn.PATH, name = "userId")
+		}
+	)
+	@Path("/accounts/{id}/accountMembers/{userId}")
+	@Produces({"application/json", "application/xml"})
+	@Tags(value = {@Tag(name = "AccountMember")})
+	public Response patchAccountIdAccountMember(
+			@NotNull @Parameter(hidden = true) @PathParam("id") Long id,
+			@NotNull @Parameter(hidden = true) @PathParam("userId") Long userId,
+			AccountMember accountMember)
+		throws Exception {
+
+		Response.ResponseBuilder responseBuilder = Response.ok();
+
+		return responseBuilder.build();
+	}
+
+	@Override
+	@GET
+	@Parameters(
+		value = {
+			@Parameter(in = ParameterIn.PATH, name = "id"),
+			@Parameter(in = ParameterIn.QUERY, name = "page"),
+			@Parameter(in = ParameterIn.QUERY, name = "pageSize")
+		}
+	)
+	@Path("/accounts/{id}/accountMembers")
+	@Produces({"application/json", "application/xml"})
+	@Tags(value = {@Tag(name = "AccountMember")})
+	public Page<AccountMember> getAccountIdAccountMembersPage(
+			@NotNull @Parameter(hidden = true) @PathParam("id") Long id,
+			@Context Pagination pagination)
+		throws Exception {
+
+		return Page.of(Collections.emptyList());
+	}
+
+	@Override
+	@Consumes({"application/json", "application/xml"})
+	@POST
+	@Parameters(value = {@Parameter(in = ParameterIn.PATH, name = "id")})
+	@Path("/accounts/{id}/accountMembers")
+	@Produces({"application/json", "application/xml"})
+	@Tags(value = {@Tag(name = "AccountMember")})
+	public AccountMember postAccountIdAccountMember(
+			@NotNull @Parameter(hidden = true) @PathParam("id") Long id,
 			AccountMember accountMember)
 		throws Exception {
 

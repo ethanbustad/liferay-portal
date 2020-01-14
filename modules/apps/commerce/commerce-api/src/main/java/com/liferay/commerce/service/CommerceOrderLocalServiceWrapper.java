@@ -228,7 +228,7 @@ public class CommerceOrderLocalServiceWrapper
 	 * Performs a dynamic query on the database and returns a range of the matching rows.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>com.liferay.commerce.model.impl.CommerceOrderModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.model.impl.CommerceOrderModelImpl</code>.
 	 * </p>
 	 *
 	 * @param dynamicQuery the dynamic query
@@ -249,7 +249,7 @@ public class CommerceOrderLocalServiceWrapper
 	 * Performs a dynamic query on the database and returns an ordered range of the matching rows.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>com.liferay.commerce.model.impl.CommerceOrderModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.model.impl.CommerceOrderModelImpl</code>.
 	 * </p>
 	 *
 	 * @param dynamicQuery the dynamic query
@@ -413,7 +413,7 @@ public class CommerceOrderLocalServiceWrapper
 	 * Returns a range of all the commerce orders.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>com.liferay.commerce.model.impl.CommerceOrderModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.model.impl.CommerceOrderModelImpl</code>.
 	 * </p>
 	 *
 	 * @param start the lower bound of the range of commerce orders
@@ -470,13 +470,21 @@ public class CommerceOrderLocalServiceWrapper
 	public java.util.List<com.liferay.commerce.model.CommerceOrder>
 			getCommerceOrders(
 				long companyId, long groupId, long[] commerceAccountIds,
-				int[] orderStatuses, boolean excludeOrderStatus, int start,
-				int end)
+				String keywords, int[] orderStatuses,
+				boolean excludeOrderStatus, int start, int end)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _commerceOrderLocalService.getCommerceOrders(
-			companyId, groupId, commerceAccountIds, orderStatuses,
+			companyId, groupId, commerceAccountIds, keywords, orderStatuses,
 			excludeOrderStatus, start, end);
+	}
+
+	@Override
+	public java.util.List<com.liferay.commerce.model.CommerceOrder>
+		getCommerceOrders(long groupId, String commercePaymentMethodKey) {
+
+		return _commerceOrderLocalService.getCommerceOrders(
+			groupId, commercePaymentMethodKey);
 	}
 
 	@Override
@@ -566,11 +574,11 @@ public class CommerceOrderLocalServiceWrapper
 	@Override
 	public long getCommerceOrdersCount(
 			long companyId, long groupId, long[] commerceAccountIds,
-			int[] orderStatuses, boolean excludeOrderStatus)
+			String keywords, int[] orderStatuses, boolean excludeOrderStatus)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _commerceOrderLocalService.getCommerceOrdersCount(
-			companyId, groupId, commerceAccountIds, orderStatuses,
+			companyId, groupId, commerceAccountIds, keywords, orderStatuses,
 			excludeOrderStatus);
 	}
 
@@ -867,6 +875,18 @@ public class CommerceOrderLocalServiceWrapper
 	}
 
 	@Override
+	public com.liferay.commerce.model.CommerceOrder updateOrderDate(
+			long commerceOrderId, int orderDateMonth, int orderDateDay,
+			int orderDateYear, int orderDateHour, int orderDateMinute,
+			com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _commerceOrderLocalService.updateOrderDate(
+			commerceOrderId, orderDateMonth, orderDateDay, orderDateYear,
+			orderDateHour, orderDateMinute, serviceContext);
+	}
+
+	@Override
 	public com.liferay.commerce.model.CommerceOrder updateOrderStatus(
 			long commerceOrderId, int orderStatus)
 		throws com.liferay.portal.kernel.exception.PortalException {
@@ -893,6 +913,15 @@ public class CommerceOrderLocalServiceWrapper
 
 		return _commerceOrderLocalService.updatePaymentStatusAndTransactionId(
 			userId, commerceOrderId, paymentStatus, transactionId);
+	}
+
+	@Override
+	public com.liferay.commerce.model.CommerceOrder updatePrintedNote(
+			long commerceOrderId, String printedNote)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _commerceOrderLocalService.updatePrintedNote(
+			commerceOrderId, printedNote);
 	}
 
 	@Override

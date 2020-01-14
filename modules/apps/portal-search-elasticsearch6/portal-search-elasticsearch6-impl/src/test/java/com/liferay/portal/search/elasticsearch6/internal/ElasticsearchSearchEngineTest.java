@@ -182,10 +182,10 @@ public class ElasticsearchSearchEngineTest {
 
 		return new ElasticsearchSearchEngine() {
 			{
-				indexFactory = createCompanyIndexFactory();
-				indexNameBuilder = String::valueOf;
 				elasticsearchConnectionManager =
 					elasticsearchConnectionManager2;
+				indexFactory = createCompanyIndexFactory();
+				indexNameBuilder = String::valueOf;
 				searchEngineAdapter = searchEngineAdapter1;
 			}
 		};

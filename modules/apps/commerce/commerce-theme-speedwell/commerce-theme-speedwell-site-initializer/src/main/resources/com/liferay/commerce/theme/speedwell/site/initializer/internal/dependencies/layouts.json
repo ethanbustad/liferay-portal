@@ -532,7 +532,7 @@
 			{
 				"layoutColumnId": "column-1",
 				"layoutColumnPos": 0,
-				"portletName": "com_liferay_portal_search_web_search_bar_portlet_SearchBarPortlet"
+				"portletName": "com_liferay_portal_search_web_search_bar_portlet_SearchBarPortlet_INSTANCE_speedwell"
 			},
 			{
 				"layoutColumnId": "column-1",
@@ -542,36 +542,46 @@
 			{
 				"layoutColumnId": "column-2",
 				"layoutColumnPos": 0,
-				"portletName": "com_liferay_portal_search_web_site_facet_portlet_SiteFacetPortlet"
+				"portletName": "com_liferay_commerce_product_content_search_web_internal_portlet_CPOptionFacetsPortlet"
 			},
 			{
 				"layoutColumnId": "column-2",
 				"layoutColumnPos": 1,
-				"portletName": "com_liferay_portal_search_web_type_facet_portlet_TypeFacetPortlet"
+				"portletName": "com_liferay_commerce_product_content_search_web_internal_portlet_CPSpecificationOptionFacetsPortlet"
 			},
 			{
 				"layoutColumnId": "column-2",
 				"layoutColumnPos": 2,
-				"portletName": "com_liferay_portal_search_web_tag_facet_portlet_TagFacetPortlet"
+				"portletName": "com_liferay_portal_search_web_site_facet_portlet_SiteFacetPortlet"
 			},
 			{
 				"layoutColumnId": "column-2",
 				"layoutColumnPos": 3,
-				"portletName": "com_liferay_portal_search_web_category_facet_portlet_CategoryFacetPortlet"
+				"portletName": "com_liferay_portal_search_web_type_facet_portlet_TypeFacetPortlet"
 			},
 			{
 				"layoutColumnId": "column-2",
 				"layoutColumnPos": 4,
-				"portletName": "com_liferay_portal_search_web_folder_facet_portlet_FolderFacetPortlet"
+				"portletName": "com_liferay_portal_search_web_tag_facet_portlet_TagFacetPortlet"
 			},
 			{
 				"layoutColumnId": "column-2",
 				"layoutColumnPos": 5,
-				"portletName": "com_liferay_portal_search_web_user_facet_portlet_UserFacetPortlet"
+				"portletName": "com_liferay_portal_search_web_category_facet_portlet_CategoryFacetPortlet"
 			},
 			{
 				"layoutColumnId": "column-2",
 				"layoutColumnPos": 6,
+				"portletName": "com_liferay_portal_search_web_folder_facet_portlet_FolderFacetPortlet"
+			},
+			{
+				"layoutColumnId": "column-2",
+				"layoutColumnPos": 7,
+				"portletName": "com_liferay_portal_search_web_user_facet_portlet_UserFacetPortlet"
+			},
+			{
+				"layoutColumnId": "column-2",
+				"layoutColumnPos": 8,
 				"portletName": "com_liferay_portal_search_web_modified_facet_portlet_ModifiedFacetPortlet"
 			},
 			{

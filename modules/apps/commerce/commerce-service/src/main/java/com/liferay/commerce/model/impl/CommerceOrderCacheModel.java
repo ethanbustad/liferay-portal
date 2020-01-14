@@ -64,7 +64,7 @@ public class CommerceOrderCacheModel
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(97);
+		StringBundler sb = new StringBundler(101);
 
 		sb.append("{uuid=");
 		sb.append(uuid);
@@ -148,12 +148,16 @@ public class CommerceOrderCacheModel
 		sb.append(advanceStatus);
 		sb.append(", paymentStatus=");
 		sb.append(paymentStatus);
+		sb.append(", orderDate=");
+		sb.append(orderDate);
 		sb.append(", orderStatus=");
 		sb.append(orderStatus);
 		sb.append(", printedNote=");
 		sb.append(printedNote);
 		sb.append(", requestedDeliveryDate=");
 		sb.append(requestedDeliveryDate);
+		sb.append(", manuallyAdjusted=");
+		sb.append(manuallyAdjusted);
 		sb.append(", status=");
 		sb.append(status);
 		sb.append(", statusByUserId=");
@@ -302,6 +306,14 @@ public class CommerceOrderCacheModel
 		}
 
 		commerceOrderImpl.setPaymentStatus(paymentStatus);
+
+		if (orderDate == Long.MIN_VALUE) {
+			commerceOrderImpl.setOrderDate(null);
+		}
+		else {
+			commerceOrderImpl.setOrderDate(new Date(orderDate));
+		}
+
 		commerceOrderImpl.setOrderStatus(orderStatus);
 
 		if (printedNote == null) {
@@ -319,6 +331,7 @@ public class CommerceOrderCacheModel
 				new Date(requestedDeliveryDate));
 		}
 
+		commerceOrderImpl.setManuallyAdjusted(manuallyAdjusted);
 		commerceOrderImpl.setStatus(status);
 		commerceOrderImpl.setStatusByUserId(statusByUserId);
 
@@ -396,10 +409,13 @@ public class CommerceOrderCacheModel
 		advanceStatus = objectInput.readUTF();
 
 		paymentStatus = objectInput.readInt();
+		orderDate = objectInput.readLong();
 
 		orderStatus = objectInput.readInt();
 		printedNote = objectInput.readUTF();
 		requestedDeliveryDate = objectInput.readLong();
+
+		manuallyAdjusted = objectInput.readBoolean();
 
 		status = objectInput.readInt();
 
@@ -516,6 +532,7 @@ public class CommerceOrderCacheModel
 		}
 
 		objectOutput.writeInt(paymentStatus);
+		objectOutput.writeLong(orderDate);
 
 		objectOutput.writeInt(orderStatus);
 
@@ -527,6 +544,8 @@ public class CommerceOrderCacheModel
 		}
 
 		objectOutput.writeLong(requestedDeliveryDate);
+
+		objectOutput.writeBoolean(manuallyAdjusted);
 
 		objectOutput.writeInt(status);
 
@@ -583,9 +602,11 @@ public class CommerceOrderCacheModel
 	public BigDecimal totalDiscountPercentageLevel4;
 	public String advanceStatus;
 	public int paymentStatus;
+	public long orderDate;
 	public int orderStatus;
 	public String printedNote;
 	public long requestedDeliveryDate;
+	public boolean manuallyAdjusted;
 	public int status;
 	public long statusByUserId;
 	public String statusByUserName;

@@ -14,10 +14,7 @@
 
 package com.liferay.commerce.order.content.web.internal.frontend;
 
-import com.liferay.commerce.constants.CommerceWebKeys;
-import com.liferay.commerce.context.CommerceContext;
 import com.liferay.commerce.currency.model.CommerceMoney;
-import com.liferay.commerce.discount.CommerceDiscountValue;
 import com.liferay.commerce.frontend.ClayTable;
 import com.liferay.commerce.frontend.ClayTableAction;
 import com.liferay.commerce.frontend.ClayTableActionProvider;
@@ -30,11 +27,15 @@ import com.liferay.commerce.frontend.Filter;
 import com.liferay.commerce.frontend.Pagination;
 import com.liferay.commerce.model.CommerceOrder;
 import com.liferay.commerce.model.CommerceOrderItem;
+import com.liferay.commerce.order.CommerceOrderValidatorRegistry;
+import com.liferay.commerce.order.CommerceOrderValidatorResult;
 import com.liferay.commerce.order.content.web.internal.frontend.util.CommerceOrderClayTableUtil;
 import com.liferay.commerce.order.content.web.internal.model.OrderItem;
-import com.liferay.commerce.price.CommerceProductPrice;
-import com.liferay.commerce.price.CommerceProductPriceCalculation;
+import com.liferay.commerce.product.model.CPInstance;
+import com.liferay.commerce.product.model.CPSubscriptionInfo;
 import com.liferay.commerce.product.util.CPInstanceHelper;
+import com.liferay.commerce.product.util.CPSubscriptionType;
+import com.liferay.commerce.product.util.CPSubscriptionTypeRegistry;
 import com.liferay.commerce.service.CommerceOrderItemService;
 import com.liferay.commerce.service.CommerceOrderService;
 import com.liferay.petra.string.StringPool;
@@ -48,13 +49,18 @@ import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
 import com.liferay.portal.kernel.theme.PortletDisplay;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.Constants;
+import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.TextFormatter;
 import com.liferay.portal.kernel.util.WebKeys;
 
 import java.math.BigDecimal;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.PortletRequest;
@@ -107,10 +113,12 @@ public class CommercePendingOrderItemClayTable
 			commerceOrder.isOpen()) {
 
 			ClayTableAction clayTableAction = new ClayTableAction(
+				StringPool.BLANK,
 				_getDeleteCommerceOrderItemURL(
 					orderItem.getOrderItemId(), themeDisplay),
 				StringPool.BLANK,
-				LanguageUtil.get(httpServletRequest, "delete"), false, false);
+				LanguageUtil.get(httpServletRequest, "delete"), null, false,
+				false);
 
 			clayTableActions.add(clayTableAction);
 		}
@@ -122,10 +130,10 @@ public class CommercePendingOrderItemClayTable
 	public int countItems(HttpServletRequest httpServletRequest, Filter filter)
 		throws PortalException {
 
-		OrderFilterImpl orderFilter = (OrderFilterImpl)filter;
+		OrderFilterImpl orderFilterImpl = (OrderFilterImpl)filter;
 
 		return _commerceOrderItemService.getCommerceOrderItemsCount(
-			orderFilter.getOrderId());
+			orderFilterImpl.getCommerceOrderId());
 	}
 
 	@Override
@@ -138,7 +146,10 @@ public class CommercePendingOrderItemClayTable
 
 		skuField.setContentRenderer("commerceTableCellImageName");
 
-		clayTableSchemaBuilder.addField("name", "name");
+		ClayTableSchemaField nameField = clayTableSchemaBuilder.addField(
+			"name", "name");
+
+		nameField.setContentRenderer("commerceTableCellNameWithError");
 
 		ClayTableSchemaField priceField = clayTableSchemaBuilder.addField(
 			"price", "price");
@@ -167,11 +178,7 @@ public class CommercePendingOrderItemClayTable
 
 		List<OrderItem> orderItems = new ArrayList<>();
 
-		OrderFilterImpl orderFilter = (OrderFilterImpl)filter;
-
-		CommerceContext commerceContext =
-			(CommerceContext)httpServletRequest.getAttribute(
-				CommerceWebKeys.COMMERCE_CONTEXT);
+		OrderFilterImpl orderFilterImpl = (OrderFilterImpl)filter;
 
 		ThemeDisplay themeDisplay =
 			(ThemeDisplay)httpServletRequest.getAttribute(
@@ -179,8 +186,25 @@ public class CommercePendingOrderItemClayTable
 
 		List<CommerceOrderItem> commerceOrderItems =
 			_commerceOrderItemService.getCommerceOrderItems(
-				orderFilter.getOrderId(), pagination.getStartPosition(),
-				pagination.getEndPosition());
+				orderFilterImpl.getCommerceOrderId(),
+				pagination.getStartPosition(), pagination.getEndPosition());
+
+		CommerceOrder commerceOrder = null;
+		Map<Long, List<CommerceOrderValidatorResult>>
+			commerceOrderValidatorResultMap = null;
+
+		if (!commerceOrderItems.isEmpty()) {
+			CommerceOrderItem firstCommerceOrderItem = commerceOrderItems.get(
+				0);
+
+			commerceOrder = _commerceOrderService.getCommerceOrder(
+				firstCommerceOrderItem.getCommerceOrderId());
+
+			commerceOrderValidatorResultMap =
+				_commerceOrderValidatorRegistry.
+					getCommerceOrderValidatorResults(
+						themeDisplay.getLocale(), commerceOrder);
+		}
 
 		try {
 			for (CommerceOrderItem commerceOrderItem : commerceOrderItems) {
@@ -189,50 +213,88 @@ public class CommercePendingOrderItemClayTable
 				String formattedDiscountAmount = StringPool.BLANK;
 				String formattedFinalPrice = StringPool.BLANK;
 
-				CommerceProductPrice commerceProductPrice =
-					_commerceProductPriceCalculation.getCommerceProductPrice(
-						commerceOrderItem.getCPInstanceId(),
-						commerceOrderItem.getQuantity(), commerceContext);
+				CommerceMoney unitPriceMoney =
+					commerceOrderItem.getUnitPriceMoney();
 
-				if (commerceProductPrice != null) {
-					CommerceMoney unitPriceMoney =
-						commerceProductPrice.getUnitPrice();
+				if (unitPriceMoney != null) {
+					formattedUnitPrice = unitPriceMoney.format(
+						themeDisplay.getLocale());
+				}
 
-					if (unitPriceMoney != null) {
-						formattedUnitPrice = unitPriceMoney.format(
-							themeDisplay.getLocale());
+				CommerceMoney promoPriceMoney =
+					commerceOrderItem.getPromoPriceMoney();
+
+				BigDecimal promoPrice = promoPriceMoney.getPrice();
+
+				if ((promoPriceMoney != null) &&
+					(promoPrice.compareTo(BigDecimal.ZERO) > 0)) {
+
+					formattedPromoPrice = promoPriceMoney.format(
+						themeDisplay.getLocale());
+				}
+
+				CommerceMoney finalPriceMoney =
+					commerceOrderItem.getFinalPriceMoney();
+
+				if (finalPriceMoney != null) {
+					formattedFinalPrice = finalPriceMoney.format(
+						themeDisplay.getLocale());
+				}
+
+				CommerceMoney discountAmount =
+					commerceOrderItem.getDiscountAmountMoney();
+
+				if (discountAmount != null) {
+					formattedDiscountAmount = discountAmount.format(
+						themeDisplay.getLocale());
+				}
+
+				List<CommerceOrderValidatorResult>
+					commerceOrderValidatorResults =
+						commerceOrderValidatorResultMap.get(
+							commerceOrderItem.getCommerceOrderItemId());
+
+				List<String> errorMessages = new ArrayList<>();
+
+				for (CommerceOrderValidatorResult commerceOrderValidatorResult :
+						commerceOrderValidatorResults) {
+
+					errorMessages.add(
+						commerceOrderValidatorResult.getLocalizedMessage());
+				}
+
+				String formattedSubscriptionPeriod = null;
+
+				CPInstance cpInstance = commerceOrderItem.getCPInstance();
+
+				CPSubscriptionInfo cpSubscriptionInfo =
+					cpInstance.getCPSubscriptionInfo();
+
+				if (cpSubscriptionInfo != null) {
+					Locale locale = themeDisplay.getLocale();
+
+					String period = StringPool.BLANK;
+
+					CPSubscriptionType cpSubscriptionType =
+						_cpSubscriptionTypeRegistry.getCPSubscriptionType(
+							cpSubscriptionInfo.getSubscriptionType());
+
+					if (cpSubscriptionType != null) {
+						period = cpSubscriptionType.getLabel(locale);
+
+						if (cpSubscriptionInfo.getSubscriptionLength() > 1) {
+							period = LanguageUtil.get(
+								locale,
+								StringUtil.toLowerCase(
+									TextFormatter.formatPlural(period)));
+						}
 					}
 
-					CommerceMoney unitPromoPriceMoney =
-						commerceProductPrice.getUnitPromoPrice();
-
-					BigDecimal promoPrice = unitPromoPriceMoney.getPrice();
-
-					if ((unitPromoPriceMoney != null) &&
-						(promoPrice.compareTo(BigDecimal.ZERO) > 0)) {
-
-						formattedPromoPrice = unitPromoPriceMoney.format(
-							themeDisplay.getLocale());
-					}
-
-					CommerceMoney finalPriceMoney =
-						commerceProductPrice.getFinalPrice();
-
-					if (finalPriceMoney != null) {
-						formattedFinalPrice = finalPriceMoney.format(
-							themeDisplay.getLocale());
-					}
-
-					CommerceDiscountValue discountValue =
-						commerceProductPrice.getDiscountValue();
-
-					if (discountValue != null) {
-						CommerceMoney discountAmount =
-							discountValue.getDiscountAmount();
-
-						formattedDiscountAmount = discountAmount.format(
-							themeDisplay.getLocale());
-					}
+					formattedSubscriptionPeriod = LanguageUtil.format(
+						locale, "every-x-x",
+						new Object[] {
+							cpSubscriptionInfo.getSubscriptionLength(), period
+						});
 				}
 
 				orderItems.add(
@@ -249,7 +311,8 @@ public class CommercePendingOrderItemClayTable
 						CommerceOrderClayTableUtil.getViewShipmentURL(
 							commerceOrderItem.getCommerceOrderId(),
 							themeDisplay),
-						0));
+						0, ArrayUtil.toStringArray(errorMessages),
+						formattedSubscriptionPeriod));
 			}
 		}
 		catch (Exception e) {
@@ -296,10 +359,13 @@ public class CommercePendingOrderItemClayTable
 	private CommerceOrderService _commerceOrderService;
 
 	@Reference
-	private CommerceProductPriceCalculation _commerceProductPriceCalculation;
+	private CommerceOrderValidatorRegistry _commerceOrderValidatorRegistry;
 
 	@Reference
 	private CPInstanceHelper _cpInstanceHelper;
+
+	@Reference
+	private CPSubscriptionTypeRegistry _cpSubscriptionTypeRegistry;
 
 	@Reference(
 		target = "(model.class.name=com.liferay.commerce.model.CommerceOrder)"

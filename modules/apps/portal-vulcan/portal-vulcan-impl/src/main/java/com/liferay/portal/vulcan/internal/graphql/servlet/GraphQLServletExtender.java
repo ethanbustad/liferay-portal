@@ -14,6 +14,9 @@
 
 package com.liferay.portal.vulcan.internal.graphql.servlet;
 
+import static graphql.schema.FieldCoordinates.coordinates;
+import static graphql.schema.GraphQLFieldDefinition.newFieldDefinition;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.liferay.petra.string.StringPool;
@@ -27,6 +30,7 @@ import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.HashMapDictionary;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.ProxyUtil;
@@ -53,6 +57,7 @@ import com.liferay.portal.vulcan.multipart.MultipartBody;
 import com.liferay.portal.vulcan.resource.EntityModelResource;
 
 import graphql.GraphQLError;
+import graphql.GraphqlErrorBuilder;
 import graphql.Scalars;
 import graphql.TypeResolutionEnvironment;
 
@@ -69,8 +74,8 @@ import graphql.annotations.processor.retrievers.GraphQLObjectInfoRetriever;
 import graphql.annotations.processor.retrievers.GraphQLTypeRetriever;
 import graphql.annotations.processor.retrievers.fieldBuilders.ArgumentBuilder;
 import graphql.annotations.processor.retrievers.fieldBuilders.DeprecateBuilder;
-import graphql.annotations.processor.retrievers.fieldBuilders.DescriptionBuilder;
 import graphql.annotations.processor.retrievers.fieldBuilders.DirectivesBuilder;
+import graphql.annotations.processor.retrievers.fieldBuilders.field.FieldNameBuilder;
 import graphql.annotations.processor.retrievers.fieldBuilders.method.MethodNameBuilder;
 import graphql.annotations.processor.retrievers.fieldBuilders.method.MethodTypeBuilder;
 import graphql.annotations.processor.searchAlgorithms.BreadthFirstSearch;
@@ -106,16 +111,17 @@ import graphql.schema.GraphQLFieldsContainer;
 import graphql.schema.GraphQLInputType;
 import graphql.schema.GraphQLInterfaceType;
 import graphql.schema.GraphQLList;
+import graphql.schema.GraphQLNonNull;
 import graphql.schema.GraphQLObjectType;
 import graphql.schema.GraphQLOutputType;
 import graphql.schema.GraphQLScalarType;
 import graphql.schema.GraphQLSchema;
 import graphql.schema.GraphQLType;
+import graphql.schema.PropertyDataFetcher;
 import graphql.schema.TypeResolver;
 
 import graphql.servlet.ApolloScalars;
 import graphql.servlet.DefaultGraphQLErrorHandler;
-import graphql.servlet.GenericGraphQLError;
 import graphql.servlet.GraphQLConfiguration;
 import graphql.servlet.GraphQLContext;
 import graphql.servlet.GraphQLHttpServlet;
@@ -161,6 +167,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
 import javax.validation.ValidationException;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import javax.ws.rs.BadRequestException;
@@ -269,7 +276,27 @@ public class GraphQLServletExtender {
 				{
 					setGraphQLTypeRetriever(graphQLTypeRetriever);
 				}
-			});
+			}) {
+
+			@Override
+			public GraphQLType buildType(
+				boolean input, Class<?> clazz, AnnotatedType annotatedType,
+				ProcessingElementsContainer processingElementsContainer) {
+
+				GraphQLType graphQLType = super.buildType(
+					input, clazz, annotatedType, processingElementsContainer);
+
+				if ((annotatedType != null) &&
+					(annotatedType.isAnnotationPresent(NotEmpty.class) ||
+					 annotatedType.isAnnotationPresent(NotNull.class))) {
+
+					graphQLType = new GraphQLNonNull(graphQLType);
+				}
+
+				return graphQLType;
+			}
+
+		};
 
 		_defaultTypeFunction.register(new DateTypeFunction());
 		_defaultTypeFunction.register(new ObjectTypeFunction());
@@ -608,12 +635,21 @@ public class GraphQLServletExtender {
 			}
 
 			if (parameterName.equals("siteKey") && (argument != null)) {
-				SiteParamConverterProvider siteParamConverterProvider =
-					new SiteParamConverterProvider(_groupLocalService);
+				try {
+					SiteParamConverterProvider siteParamConverterProvider =
+						new SiteParamConverterProvider(_groupLocalService);
 
-				args[i - 1] = Long.valueOf(
-					siteParamConverterProvider.getGroupId(
-						CompanyThreadLocal.getCompanyId(), (String)argument));
+					argument = String.valueOf(
+						siteParamConverterProvider.getGroupId(
+							CompanyThreadLocal.getCompanyId(),
+							(String)argument));
+				}
+				catch (Exception e) {
+					throw new Exception(
+						"Unable to convert site key \"" + argument +
+							"\" to group ID",
+						e);
+				}
 			}
 
 			if (_isMultipartBody(parameter)) {
@@ -808,6 +844,8 @@ public class GraphQLServletExtender {
 			if (_servlet != null) {
 				return _servlet;
 			}
+
+			PropertyDataFetcher.clearReflectionCache();
 
 			ProcessingElementsContainer processingElementsContainer =
 				new ProcessingElementsContainer(_defaultTypeFunction);
@@ -1575,16 +1613,44 @@ public class GraphQLServletExtender {
 
 			return stream.map(
 				graphQLError -> {
-					if (!isClientError(graphQLError)) {
-						return new GenericGraphQLError(
-							graphQLError.getMessage());
+					String message = graphQLError.getMessage();
+
+					if (message.contains("SecurityException")) {
+						return _getExtendedGraphQLError(
+							graphQLError, Response.Status.UNAUTHORIZED);
+					}
+					else if (!isClientError(graphQLError)) {
+						return _getExtendedGraphQLError(
+							graphQLError,
+							Response.Status.INTERNAL_SERVER_ERROR);
 					}
 
-					return graphQLError;
+					return _getExtendedGraphQLError(
+						graphQLError, Response.Status.BAD_REQUEST);
 				}
 			).collect(
 				Collectors.toList()
 			);
+		}
+
+		private GraphQLError _getExtendedGraphQLError(
+			GraphQLError graphQLError, Response.Status status) {
+
+			GraphqlErrorBuilder graphqlErrorBuilder =
+				GraphqlErrorBuilder.newError();
+
+			return graphqlErrorBuilder.message(
+				graphQLError.getMessage()
+			).extensions(
+				HashMapBuilder.put(
+					"code", (Object)status.getReasonPhrase()
+				).put(
+					"exception",
+					HashMapBuilder.put(
+						"errno", status.getStatusCode()
+					).build()
+				).build()
+			).build();
 		}
 
 	}
@@ -1675,6 +1741,36 @@ public class GraphQLServletExtender {
 
 		@Override
 		public GraphQLFieldDefinition getField(
+				String parentName, Field field,
+				ProcessingElementsContainer processingElementsContainer)
+			throws GraphQLAnnotationsException {
+
+			GraphQLFieldDefinition.Builder builder =
+				GraphQLFieldDefinition.newFieldDefinition();
+
+			builder.deprecate(
+				new DeprecateBuilder(
+					field
+				).build());
+
+			GraphQLField graphQLField = field.getAnnotation(GraphQLField.class);
+
+			builder.description(graphQLField.description());
+
+			builder.name(
+				new FieldNameBuilder(
+					field
+				).build());
+			builder.type(
+				(GraphQLOutputType)_defaultTypeFunction.buildType(
+					field.getType(), field.getAnnotatedType(),
+					processingElementsContainer));
+
+			return builder.build();
+		}
+
+		@Override
+		public GraphQLFieldDefinition getField(
 			String parentName, Method method,
 			ProcessingElementsContainer processingElementsContainer) {
 
@@ -1701,10 +1797,10 @@ public class GraphQLServletExtender {
 
 			builder.deprecate(deprecateBuilder.build());
 
-			DescriptionBuilder descriptionBuilder = new DescriptionBuilder(
-				method);
+			GraphQLField graphQLField = method.getAnnotation(
+				GraphQLField.class);
 
-			builder.description(descriptionBuilder.build());
+			builder.description(graphQLField.description());
 
 			MethodNameBuilder methodNameBuilder = new MethodNameBuilder(method);
 

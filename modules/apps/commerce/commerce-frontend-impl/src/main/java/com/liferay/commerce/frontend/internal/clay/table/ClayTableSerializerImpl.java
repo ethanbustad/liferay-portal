@@ -22,11 +22,15 @@ import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -38,7 +42,7 @@ import org.osgi.service.component.annotations.Reference;
 public class ClayTableSerializerImpl implements ClayTableSerializer {
 
 	@Override
-	public Map<String, Object> serialize(ClayTable clayTable) {
+	public Map<String, Object> serialize(ClayTable clayTable, Locale locale) {
 		Map<String, Object> context = new HashMap<>();
 
 		context.put("actionsMenuVariant", clayTable.getActionsMenuVariant());
@@ -64,7 +68,11 @@ public class ClayTableSerializerImpl implements ClayTableSerializer {
 		for (ClayTableSchemaField clayTableSchemaField : fieldsMap.values()) {
 			JSONObject jsonObject = _jsonFactory.createJSONObject();
 
-			String label = clayTableSchemaField.getLabel();
+			ResourceBundle resourceBundle = ResourceBundleUtil.getBundle(
+				"content.Language", locale, getClass());
+
+			String label = LanguageUtil.get(
+				resourceBundle, clayTableSchemaField.getLabel());
 
 			if (Validator.isNull(label)) {
 				label = StringPool.BLANK;

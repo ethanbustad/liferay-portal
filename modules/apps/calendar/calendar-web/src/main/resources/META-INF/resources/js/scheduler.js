@@ -734,17 +734,13 @@ AUI.add(
 
 						var weeks = DateMath.getWeeksInMonth(date, firstDayOfWeek);
 
-						A.each(
-							instance.tableRows,
-							function(item, index) {
-								if (index < weeks) {
-									item.removeClass('hide');
-								}
-								else {
-									item.addClass('hide');
-								}
+						A.each(instance.tableRows, function(item, index) {
+							if (index >= weeks) {
+								item.remove();
+							} else if (index < weeks && !item.parentElement) {
+								instance.tableRowContainer.appendChild(item);
 							}
-						);
+						});
 
 						SchedulerMonthView.superclass._uiSetDate.apply(this, arguments);
 					}

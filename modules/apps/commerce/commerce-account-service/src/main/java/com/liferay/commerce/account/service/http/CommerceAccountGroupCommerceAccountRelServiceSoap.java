@@ -105,6 +105,30 @@ public class CommerceAccountGroupCommerceAccountRelServiceSoap {
 	}
 
 	public static com.liferay.commerce.account.model.
+		CommerceAccountGroupCommerceAccountRelSoap
+				getCommerceAccountGroupCommerceAccountRel(
+					long commerceAccountGroupId, long commerceAccountId)
+			throws RemoteException {
+
+		try {
+			com.liferay.commerce.account.model.
+				CommerceAccountGroupCommerceAccountRel returnValue =
+					CommerceAccountGroupCommerceAccountRelServiceUtil.
+						getCommerceAccountGroupCommerceAccountRel(
+							commerceAccountGroupId, commerceAccountId);
+
+			return com.liferay.commerce.account.model.
+				CommerceAccountGroupCommerceAccountRelSoap.toSoapModel(
+					returnValue);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
+	public static com.liferay.commerce.account.model.
 		CommerceAccountGroupCommerceAccountRelSoap[]
 				getCommerceAccountGroupCommerceAccountRels(
 					long commerceAccountGroupId, int start, int end)

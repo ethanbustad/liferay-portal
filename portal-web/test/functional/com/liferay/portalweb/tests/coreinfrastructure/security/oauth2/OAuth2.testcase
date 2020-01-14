@@ -427,6 +427,100 @@ definition {
 		OAuth2.viewGrantedAuthViaUser(noAuthorizations = "true");
 	}
 
+	test UpdateScopeBundlePrefixes {
+		property liferay.dependency.jars = "com.liferay.oauth2.provider.scope.sample.qa.jar";
+
+		ProductMenu.gotoPortlet(
+			category = "Configuration",
+			panel = "Control Panel",
+			portlet = "OAuth 2 Administration");
+
+		OAuth2.addApplication(
+			applicationName = "OAuth Application",
+			checkboxUncheckList = "Authorization Code");
+
+		Navigator.gotoBack();
+
+		OAuth2.viewScopeAliases(
+			applicationName = "OAuth Application",
+			resourcePanels = "Portal Services,Sample QA app",
+			scopeAliasList = "liferay-json-web-services.everything,liferay-oauth2-scope-sample-qa-app.example-scope-1");
+
+		ProductMenu.gotoPortlet(
+			category = "Configuration",
+			panel = "Control Panel",
+			portlet = "System Settings");
+
+		SystemSettings.gotoConfiguration(
+			configurationCategory = "OAuth 2",
+			configurationName = "Bundle PrefixHandlerFactory",
+			configurationScope = "System Scope");
+
+		SystemSettings.gotoConfigurationEntry(configurationEntry = "Default");
+
+		SystemSettings.deleteConfiguration();
+
+		ProductMenu.gotoPortlet(
+			category = "Configuration",
+			panel = "Control Panel",
+			portlet = "OAuth 2 Administration");
+
+		OAuth2.viewScopeAliases(
+			applicationName = "OAuth Application",
+			resourcePanels = "Portal Services,Sample QA app",
+			scopeAliasList = "everything,example-scope-1");
+
+		OAuth2.addPrefixHandlerInSystemSettings(
+			excludedScopesName = "example-scope-1",
+			osgiJaxrsName = "liferay-oauth2-scope-sample-qa-app",
+			separator = "_",
+			serviceProperties = "osgi.jaxrs.application.base");
+
+		ProductMenu.gotoPortlet(
+			category = "Configuration",
+			panel = "Control Panel",
+			portlet = "OAuth 2 Administration");
+
+		OAuth2.viewScopeAliases(
+			applicationName = "OAuth Application",
+			resourcePanels = "Portal Services,Sample QA app",
+			scopeAliasList = "everything,example-scope-1,com.liferay.oauth2.provider.scope.sample.qa_/sample-qa-app_example-scope-2");
+	}
+
+	test UpdateScopeMappings {
+		property liferay.dependency.jars = "com.liferay.oauth2.provider.scope.sample.qa.jar";
+		property osgi.module.configuration.file.names = "com.liferay.oauth2.provider.scope.internal.configuration.ConfigurableScopeMapperConfiguration-liferay-oauth2-scope-sample-qa-app.config";
+		property osgi.module.configurations = "mapping=[&quot;example-scope-1,example-scope-2\=everything.read,everything.write&quot;]${line.separator}osgi.jaxrs.name=&quot;liferay-oauth2-scope-sample-qa-app&quot;${line.separator}passthrough=&quot;false&quot;";
+
+		ProductMenu.gotoPortlet(
+			category = "Configuration",
+			panel = "Control Panel",
+			portlet = "System Settings");
+
+		SystemSettings.gotoConfiguration(
+			configurationCategory = "OAuth 2",
+			configurationName = "Bundle PrefixHandlerFactory",
+			configurationScope = "System Scope");
+
+		SystemSettings.gotoConfigurationEntry(configurationEntry = "Default");
+
+		SystemSettings.deleteConfiguration();
+
+		ProductMenu.gotoPortlet(
+			category = "Configuration",
+			panel = "Control Panel",
+			portlet = "OAuth 2 Administration");
+
+		OAuth2.viewScopeMappings(
+			applicationName = "Analytics Cloud",
+			globalScopeLinkValue = "This resource scope MUST be assigned via a global scope.",
+			resourcePanels = "Sample QA app",
+			scopeAliasList = "everything,everything.read,everything.write",
+			scopeTranslation = "Example scope 1 + Example scope 2");
+
+		AssertElementNotPresent(locator1 = "xpath=(//a[contains(.,'Sample QA app')]//following-sibling::div//li)[2]");
+	}
+
 	test ViewAuthPromptRequestedScopes {
 		property custom.properties = "virtual.hosts.default.site.name=Guest";
 		property osgi.module.configuration.file.names = "com.liferay.oauth2.provider.scope.internal.configuration.BundlePrefixHandlerFactoryConfiguration-default.config";

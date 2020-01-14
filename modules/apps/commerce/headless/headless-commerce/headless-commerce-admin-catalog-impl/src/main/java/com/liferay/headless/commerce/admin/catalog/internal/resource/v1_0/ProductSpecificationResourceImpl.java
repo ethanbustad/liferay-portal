@@ -21,6 +21,7 @@ import com.liferay.commerce.product.model.CPDefinitionSpecificationOptionValue;
 import com.liferay.commerce.product.service.CPDefinitionService;
 import com.liferay.commerce.product.service.CPDefinitionSpecificationOptionValueService;
 import com.liferay.commerce.product.service.CPSpecificationOptionService;
+import com.liferay.headless.commerce.admin.catalog.dto.v1_0.Product;
 import com.liferay.headless.commerce.admin.catalog.dto.v1_0.ProductSpecification;
 import com.liferay.headless.commerce.admin.catalog.internal.util.v1_0.ProductSpecificationUtil;
 import com.liferay.headless.commerce.admin.catalog.resource.v1_0.ProductSpecificationResource;
@@ -31,6 +32,8 @@ import com.liferay.headless.commerce.core.util.ServiceContextHelper;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.vulcan.fields.NestedField;
+import com.liferay.portal.vulcan.fields.NestedFieldId;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
 
@@ -51,9 +54,10 @@ import org.osgi.service.component.annotations.ServiceScope;
 public class ProductSpecificationResourceImpl
 	extends BaseProductSpecificationResourceImpl {
 
+	@NestedField(parentClass = Product.class, value = "productSpecifications")
 	@Override
 	public Page<ProductSpecification> getProductIdProductSpecificationsPage(
-			Long id, Pagination pagination)
+			@NestedFieldId(value = "productId") Long id, Pagination pagination)
 		throws Exception {
 
 		CPDefinition cpDefinition =

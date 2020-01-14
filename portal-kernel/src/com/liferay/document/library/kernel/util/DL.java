@@ -215,9 +215,8 @@ public interface DL {
 
 	/**
 	 * @deprecated As of Judson (7.1.x), replaced by {@link
-	 *             com.liferay.document.library.web.internal.util.
-	 *             DLSubscriptionUtil#isSubscribedToFileEntryType(long, long,
-	 *             long, long)}
+	 *             com.liferay.document.library.web.internal.util.DLSubscriptionUtil#isSubscribedToFileEntryType(
+	 *             long, long, long, long)}
 	 */
 	@Deprecated
 	public boolean isSubscribedToFileEntryType(
@@ -225,9 +224,8 @@ public interface DL {
 
 	/**
 	 * @deprecated As of Judson (7.1.x), replaced by {@link
-	 *             com.liferay.document.library.web.internal.util.
-	 *             DLSubscriptionUtil#isSubscribedToFolder(long, long, long,
-	 *             long)}
+	 *             com.liferay.document.library.web.internal.util.DLSubscriptionUtil#isSubscribedToFolder(
+	 *             long, long, long, long)}
 	 */
 	@Deprecated
 	public boolean isSubscribedToFolder(
@@ -236,9 +234,8 @@ public interface DL {
 
 	/**
 	 * @deprecated As of Judson (7.1.x), replaced by {@link
-	 *             com.liferay.document.library.web.internal.util.
-	 *             DLSubscriptionUtil#isSubscribedToFolder(long, long, long,
-	 *             long, boolean)}
+	 *             com.liferay.document.library.web.internal.util.DLSubscriptionUtil#isSubscribedToFolder(
+	 *             long, long, long, long, boolean)}
 	 */
 	@Deprecated
 	public boolean isSubscribedToFolder(

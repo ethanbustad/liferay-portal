@@ -61,7 +61,6 @@ public class EditAssetCategoryFriendlyURLMVCActionCommand
 		throws Exception {
 
 		long categoryId = ParamUtil.getLong(actionRequest, "categoryId");
-		String layoutUuid = ParamUtil.getString(actionRequest, "layoutUuid");
 		Map<Locale, String> urlTitleMap = LocalizationUtil.getLocalizationMap(
 			actionRequest, "urlTitleMapAsXML");
 
@@ -70,11 +69,6 @@ public class EditAssetCategoryFriendlyURLMVCActionCommand
 
 		ServiceContext serviceContext = ServiceContextFactory.getInstance(
 			AssetCategory.class.getName(), actionRequest);
-
-		// Commerce product display layout
-
-		_cpDisplayLayoutLocalService.addCPDisplayLayout(
-			AssetCategory.class, categoryId, layoutUuid, serviceContext);
 
 		// Commerce product friendly URL
 
@@ -91,25 +85,21 @@ public class EditAssetCategoryFriendlyURLMVCActionCommand
 
 		Map<Locale, String> newUrlTitleMap = new HashMap<>();
 
-		Map<Locale, String> titleMap = assetCategory.getTitleMap();
-
 		long classNameId = _portal.getClassNameId(AssetCategory.class);
 
-		for (Map.Entry<Locale, String> entry : titleMap.entrySet()) {
+		for (Map.Entry<Locale, String> entry : urlTitleMap.entrySet()) {
 			Locale locale = entry.getKey();
 
 			String urlTitle = urlTitleMap.get(locale);
 
-			if (Validator.isNull(urlTitle)) {
-				urlTitle = entry.getValue();
+			if (Validator.isNotNull(urlTitle)) {
+				urlTitle = _cpFriendlyURLEntryLocalService.buildUrlTitle(
+					GroupConstants.DEFAULT_LIVE_GROUP_ID, classNameId,
+					assetCategory.getCategoryId(),
+					LanguageUtil.getLanguageId(locale), urlTitle);
+
+				newUrlTitleMap.put(locale, urlTitle);
 			}
-
-			urlTitle = _cpFriendlyURLEntryLocalService.buildUrlTitle(
-				GroupConstants.DEFAULT_LIVE_GROUP_ID, classNameId,
-				assetCategory.getCategoryId(),
-				LanguageUtil.getLanguageId(locale), urlTitle);
-
-			newUrlTitleMap.put(locale, urlTitle);
 		}
 
 		return newUrlTitleMap;

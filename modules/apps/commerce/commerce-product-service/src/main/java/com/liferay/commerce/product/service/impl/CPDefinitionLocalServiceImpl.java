@@ -173,7 +173,7 @@ public class CPDefinitionLocalServiceImpl
 
 		validate(
 			groupId, ddmStructureKey, metaTitleMap, metaDescriptionMap,
-			metaKeywordsMap, productTypeName);
+			metaKeywordsMap, displayDate, expirationDate, productTypeName);
 
 		long cpDefinitionId = counterLocalService.increment();
 
@@ -183,7 +183,6 @@ public class CPDefinitionLocalServiceImpl
 		CProduct cProduct = cProductLocalService.addCProduct(
 			groupId, userId, externalReferenceCode, new ServiceContext());
 
-		cpDefinition.setUuid(serviceContext.getUuid());
 		cpDefinition.setGroupId(groupId);
 		cpDefinition.setCompanyId(user.getCompanyId());
 		cpDefinition.setUserId(user.getUserId());
@@ -318,8 +317,6 @@ public class CPDefinitionLocalServiceImpl
 
 		newCPDefinition.setCPDefinitionId(newCPDefinitionId);
 
-		newCPDefinition.setModifiedDate(new Date());
-
 		newCPDefinition.setVersion(
 			cProductLocalService.increment(
 				originalCPDefinition.getCProductId()));
@@ -338,7 +335,7 @@ public class CPDefinitionLocalServiceImpl
 			AssetEntry newAssetEntry = (AssetEntry)assetEntry.clone();
 
 			newAssetEntry.setEntryId(counterLocalService.increment());
-			newAssetEntry.setModifiedDate(new Date());
+
 			newAssetEntry.setClassPK(newCPDefinitionId);
 
 			assetEntryLocalService.updateAssetEntry(newAssetEntry);
@@ -379,7 +376,7 @@ public class CPDefinitionLocalServiceImpl
 			newCPAttachmentFileEntry.setUuid(PortalUUIDUtil.generate());
 			newCPAttachmentFileEntry.setCPAttachmentFileEntryId(
 				counterLocalService.increment());
-			newCPAttachmentFileEntry.setModifiedDate(new Date());
+
 			newCPAttachmentFileEntry.setClassPK(newCPDefinitionId);
 
 			cpAttachmentFileEntryPersistence.update(newCPAttachmentFileEntry);
@@ -397,7 +394,7 @@ public class CPDefinitionLocalServiceImpl
 			newCPDefinitionLink.setUuid(PortalUUIDUtil.generate());
 			newCPDefinitionLink.setCPDefinitionLinkId(
 				counterLocalService.increment());
-			newCPDefinitionLink.setModifiedDate(new Date());
+
 			newCPDefinitionLink.setCPDefinitionId(newCPDefinitionId);
 
 			cpDefinitionLinkPersistence.update(newCPDefinitionLink);
@@ -422,7 +419,6 @@ public class CPDefinitionLocalServiceImpl
 			newCPDefinitionOptionRel.setCPDefinitionOptionRelId(
 				newCPDefinitionOptionRelId);
 
-			newCPDefinitionOptionRel.setModifiedDate(new Date());
 			newCPDefinitionOptionRel.setCPDefinitionId(newCPDefinitionId);
 
 			cpDefinitionOptionRelPersistence.update(newCPDefinitionOptionRel);
@@ -445,7 +441,7 @@ public class CPDefinitionLocalServiceImpl
 					PortalUUIDUtil.generate());
 				newCPDefinitionOptionValueRel.setCPDefinitionOptionValueRelId(
 					counterLocalService.increment());
-				newCPDefinitionOptionValueRel.setModifiedDate(new Date());
+
 				newCPDefinitionOptionValueRel.setCPDefinitionOptionRelId(
 					newCPDefinitionOptionRelId);
 
@@ -475,7 +471,7 @@ public class CPDefinitionLocalServiceImpl
 			newCPDefinitionSpecificationOptionValue.
 				setCPDefinitionSpecificationOptionValueId(
 					counterLocalService.increment());
-			newCPDefinitionSpecificationOptionValue.setModifiedDate(new Date());
+
 			newCPDefinitionSpecificationOptionValue.setCPDefinitionId(
 				newCPDefinitionId);
 
@@ -495,7 +491,7 @@ public class CPDefinitionLocalServiceImpl
 			newCPDisplayLayout.setUuid(PortalUUIDUtil.generate());
 			newCPDisplayLayout.setCPDisplayLayoutId(
 				counterLocalService.increment());
-			newCPDisplayLayout.setModifiedDate(new Date());
+
 			newCPDisplayLayout.setClassPK(newCPDefinitionId);
 
 			cpDisplayLayoutPersistence.update(newCPDisplayLayout);
@@ -511,7 +507,7 @@ public class CPDefinitionLocalServiceImpl
 
 			newCPInstance.setUuid(PortalUUIDUtil.generate());
 			newCPInstance.setCPInstanceId(counterLocalService.increment());
-			newCPInstance.setModifiedDate(new Date());
+
 			newCPInstance.setCPDefinitionId(newCPDefinitionId);
 
 			cpInstancePersistence.update(newCPInstance);
@@ -861,6 +857,13 @@ public class CPDefinitionLocalServiceImpl
 
 	@Override
 	public List<CPDefinition> getCPDefinitions(
+		long groupId, boolean subscriptionEnabled) {
+
+		return cpDefinitionPersistence.findByG_SE(groupId, subscriptionEnabled);
+	}
+
+	@Override
+	public List<CPDefinition> getCPDefinitions(
 		long groupId, int status, int start, int end) {
 
 		if (status == WorkflowConstants.STATUS_ANY) {
@@ -894,6 +897,14 @@ public class CPDefinitionLocalServiceImpl
 
 		return cpDefinitionFinder.findByG_P_S(
 			groupId, productTypeName, languageId, queryDefinition);
+	}
+
+	@Override
+	public int getCPDefinitionsCount(
+		long groupId, boolean subscriptionEnabled) {
+
+		return cpDefinitionPersistence.countByG_SE(
+			groupId, subscriptionEnabled);
 	}
 
 	@Override
@@ -973,19 +984,15 @@ public class CPDefinitionLocalServiceImpl
 			String[] filterFieldsArray = StringUtil.split(filterFields);
 			String[] filterValuesArray = StringUtil.split(filterValues);
 
-			List<String> options = new ArrayList<>();
-
 			for (int i = 0; i < filterFieldsArray.length; i++) {
 				String key = filterFieldsArray[i];
 				String value = filterValuesArray[i];
 
 				if (key.startsWith("OPTION_")) {
-					key = key.replace("OPTION_", StringPool.BLANK);
+					key = StringUtil.replace(key, "OPTION_", StringPool.BLANK);
 
 					key = _getIndexFieldName(
 						key, searchContext.getLanguageId());
-
-					options.add(key);
 				}
 
 				List<String> facetValues = null;
@@ -1283,7 +1290,8 @@ public class CPDefinitionLocalServiceImpl
 
 		validate(
 			groupId, ddmStructureKey, metaTitleMap, metaDescriptionMap,
-			metaKeywordsMap, cpDefinition.getProductTypeName());
+			metaKeywordsMap, displayDate, expirationDate,
+			cpDefinition.getProductTypeName());
 
 		if (cpDefinitionLocalService.isVersionable(cpDefinition)) {
 			cpDefinition = cpDefinitionLocalService.copyCPDefinition(
@@ -1508,10 +1516,6 @@ public class CPDefinitionLocalServiceImpl
 				cpDefinitionId);
 		}
 
-		Date now = new Date();
-
-		cpDefinition.setModifiedDate(serviceContext.getModifiedDate(now));
-
 		cpDefinition.setShippable(shippable);
 		cpDefinition.setFreeShipping(freeShipping);
 		cpDefinition.setShipSeparately(shipSeparately);
@@ -1548,8 +1552,6 @@ public class CPDefinitionLocalServiceImpl
 		}
 
 		Date modifiedDate = serviceContext.getModifiedDate(now);
-
-		cpDefinition.setModifiedDate(modifiedDate);
 
 		if (status == WorkflowConstants.STATUS_APPROVED) {
 			Date expirationDate = cpDefinition.getExpirationDate();
@@ -1615,10 +1617,6 @@ public class CPDefinitionLocalServiceImpl
 			cpDefinition = cpDefinitionLocalService.copyCPDefinition(
 				cpDefinitionId);
 		}
-
-		Date now = new Date();
-
-		cpDefinition.setModifiedDate(serviceContext.getModifiedDate(now));
 
 		cpDefinition.setSubscriptionEnabled(subscriptionEnabled);
 		cpDefinition.setSubscriptionLength(subscriptionLength);
@@ -1727,10 +1725,10 @@ public class CPDefinitionLocalServiceImpl
 
 		Map<String, Serializable> attributes = new HashMap<>();
 
+		attributes.put(Field.CONTENT, keywords);
+		attributes.put(Field.DESCRIPTION, keywords);
 		attributes.put(Field.ENTRY_CLASS_PK, keywords);
 		attributes.put(Field.NAME, keywords);
-		attributes.put(Field.DESCRIPTION, keywords);
-		attributes.put(Field.CONTENT, keywords);
 		attributes.put(Field.STATUS, status);
 		attributes.put("params", params);
 
@@ -1939,7 +1937,8 @@ public class CPDefinitionLocalServiceImpl
 			long groupId, String ddmStructureKey,
 			Map<Locale, String> metaTitleMap,
 			Map<Locale, String> metaDescriptionMap,
-			Map<Locale, String> metaKeywordsMap, String productTypeName)
+			Map<Locale, String> metaKeywordsMap, Date displayDate,
+			Date expirationDate, String productTypeName)
 		throws PortalException {
 
 		if (Validator.isNotNull(ddmStructureKey)) {
@@ -1991,6 +1990,14 @@ public class CPDefinitionLocalServiceImpl
 					throw cpDefinitionMetaKeywordsException;
 				}
 			}
+		}
+
+		if ((expirationDate != null) &&
+			(expirationDate.before(new Date()) ||
+			 ((displayDate != null) && expirationDate.before(displayDate)))) {
+
+			throw new CPDefinitionExpirationDateException(
+				"Expiration date " + expirationDate + " is in the past");
 		}
 
 		CPType cpType = _cpTypeServicesTracker.getCPType(productTypeName);

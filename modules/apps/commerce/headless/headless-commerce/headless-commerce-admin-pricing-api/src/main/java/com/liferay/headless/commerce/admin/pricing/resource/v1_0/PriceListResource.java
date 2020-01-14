@@ -16,6 +16,8 @@ package com.liferay.headless.commerce.admin.pricing.resource.v1_0;
 
 import com.liferay.headless.commerce.admin.pricing.dto.v1_0.PriceList;
 import com.liferay.portal.kernel.model.Company;
+import com.liferay.portal.kernel.search.Sort;
+import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
 
@@ -33,11 +35,6 @@ import javax.ws.rs.core.Response;
  */
 @Generated("")
 public interface PriceListResource {
-
-	public Page<PriceList> getPriceListsPage(Pagination pagination)
-		throws Exception;
-
-	public PriceList postPriceList(PriceList priceList) throws Exception;
 
 	public Response deletePriceListByExternalReferenceCode(
 			String externalReferenceCode)
@@ -57,6 +54,12 @@ public interface PriceListResource {
 
 	public Response patchPriceList(Long id, PriceList priceList)
 		throws Exception;
+
+	public Page<PriceList> getPriceListsPage(
+			Filter filter, Pagination pagination, Sort[] sorts)
+		throws Exception;
+
+	public PriceList postPriceList(PriceList priceList) throws Exception;
 
 	public void setContextCompany(Company contextCompany);
 

@@ -766,7 +766,7 @@ public class FormField {
 		}
 	}
 
-	@GraphQLField
+	@GraphQLField(description = "https://www.schema.org/FormFieldValidation")
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected Validation validation;
 
@@ -1115,6 +1115,12 @@ public class FormField {
 
 		return sb.toString();
 	}
+
+	@Schema(
+		defaultValue = "com.liferay.headless.form.dto.v1_0.FormField",
+		name = "x-class-name"
+	)
+	public String xClassName;
 
 	private static String _escape(Object object) {
 		String string = String.valueOf(object);

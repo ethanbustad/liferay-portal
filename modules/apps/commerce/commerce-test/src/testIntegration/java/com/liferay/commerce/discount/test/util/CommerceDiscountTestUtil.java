@@ -46,9 +46,6 @@ public class CommerceDiscountTestUtil {
 
 		CommerceAccountGroup commerceAccountGroup = null;
 
-		/*CommerceAccountGroupTestUtil.addUserCommerceAccountGroup(
-			userId);*/
-
 		return CommerceDiscountCommerceAccountGroupRelLocalServiceUtil.
 			addCommerceDiscountCommerceAccountGroupRel(
 				commerceDiscount.getCommerceDiscountId(),
@@ -79,13 +76,9 @@ public class CommerceDiscountTestUtil {
 
 	public static CommerceDiscountCommerceAccountGroupRel
 			addDiscountCommerceAccountGroupRel(
-				CommerceDiscount commerceDiscount, long userId)
+				CommerceDiscount commerceDiscount,
+				CommerceAccountGroup commerceAccountGroup)
 		throws Exception {
-
-		CommerceAccountGroup commerceAccountGroup = null;
-
-		/*CommerceAccountGroupTestUtil.addUserCommerceAccountGroup(
-			commerceDiscount.getGroupId(), userId);*/
 
 		return CommerceDiscountCommerceAccountGroupRelLocalServiceUtil.
 			addCommerceDiscountCommerceAccountGroupRel(

@@ -26,6 +26,7 @@ import com.liferay.commerce.model.CommerceOrder;
 import com.liferay.commerce.order.CommerceOrderHttpHelper;
 import com.liferay.commerce.product.service.CommerceChannelLocalService;
 import com.liferay.commerce.service.CommerceOrderService;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
@@ -63,23 +64,21 @@ public class CommerceOrderResource {
 			CommerceAccount commerceAccount)
 		throws PortalException {
 
-		long commerceAccountId = 0;
+		long companyId = _portal.getCompanyId(httpServletRequest);
 
-		if (commerceAccount != null) {
-			commerceAccountId = commerceAccount.getCommerceAccountId();
-		}
+		groupId =
+			_commerceChannelLocalService.getCommerceChannelGroupIdBySiteGroupId(
+				groupId);
 
 		List<Order> orders = getOrders(
-			groupId, keywords, page, pageSize, httpServletRequest,
-			commerceAccountId);
+			companyId, groupId, keywords, page, pageSize, httpServletRequest);
 
-		return new OrderList(
-			orders, getOrdersCount(groupId, keywords, commerceAccountId));
+		return new OrderList(orders, getOrdersCount(companyId, groupId));
 	}
 
 	protected List<Order> getOrders(
-			long groupId, String keywords, int page, int pageSize,
-			HttpServletRequest httpServletRequest, long commerceAccountId)
+			long companyId, long groupId, String keywords, int page,
+			int pageSize, HttpServletRequest httpServletRequest)
 		throws PortalException {
 
 		List<Order> orders = new ArrayList<>();
@@ -87,14 +86,9 @@ public class CommerceOrderResource {
 		int start = (page - 1) * pageSize;
 		int end = page * pageSize;
 
-		long commerceChannelGroupId =
-			_commerceChannelLocalService.getCommerceChannelGroupIdBySiteGroupId(
-				groupId);
-
 		List<CommerceOrder> userCommerceOrders =
-			_commerceOrderService.getPendingCommerceOrders(
-				commerceChannelGroupId, commerceAccountId, keywords, start,
-				end);
+			_commerceOrderService.getUserPendingCommerceOrders(
+				companyId, groupId, keywords, start, end);
 
 		for (CommerceOrder commerceOrder : userCommerceOrders) {
 			Date modifiedDate = commerceOrder.getModifiedDate();
@@ -121,16 +115,11 @@ public class CommerceOrderResource {
 		return orders;
 	}
 
-	protected int getOrdersCount(
-			long groupId, String keywords, long commerceAccountId)
+	protected int getOrdersCount(long companyId, long groupId)
 		throws PortalException {
 
-		long commerceChannelGroupId =
-			_commerceChannelLocalService.getCommerceChannelGroupIdBySiteGroupId(
-				groupId);
-
-		return _commerceOrderService.getPendingCommerceOrdersCount(
-			commerceChannelGroupId, commerceAccountId, keywords);
+		return (int)_commerceOrderService.getUserPendingCommerceOrdersCount(
+			companyId, groupId, StringPool.BLANK);
 	}
 
 	protected Response getResponse(Object object) {

@@ -94,7 +94,7 @@ public class CommerceAccountAddressClayTable
 
 		StringBundler sb = new StringBundler(7);
 
-		sb.append("javascript:deleteCommerceAddress");
+		sb.append("deleteCommerceAddress");
 		sb.append(StringPool.OPEN_PARENTHESIS);
 		sb.append(StringPool.APOSTROPHE);
 		sb.append(address.getAddressId());
@@ -103,16 +103,18 @@ public class CommerceAccountAddressClayTable
 		sb.append(StringPool.SEMICOLON);
 
 		ClayTableAction deleteClayTableAction = new ClayTableAction(
-			sb.toString(), StringPool.BLANK,
-			LanguageUtil.get(httpServletRequest, "delete"), false, false);
+			StringPool.BLANK, StringPool.POUND, StringPool.BLANK,
+			LanguageUtil.get(httpServletRequest, "delete"), sb.toString(),
+			false, false);
 
 		clayTableActions.add(deleteClayTableAction);
 
-		sb.setStringAt("javascript:editCommerceAddress", 0);
+		sb.setStringAt("editCommerceAddress", 0);
 
 		ClayTableAction editClayTableAction = new ClayTableAction(
-			sb.toString(), StringPool.BLANK,
-			LanguageUtil.get(httpServletRequest, "edit"), false, false);
+			StringPool.BLANK, StringPool.POUND, StringPool.BLANK,
+			LanguageUtil.get(httpServletRequest, "edit"), sb.toString(), false,
+			false);
 
 		clayTableActions.add(editClayTableAction);
 
@@ -123,7 +125,7 @@ public class CommerceAccountAddressClayTable
 	public int countItems(HttpServletRequest httpServletRequest, Filter filter)
 		throws PortalException {
 
-		AccountFilterImpl accountFilter = (AccountFilterImpl)filter;
+		AccountFilterImpl accountFilterImpl = (AccountFilterImpl)filter;
 
 		ThemeDisplay themeDisplay =
 			(ThemeDisplay)httpServletRequest.getAttribute(
@@ -131,7 +133,7 @@ public class CommerceAccountAddressClayTable
 
 		return _commerceAddressService.getCommerceAddressesCountByCompanyId(
 			themeDisplay.getCompanyId(), CommerceAccount.class.getName(),
-			accountFilter.getAccountId());
+			accountFilterImpl.getAccountId());
 	}
 
 	@Override
@@ -158,7 +160,7 @@ public class CommerceAccountAddressClayTable
 			Pagination pagination, Sort sort)
 		throws PortalException {
 
-		AccountFilterImpl accountFilter = (AccountFilterImpl)filter;
+		AccountFilterImpl accountFilterImpl = (AccountFilterImpl)filter;
 
 		ThemeDisplay themeDisplay =
 			(ThemeDisplay)httpServletRequest.getAttribute(
@@ -169,7 +171,7 @@ public class CommerceAccountAddressClayTable
 		List<CommerceAddress> commerceAddresses =
 			_commerceAddressService.getCommerceAddressesByCompanyId(
 				themeDisplay.getCompanyId(), CommerceAccount.class.getName(),
-				accountFilter.getAccountId(), pagination.getStartPosition(),
+				accountFilterImpl.getAccountId(), pagination.getStartPosition(),
 				pagination.getEndPosition(), null);
 
 		for (CommerceAddress commerceAddress : commerceAddresses) {
@@ -197,16 +199,14 @@ public class CommerceAccountAddressClayTable
 	protected String getCompleteAddress(CommerceAddress commerceAddress)
 		throws PortalException {
 
-		StringBundler sb = new StringBundler(9);
+		StringBundler sb = new StringBundler(7);
 
 		sb.append(commerceAddress.getZip());
 		sb.append(StringPool.SPACE);
 		sb.append(commerceAddress.getStreet1());
 		sb.append(StringPool.SPACE);
 		sb.append(commerceAddress.getCity());
-		sb.append(StringPool.SPACE);
-		sb.append(StringPool.DASH);
-		sb.append(StringPool.SPACE);
+		sb.append(" - ");
 
 		CommerceCountry commerceCountry = commerceAddress.getCommerceCountry();
 

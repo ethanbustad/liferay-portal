@@ -103,12 +103,12 @@ public class StructuredContentDTOConverter implements DTOConverter {
 
 		return new StructuredContent() {
 			{
-				availableLanguages = LocaleUtil.toW3cLanguageIds(
-					journalArticle.getAvailableLanguageIds());
 				aggregateRating = AggregateRatingUtil.toAggregateRating(
 					_ratingsStatsLocalService.fetchStats(
 						JournalArticle.class.getName(),
 						journalArticle.getResourcePrimKey()));
+				availableLanguages = LocaleUtil.toW3cLanguageIds(
+					journalArticle.getAvailableLanguageIds());
 				contentFields = _toContentFields(
 					journalArticle, dtoConverterContext.getLocale(),
 					_dlAppService, _fieldsToDDMFormValuesConverter,
@@ -263,6 +263,7 @@ public class StructuredContentDTOConverter implements DTOConverter {
 			ddmTemplate -> new RenderedContent() {
 				{
 					renderedContentURL = JaxRsLinkUtil.getJaxRsLink(
+						"headless-delivery",
 						BaseStructuredContentResourceImpl.class,
 						"getStructuredContentRenderedContentTemplate",
 						uriInfoOptional.get(),
@@ -378,6 +379,7 @@ public class StructuredContentDTOConverter implements DTOConverter {
 				{
 					structuredContentLink = new StructuredContentLink() {
 						{
+							contentType = "StructuredContent";
 							id = journalArticle.getResourcePrimKey();
 							title = journalArticle.getTitle();
 						}

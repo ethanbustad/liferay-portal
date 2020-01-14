@@ -21,10 +21,8 @@ import com.liferay.commerce.order.web.internal.display.context.util.CommerceOrde
 import com.liferay.commerce.order.web.internal.search.CommerceOrderDisplayTerms;
 import com.liferay.commerce.order.web.internal.search.CommerceOrderSearch;
 import com.liferay.commerce.order.web.internal.security.permission.resource.CommerceOrderPermission;
-import com.liferay.commerce.price.CommerceOrderPriceCalculation;
 import com.liferay.commerce.product.model.CommerceChannel;
 import com.liferay.commerce.product.service.CommerceChannelService;
-import com.liferay.commerce.search.facet.NegatableMultiValueFacet;
 import com.liferay.commerce.search.facet.NegatableSimpleFacet;
 import com.liferay.commerce.service.CommerceOrderLocalService;
 import com.liferay.commerce.service.CommerceOrderNoteService;
@@ -94,14 +92,12 @@ public class CommerceOrderListDisplayContext {
 		CommerceChannelService commerceChannelService,
 		CommerceOrderLocalService commerceOrderLocalService,
 		CommerceOrderNoteService commerceOrderNoteService,
-		CommerceOrderPriceCalculation commerceOrderPriceCalculation,
 		GroupLocalService groupLocalService, JSONFactory jsonFactory,
 		RenderRequest renderRequest) {
 
 		_commerceChannelService = commerceChannelService;
 		_commerceOrderLocalService = commerceOrderLocalService;
 		_commerceOrderNoteService = commerceOrderNoteService;
-		_commerceOrderPriceCalculation = commerceOrderPriceCalculation;
 		_groupLocalService = groupLocalService;
 		_jsonFactory = jsonFactory;
 
@@ -152,9 +148,21 @@ public class CommerceOrderListDisplayContext {
 			_commerceOrderRequestHelper.getCompanyId());
 	}
 
-	public String getCommerceOrderDateTime(CommerceOrder commerceOrder) {
+	public String getCommerceOrderCreateDateTime(CommerceOrder commerceOrder) {
 		return _commerceOrderDateFormatDateTime.format(
 			commerceOrder.getCreateDate());
+	}
+
+	public String getCommerceOrderDateTime(CommerceOrder commerceOrder) {
+		if (commerceOrder.getOrderDate() == null) {
+			ThemeDisplay themeDisplay =
+				_commerceOrderRequestHelper.getThemeDisplay();
+
+			return LanguageUtil.get(themeDisplay.getLocale(), "unknown");
+		}
+
+		return _commerceOrderDateFormatDateTime.format(
+			commerceOrder.getOrderDate());
 	}
 
 	public int getCommerceOrderNotesCount(CommerceOrder commerceOrder)
@@ -189,8 +197,7 @@ public class CommerceOrderListDisplayContext {
 	public String getCommerceOrderValue(CommerceOrder commerceOrder)
 		throws PortalException {
 
-		CommerceMoney subtotal = _commerceOrderPriceCalculation.getSubtotal(
-			commerceOrder, _commerceOrderRequestHelper.getCommerceContext());
+		CommerceMoney subtotal = commerceOrder.getSubtotalMoney();
 
 		if (subtotal == null) {
 			return StringPool.BLANK;
@@ -208,13 +215,16 @@ public class CommerceOrderListDisplayContext {
 	}
 
 	public PortletURL getPortletURL() {
-		LiferayPortletResponse liferayPortletResponse =
-			_commerceOrderRequestHelper.getLiferayPortletResponse();
+		PortletURL portletURL = getSearchURL();
 
-		PortletURL portletURL = liferayPortletResponse.createRenderURL();
+		for (String displayTerm : CommerceOrderDisplayTerms.VALID_TERMS) {
+			String paramValue = ParamUtil.getString(
+				_commerceOrderRequestHelper.getRequest(), displayTerm);
 
-		portletURL.setParameter("showFilter", String.valueOf(_showFilter));
-		portletURL.setParameter("tabs1", _tabs1);
+			if (Validator.isNotNull(paramValue)) {
+				portletURL.setParameter(displayTerm, paramValue);
+			}
+		}
 
 		return portletURL;
 	}
@@ -227,6 +237,30 @@ public class CommerceOrderListDisplayContext {
 		}
 
 		return _searchContainer;
+	}
+
+	public PortletURL getSearchURL() {
+		LiferayPortletResponse liferayPortletResponse =
+			_commerceOrderRequestHelper.getLiferayPortletResponse();
+
+		PortletURL portletURL = liferayPortletResponse.createRenderURL();
+
+		portletURL.setParameter("showFilter", String.valueOf(_showFilter));
+		portletURL.setParameter("tabs1", _tabs1);
+
+		if (Validator.isNotNull(_keywords)) {
+			portletURL.setParameter("keywords", _keywords);
+		}
+
+		return portletURL;
+	}
+
+	public boolean isOpenTab() {
+		if (_tabs1.equals("open")) {
+			return true;
+		}
+
+		return false;
 	}
 
 	public boolean isShowFilter() {
@@ -279,13 +313,6 @@ public class CommerceOrderListDisplayContext {
 	private SearchContext _addFacetOrderStatus(
 		SearchContext searchContext, String tabs1, int orderStatus) {
 
-		NegatableMultiValueFacet negatableMultiValueFacet =
-			new NegatableMultiValueFacet(searchContext);
-
-		negatableMultiValueFacet.setFieldName("orderStatus");
-
-		searchContext.addFacet(negatableMultiValueFacet);
-
 		boolean negated = false;
 		int[] orderStatuses = null;
 
@@ -313,11 +340,9 @@ public class CommerceOrderListDisplayContext {
 			orderStatuses = new int[] {orderStatus};
 		}
 
-		negatableMultiValueFacet.setNegated(negated);
+		searchContext.setAttribute("negateOrderStatuses", negated);
 
-		searchContext.setAttribute(
-			negatableMultiValueFacet.getFieldId(),
-			StringUtil.merge(orderStatuses));
+		searchContext.setAttribute("orderStatuses", orderStatuses);
 
 		return searchContext;
 	}
@@ -601,7 +626,6 @@ public class CommerceOrderListDisplayContext {
 	private final Format _commerceOrderDateFormatDateTime;
 	private final CommerceOrderLocalService _commerceOrderLocalService;
 	private final CommerceOrderNoteService _commerceOrderNoteService;
-	private final CommerceOrderPriceCalculation _commerceOrderPriceCalculation;
 	private final CommerceOrderRequestHelper _commerceOrderRequestHelper;
 	private final GroupLocalService _groupLocalService;
 	private final JSONFactory _jsonFactory;

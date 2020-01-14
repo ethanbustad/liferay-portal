@@ -28,6 +28,9 @@ import com.liferay.commerce.internal.upgrade.v3_2_0.CommerceCountryUpgradeProces
 import com.liferay.commerce.internal.upgrade.v3_2_0.CommerceRegionUpgradeProcess;
 import com.liferay.commerce.internal.upgrade.v4_0_0.CommerceShipmentItemUpgradeProcess;
 import com.liferay.commerce.internal.upgrade.v4_1_0.CommerceAddressUpgradeProcess;
+import com.liferay.commerce.internal.upgrade.v4_2_1.PrintedNoteUpgradeProcess;
+import com.liferay.commerce.internal.upgrade.v4_3_0.CommerceOrderDateUpgradeProcess;
+import com.liferay.commerce.internal.upgrade.v4_4_0.CommerceOrderManuallyAdjustedUpgradeProcess;
 import com.liferay.commerce.product.service.CPDefinitionLocalService;
 import com.liferay.commerce.product.service.CPInstanceLocalService;
 import com.liferay.portal.kernel.log.Log;
@@ -36,6 +39,7 @@ import com.liferay.portal.kernel.service.ClassNameLocalService;
 import com.liferay.portal.kernel.service.EmailAddressLocalService;
 import com.liferay.portal.kernel.service.OrganizationLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
+import com.liferay.portal.kernel.upgrade.DummyUpgradeProcess;
 import com.liferay.portal.upgrade.registry.UpgradeStepRegistrator;
 
 import org.osgi.service.component.annotations.Component;
@@ -130,6 +134,27 @@ public class CommerceUpgradeStepRegistrator implements UpgradeStepRegistrator {
 			new com.liferay.commerce.internal.upgrade.v4_1_1.
 				CommerceAddressUpgradeProcess());
 
+		registry.register(
+			_SCHEMA_VERSION_4_1_1, _SCHEMA_VERSION_4_2_0,
+			new DummyUpgradeProcess());
+
+		registry.register(
+			_SCHEMA_VERSION_4_2_0, _SCHEMA_VERSION_4_2_1,
+			new PrintedNoteUpgradeProcess());
+
+		registry.register(
+			_SCHEMA_VERSION_4_2_1, _SCHEMA_VERSION_4_3_0,
+			new CommerceOrderDateUpgradeProcess());
+
+		registry.register(
+			_SCHEMA_VERSION_4_3_0, _SCHEMA_VERSION_4_4_0,
+			new CommerceOrderManuallyAdjustedUpgradeProcess());
+
+		registry.register(
+			_SCHEMA_VERSION_4_4_0, _SCHEMA_VERSION_4_5_0,
+			new com.liferay.commerce.internal.upgrade.v4_5_0.
+				CommerceAddressUpgradeProcess());
+
 		if (_log.isInfoEnabled()) {
 			_log.info("COMMERCE UPGRADE STEP REGISTRATOR FINISHED");
 		}
@@ -158,6 +183,16 @@ public class CommerceUpgradeStepRegistrator implements UpgradeStepRegistrator {
 	private static final String _SCHEMA_VERSION_4_1_0 = "4.1.0";
 
 	private static final String _SCHEMA_VERSION_4_1_1 = "4.1.1";
+
+	private static final String _SCHEMA_VERSION_4_2_0 = "4.2.0";
+
+	private static final String _SCHEMA_VERSION_4_2_1 = "4.2.1";
+
+	private static final String _SCHEMA_VERSION_4_3_0 = "4.3.0";
+
+	private static final String _SCHEMA_VERSION_4_4_0 = "4.4.0";
+
+	private static final String _SCHEMA_VERSION_4_5_0 = "4.5.0";
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		CommerceUpgradeStepRegistrator.class);

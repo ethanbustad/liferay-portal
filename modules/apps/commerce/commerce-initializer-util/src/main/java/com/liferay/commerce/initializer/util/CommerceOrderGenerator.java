@@ -267,6 +267,7 @@ public class CommerceOrderGenerator {
 					cpInstance.getJson(), commerceContext, serviceContext);
 			}
 			catch (Exception e) {
+				_log.error(e, e);
 			}
 		}
 	}
@@ -349,7 +350,9 @@ public class CommerceOrderGenerator {
 				_configurationProvider.getConfiguration(
 					CommerceAccountGroupServiceConfiguration.class,
 					new GroupServiceSettingsLocator(
-						groupId, CommerceAccountConstants.SERVICE_NAME));
+						_commerceChannelLocalService.
+							getCommerceChannelGroupIdBySiteGroupId(groupId),
+						CommerceAccountConstants.SERVICE_NAME));
 
 		if (commerceAccountGroupServiceConfiguration.commerceSiteType() ==
 				CommerceAccountConstants.SITE_TYPE_B2C) {
@@ -451,13 +454,13 @@ public class CommerceOrderGenerator {
 
 		int value = _random.nextInt();
 
-		long range = max + 1 - min;
+		int range = max + 1 - min;
 
 		if (range == 0) {
 			return value;
 		}
 
-		return (int)(Math.abs(value) % range + min);
+		return (value % range) + min;
 	}
 
 	private void _setPermissionChecker(Group group) throws Exception {

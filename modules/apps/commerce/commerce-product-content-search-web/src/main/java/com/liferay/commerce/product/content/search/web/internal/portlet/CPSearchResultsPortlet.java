@@ -17,6 +17,7 @@ package com.liferay.commerce.product.content.search.web.internal.portlet;
 import com.liferay.asset.kernel.model.AssetCategory;
 import com.liferay.commerce.account.model.CommerceAccount;
 import com.liferay.commerce.account.util.CommerceAccountHelper;
+import com.liferay.commerce.product.constants.CPField;
 import com.liferay.commerce.product.constants.CPPortletKeys;
 import com.liferay.commerce.product.content.constants.CPContentWebKeys;
 import com.liferay.commerce.product.content.render.list.CPContentListRendererRegistry;
@@ -26,7 +27,6 @@ import com.liferay.commerce.product.content.search.web.internal.display.context.
 import com.liferay.commerce.product.content.util.CPContentHelper;
 import com.liferay.commerce.product.model.CPDefinition;
 import com.liferay.commerce.product.model.CommerceChannel;
-import com.liferay.commerce.product.search.CPDefinitionIndexer;
 import com.liferay.commerce.product.service.CommerceChannelLocalService;
 import com.liferay.commerce.product.type.CPTypeServicesTracker;
 import com.liferay.commerce.product.util.CPDefinitionHelper;
@@ -51,8 +51,6 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchContributor;
-import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchRequest;
-import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchResponse;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchSettings;
 
 import java.io.IOException;
@@ -119,16 +117,12 @@ public class CPSearchResultsPortlet
 		HttpServletRequest httpServletRequest = _portal.getHttpServletRequest(
 			renderRequest);
 
-		PortletSharedSearchResponse portletSharedSearchResponse =
-			_portletSharedSearchRequest.search(renderRequest);
-
 		try {
 			CPSearchResultsDisplayContext cpSearchResultsDisplayContext =
 				new CPSearchResultsDisplayContext(
 					_cpContentListEntryRendererRegistry,
 					_cpContentListRendererRegistry, _cpDefinitionHelper,
-					_cpTypeServicesTracker, httpServletRequest,
-					portletSharedSearchResponse);
+					_cpTypeServicesTracker, httpServletRequest);
 
 			renderRequest.setAttribute(
 				WebKeys.PORTLET_DISPLAY_CONTEXT, cpSearchResultsDisplayContext);
@@ -154,7 +148,7 @@ public class CPSearchResultsPortlet
 			paginationStartParameterName);
 
 		Optional<String> paginationStartParameterValueOptional =
-			portletSharedSearchSettings.getParameter(
+			portletSharedSearchSettings.getParameter71(
 				paginationStartParameterName);
 
 		Optional<Integer> paginationStartOptional =
@@ -166,7 +160,7 @@ public class CPSearchResultsPortlet
 		String paginationDeltaParameterName = "delta";
 
 		Optional<String> paginationDeltaParameterValueOptional =
-			portletSharedSearchSettings.getParameter(
+			portletSharedSearchSettings.getParameter71(
 				paginationDeltaParameterName);
 
 		Optional<Integer> paginationDeltaOptional =
@@ -176,7 +170,7 @@ public class CPSearchResultsPortlet
 			cpSearchResultsPortletInstanceConfiguration.paginationDelta();
 
 		Optional<PortletPreferences> portletPreferencesOptional =
-			portletSharedSearchSettings.getPortletPreferences();
+			portletSharedSearchSettings.getPortletPreferences71();
 
 		if (portletPreferencesOptional.isPresent()) {
 			PortletPreferences portletPreferences =
@@ -207,7 +201,7 @@ public class CPSearchResultsPortlet
 				themeDisplay.getScopeGroupId());
 
 		Optional<String> parameterValueOptional =
-			portletSharedSearchSettings.getParameter("q");
+			portletSharedSearchSettings.getParameter71("q");
 
 		portletSharedSearchSettings.setKeywords(
 			parameterValueOptional.orElse(StringPool.BLANK));
@@ -236,25 +230,25 @@ public class CPSearchResultsPortlet
 		searchContext.setEntryClassNames(
 			new String[] {CPDefinition.class.getName()});
 
-		searchContext.setAttribute(
-			CPDefinitionIndexer.FIELD_PUBLISHED, Boolean.TRUE);
+		searchContext.setAttribute(CPField.PUBLISHED, Boolean.TRUE);
 
 		if (commerceChannel != null) {
 			searchContext.setAttribute(
 				"commerceChannelGroupId", commerceChannel.getGroupId());
-		}
 
-		CommerceAccount commerceAccount =
-			_commerceAccountHelper.getCurrentCommerceAccount(
-				_portal.getHttpServletRequest(renderRequest));
+			CommerceAccount commerceAccount =
+				_commerceAccountHelper.getCurrentCommerceAccount(
+					commerceChannel.getGroupId(),
+					_portal.getHttpServletRequest(renderRequest));
 
-		if (commerceAccount != null) {
-			long[] commerceAccountGroupIds =
-				_commerceAccountHelper.getCommerceAccountGroupIds(
-					commerceAccount.getCommerceAccountId());
+			if (commerceAccount != null) {
+				long[] commerceAccountGroupIds =
+					_commerceAccountHelper.getCommerceAccountGroupIds(
+						commerceAccount.getCommerceAccountId());
 
-			searchContext.setAttribute(
-				"commerceAccountGroupIds", commerceAccountGroupIds);
+				searchContext.setAttribute(
+					"commerceAccountGroupIds", commerceAccountGroupIds);
+			}
 		}
 
 		searchContext.setAttribute("secure", Boolean.TRUE);
@@ -304,8 +298,5 @@ public class CPSearchResultsPortlet
 
 	@Reference
 	private Portal _portal;
-
-	@Reference
-	private PortletSharedSearchRequest _portletSharedSearchRequest;
 
 }

@@ -19,6 +19,7 @@ import com.liferay.application.list.PanelCategoryRegistry;
 import com.liferay.commerce.currency.util.CommercePriceFormatter;
 import com.liferay.commerce.model.CommerceOrder;
 import com.liferay.commerce.order.CommerceOrderHelper;
+import com.liferay.commerce.order.CommerceOrderValidatorRegistry;
 import com.liferay.commerce.price.CommerceProductPriceCalculation;
 import com.liferay.commerce.price.list.service.CommercePriceListLocalService;
 import com.liferay.commerce.product.util.CPDefinitionHelper;
@@ -43,69 +44,75 @@ import org.osgi.service.component.annotations.Reference;
 public class ServletContextUtil {
 
 	public static final CommerceOrderHelper getCommerceOrderHelper() {
-		return _instance._getCommerceOrderHelper();
+		return _servletContextUtil._getCommerceOrderHelper();
 	}
 
 	public static final ModelResourcePermission<CommerceOrder>
 		getCommerceOrderModelResourcePermission() {
 
-		return _instance._getCommerceOrderModelResourcePermission();
+		return _servletContextUtil._getCommerceOrderModelResourcePermission();
+	}
+
+	public static final CommerceOrderValidatorRegistry
+		getCommerceOrderValidatorRegistry() {
+
+		return _servletContextUtil._getCommerceOrderValidatorRegistry();
 	}
 
 	public static final CommerceProductPriceCalculation
 		getCommercePriceCalculation() {
 
-		return _instance._getCommercePriceCalculation();
+		return _servletContextUtil._getCommercePriceCalculation();
 	}
 
 	public static final CommercePriceFormatter getCommercePriceFormatter() {
-		return _instance._getCommercePriceFormatter();
+		return _servletContextUtil._getCommercePriceFormatter();
 	}
 
 	public static final CommercePriceListLocalService
 		getCommercePriceListLocalService() {
 
-		return _instance._getCommercePriceListLocalService();
+		return _servletContextUtil._getCommercePriceListLocalService();
 	}
 
 	public static final ConfigurationProvider getConfigurationProvider() {
-		return _instance._getConfigurationProvider();
+		return _servletContextUtil._getConfigurationProvider();
 	}
 
 	public static final CPDefinitionHelper getCPDefinitionHelper() {
-		return _instance._getCPDefinitionHelper();
+		return _servletContextUtil._getCPDefinitionHelper();
 	}
 
 	public static final CPInstanceHelper getCPInstanceHelper() {
-		return _instance._getCPInstanceHelper();
+		return _servletContextUtil._getCPInstanceHelper();
 	}
 
 	public static final CPSubscriptionTypeRegistry
 		getCPSubscriptionTypeRegistry() {
 
-		return _instance._getCPSubscriptionTypeRegistry();
+		return _servletContextUtil._getCPSubscriptionTypeRegistry();
 	}
 
 	public static final PanelAppRegistry getPanelAppRegistry() {
-		return _instance._getPanelAppRegistry();
+		return _servletContextUtil._getPanelAppRegistry();
 	}
 
 	public static final PanelCategoryRegistry getPanelCategoryRegistry() {
-		return _instance._getPanelCategoryRegistry();
+		return _servletContextUtil._getPanelCategoryRegistry();
 	}
 
 	public static final ServletContext getServletContext() {
-		return _instance._getServletContext();
+		return _servletContextUtil._getServletContext();
 	}
 
 	@Activate
 	protected void activate() {
-		_instance = this;
+		_servletContextUtil = this;
 	}
 
 	@Deactivate
 	protected void deactivate() {
-		_instance = null;
+		_servletContextUtil = null;
 	}
 
 	@Reference(unbind = "-")
@@ -125,6 +132,13 @@ public class ServletContextUtil {
 
 		_commerceOrderModelResourcePermission =
 			commerceOrderModelResourcePermission;
+	}
+
+	@Reference(unbind = "-")
+	protected void setCommerceOrderValidatorRegistry(
+		CommerceOrderValidatorRegistry commerceOrderValidatorRegistry) {
+
+		_commerceOrderValidatorRegistry = commerceOrderValidatorRegistry;
 	}
 
 	@Reference(unbind = "-")
@@ -204,6 +218,12 @@ public class ServletContextUtil {
 		return _commerceOrderModelResourcePermission;
 	}
 
+	private CommerceOrderValidatorRegistry
+		_getCommerceOrderValidatorRegistry() {
+
+		return _commerceOrderValidatorRegistry;
+	}
+
 	private CommerceProductPriceCalculation _getCommercePriceCalculation() {
 		return _commerceProductPriceCalculation;
 	}
@@ -244,11 +264,12 @@ public class ServletContextUtil {
 		return _servletContext;
 	}
 
-	private static ServletContextUtil _instance;
+	private static ServletContextUtil _servletContextUtil;
 
 	private CommerceOrderHelper _commerceOrderHelper;
 	private ModelResourcePermission<CommerceOrder>
 		_commerceOrderModelResourcePermission;
+	private CommerceOrderValidatorRegistry _commerceOrderValidatorRegistry;
 	private CommercePriceFormatter _commercePriceFormatter;
 	private CommercePriceListLocalService _commercePriceListLocalService;
 	private CommerceProductPriceCalculation _commerceProductPriceCalculation;

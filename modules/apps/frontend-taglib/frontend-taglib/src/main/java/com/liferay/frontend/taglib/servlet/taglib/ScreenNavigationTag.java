@@ -140,6 +140,7 @@ public class ScreenNavigationTag extends IncludeTag {
 		_modelBean = null;
 		_navCssClass = "col-md-3";
 		_portletURL = null;
+		_screenNavigationCategories = null;
 	}
 
 	@Override

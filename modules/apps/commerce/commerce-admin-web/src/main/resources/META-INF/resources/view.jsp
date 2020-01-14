@@ -30,5 +30,5 @@ CommerceAdminModule selectedCommerceAdminModule = commerceAdminModules.get(selec
 <liferay-util:include page="/navbar.jsp" servletContext="<%= application %>" />
 
 <%
-selectedCommerceAdminModule.render(renderRequest, renderResponse);
+selectedCommerceAdminModule.render(request, PipingServletResponse.createPipingServletResponse(pageContext));
 %>

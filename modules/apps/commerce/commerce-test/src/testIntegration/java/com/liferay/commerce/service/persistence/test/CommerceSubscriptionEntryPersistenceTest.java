@@ -283,10 +283,24 @@ public class CommerceSubscriptionEntryPersistenceTest {
 	}
 
 	@Test
+	public void testCountByGroupId() throws Exception {
+		_persistence.countByGroupId(RandomTestUtil.nextLong());
+
+		_persistence.countByGroupId(0L);
+	}
+
+	@Test
 	public void testCountByCompanyId() throws Exception {
 		_persistence.countByCompanyId(RandomTestUtil.nextLong());
 
 		_persistence.countByCompanyId(0L);
+	}
+
+	@Test
+	public void testCountByCommerceOrderItemId() throws Exception {
+		_persistence.countByCommerceOrderItemId(RandomTestUtil.nextLong());
+
+		_persistence.countByCommerceOrderItemId(0L);
 	}
 
 	@Test
@@ -630,6 +644,13 @@ public class CommerceSubscriptionEntryPersistenceTest {
 			ReflectionTestUtil.<Long>invoke(
 				existingCommerceSubscriptionEntry, "getOriginalGroupId",
 				new Class<?>[0]));
+
+		Assert.assertEquals(
+			Long.valueOf(
+				existingCommerceSubscriptionEntry.getCommerceOrderItemId()),
+			ReflectionTestUtil.<Long>invoke(
+				existingCommerceSubscriptionEntry,
+				"getOriginalCommerceOrderItemId", new Class<?>[0]));
 
 		Assert.assertTrue(
 			Objects.equals(

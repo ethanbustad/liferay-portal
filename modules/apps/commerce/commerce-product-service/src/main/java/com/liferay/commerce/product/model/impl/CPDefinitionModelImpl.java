@@ -197,9 +197,11 @@ public class CPDefinitionModelImpl
 
 	public static final long STATUS_COLUMN_BITMASK = 32L;
 
-	public static final long UUID_COLUMN_BITMASK = 64L;
+	public static final long SUBSCRIPTIONENABLED_COLUMN_BITMASK = 64L;
 
-	public static final long CREATEDATE_COLUMN_BITMASK = 128L;
+	public static final long UUID_COLUMN_BITMASK = 128L;
+
+	public static final long CREATEDATE_COLUMN_BITMASK = 256L;
 
 	/**
 	 * Converts the soap model instance into a normal model instance.
@@ -426,8 +428,10 @@ public class CPDefinitionModelImpl
 			new BiConsumer<CPDefinition, Object>() {
 
 				@Override
-				public void accept(CPDefinition cpDefinition, Object uuid) {
-					cpDefinition.setUuid((String)uuid);
+				public void accept(
+					CPDefinition cpDefinition, Object uuidObject) {
+
+					cpDefinition.setUuid((String)uuidObject);
 				}
 
 			});
@@ -447,10 +451,10 @@ public class CPDefinitionModelImpl
 
 				@Override
 				public void accept(
-					CPDefinition cpDefinition, Object defaultLanguageId) {
+					CPDefinition cpDefinition, Object defaultLanguageIdObject) {
 
 					cpDefinition.setDefaultLanguageId(
-						(String)defaultLanguageId);
+						(String)defaultLanguageIdObject);
 				}
 
 			});
@@ -470,9 +474,9 @@ public class CPDefinitionModelImpl
 
 				@Override
 				public void accept(
-					CPDefinition cpDefinition, Object CPDefinitionId) {
+					CPDefinition cpDefinition, Object CPDefinitionIdObject) {
 
-					cpDefinition.setCPDefinitionId((Long)CPDefinitionId);
+					cpDefinition.setCPDefinitionId((Long)CPDefinitionIdObject);
 				}
 
 			});
@@ -491,8 +495,10 @@ public class CPDefinitionModelImpl
 			new BiConsumer<CPDefinition, Object>() {
 
 				@Override
-				public void accept(CPDefinition cpDefinition, Object groupId) {
-					cpDefinition.setGroupId((Long)groupId);
+				public void accept(
+					CPDefinition cpDefinition, Object groupIdObject) {
+
+					cpDefinition.setGroupId((Long)groupIdObject);
 				}
 
 			});
@@ -512,9 +518,9 @@ public class CPDefinitionModelImpl
 
 				@Override
 				public void accept(
-					CPDefinition cpDefinition, Object companyId) {
+					CPDefinition cpDefinition, Object companyIdObject) {
 
-					cpDefinition.setCompanyId((Long)companyId);
+					cpDefinition.setCompanyId((Long)companyIdObject);
 				}
 
 			});
@@ -533,8 +539,10 @@ public class CPDefinitionModelImpl
 			new BiConsumer<CPDefinition, Object>() {
 
 				@Override
-				public void accept(CPDefinition cpDefinition, Object userId) {
-					cpDefinition.setUserId((Long)userId);
+				public void accept(
+					CPDefinition cpDefinition, Object userIdObject) {
+
+					cpDefinition.setUserId((Long)userIdObject);
 				}
 
 			});
@@ -553,8 +561,10 @@ public class CPDefinitionModelImpl
 			new BiConsumer<CPDefinition, Object>() {
 
 				@Override
-				public void accept(CPDefinition cpDefinition, Object userName) {
-					cpDefinition.setUserName((String)userName);
+				public void accept(
+					CPDefinition cpDefinition, Object userNameObject) {
+
+					cpDefinition.setUserName((String)userNameObject);
 				}
 
 			});
@@ -574,9 +584,9 @@ public class CPDefinitionModelImpl
 
 				@Override
 				public void accept(
-					CPDefinition cpDefinition, Object createDate) {
+					CPDefinition cpDefinition, Object createDateObject) {
 
-					cpDefinition.setCreateDate((Date)createDate);
+					cpDefinition.setCreateDate((Date)createDateObject);
 				}
 
 			});
@@ -596,9 +606,9 @@ public class CPDefinitionModelImpl
 
 				@Override
 				public void accept(
-					CPDefinition cpDefinition, Object modifiedDate) {
+					CPDefinition cpDefinition, Object modifiedDateObject) {
 
-					cpDefinition.setModifiedDate((Date)modifiedDate);
+					cpDefinition.setModifiedDate((Date)modifiedDateObject);
 				}
 
 			});
@@ -618,9 +628,9 @@ public class CPDefinitionModelImpl
 
 				@Override
 				public void accept(
-					CPDefinition cpDefinition, Object CProductId) {
+					CPDefinition cpDefinition, Object CProductIdObject) {
 
-					cpDefinition.setCProductId((Long)CProductId);
+					cpDefinition.setCProductId((Long)CProductIdObject);
 				}
 
 			});
@@ -640,9 +650,10 @@ public class CPDefinitionModelImpl
 
 				@Override
 				public void accept(
-					CPDefinition cpDefinition, Object CPTaxCategoryId) {
+					CPDefinition cpDefinition, Object CPTaxCategoryIdObject) {
 
-					cpDefinition.setCPTaxCategoryId((Long)CPTaxCategoryId);
+					cpDefinition.setCPTaxCategoryId(
+						(Long)CPTaxCategoryIdObject);
 				}
 
 			});
@@ -662,9 +673,10 @@ public class CPDefinitionModelImpl
 
 				@Override
 				public void accept(
-					CPDefinition cpDefinition, Object productTypeName) {
+					CPDefinition cpDefinition, Object productTypeNameObject) {
 
-					cpDefinition.setProductTypeName((String)productTypeName);
+					cpDefinition.setProductTypeName(
+						(String)productTypeNameObject);
 				}
 
 			});
@@ -684,10 +696,11 @@ public class CPDefinitionModelImpl
 
 				@Override
 				public void accept(
-					CPDefinition cpDefinition, Object availableIndividually) {
+					CPDefinition cpDefinition,
+					Object availableIndividuallyObject) {
 
 					cpDefinition.setAvailableIndividually(
-						(Boolean)availableIndividually);
+						(Boolean)availableIndividuallyObject);
 				}
 
 			});
@@ -707,10 +720,11 @@ public class CPDefinitionModelImpl
 
 				@Override
 				public void accept(
-					CPDefinition cpDefinition, Object ignoreSKUCombinations) {
+					CPDefinition cpDefinition,
+					Object ignoreSKUCombinationsObject) {
 
 					cpDefinition.setIgnoreSKUCombinations(
-						(Boolean)ignoreSKUCombinations);
+						(Boolean)ignoreSKUCombinationsObject);
 				}
 
 			});
@@ -730,9 +744,9 @@ public class CPDefinitionModelImpl
 
 				@Override
 				public void accept(
-					CPDefinition cpDefinition, Object shippable) {
+					CPDefinition cpDefinition, Object shippableObject) {
 
-					cpDefinition.setShippable((Boolean)shippable);
+					cpDefinition.setShippable((Boolean)shippableObject);
 				}
 
 			});
@@ -752,9 +766,9 @@ public class CPDefinitionModelImpl
 
 				@Override
 				public void accept(
-					CPDefinition cpDefinition, Object freeShipping) {
+					CPDefinition cpDefinition, Object freeShippingObject) {
 
-					cpDefinition.setFreeShipping((Boolean)freeShipping);
+					cpDefinition.setFreeShipping((Boolean)freeShippingObject);
 				}
 
 			});
@@ -774,9 +788,10 @@ public class CPDefinitionModelImpl
 
 				@Override
 				public void accept(
-					CPDefinition cpDefinition, Object shipSeparately) {
+					CPDefinition cpDefinition, Object shipSeparatelyObject) {
 
-					cpDefinition.setShipSeparately((Boolean)shipSeparately);
+					cpDefinition.setShipSeparately(
+						(Boolean)shipSeparatelyObject);
 				}
 
 			});
@@ -796,10 +811,11 @@ public class CPDefinitionModelImpl
 
 				@Override
 				public void accept(
-					CPDefinition cpDefinition, Object shippingExtraPrice) {
+					CPDefinition cpDefinition,
+					Object shippingExtraPriceObject) {
 
 					cpDefinition.setShippingExtraPrice(
-						(Double)shippingExtraPrice);
+						(Double)shippingExtraPriceObject);
 				}
 
 			});
@@ -818,8 +834,10 @@ public class CPDefinitionModelImpl
 			new BiConsumer<CPDefinition, Object>() {
 
 				@Override
-				public void accept(CPDefinition cpDefinition, Object width) {
-					cpDefinition.setWidth((Double)width);
+				public void accept(
+					CPDefinition cpDefinition, Object widthObject) {
+
+					cpDefinition.setWidth((Double)widthObject);
 				}
 
 			});
@@ -838,8 +856,10 @@ public class CPDefinitionModelImpl
 			new BiConsumer<CPDefinition, Object>() {
 
 				@Override
-				public void accept(CPDefinition cpDefinition, Object height) {
-					cpDefinition.setHeight((Double)height);
+				public void accept(
+					CPDefinition cpDefinition, Object heightObject) {
+
+					cpDefinition.setHeight((Double)heightObject);
 				}
 
 			});
@@ -858,8 +878,10 @@ public class CPDefinitionModelImpl
 			new BiConsumer<CPDefinition, Object>() {
 
 				@Override
-				public void accept(CPDefinition cpDefinition, Object depth) {
-					cpDefinition.setDepth((Double)depth);
+				public void accept(
+					CPDefinition cpDefinition, Object depthObject) {
+
+					cpDefinition.setDepth((Double)depthObject);
 				}
 
 			});
@@ -878,8 +900,10 @@ public class CPDefinitionModelImpl
 			new BiConsumer<CPDefinition, Object>() {
 
 				@Override
-				public void accept(CPDefinition cpDefinition, Object weight) {
-					cpDefinition.setWeight((Double)weight);
+				public void accept(
+					CPDefinition cpDefinition, Object weightObject) {
+
+					cpDefinition.setWeight((Double)weightObject);
 				}
 
 			});
@@ -899,9 +923,9 @@ public class CPDefinitionModelImpl
 
 				@Override
 				public void accept(
-					CPDefinition cpDefinition, Object taxExempt) {
+					CPDefinition cpDefinition, Object taxExemptObject) {
 
-					cpDefinition.setTaxExempt((Boolean)taxExempt);
+					cpDefinition.setTaxExempt((Boolean)taxExemptObject);
 				}
 
 			});
@@ -921,10 +945,11 @@ public class CPDefinitionModelImpl
 
 				@Override
 				public void accept(
-					CPDefinition cpDefinition, Object telcoOrElectronics) {
+					CPDefinition cpDefinition,
+					Object telcoOrElectronicsObject) {
 
 					cpDefinition.setTelcoOrElectronics(
-						(Boolean)telcoOrElectronics);
+						(Boolean)telcoOrElectronicsObject);
 				}
 
 			});
@@ -944,9 +969,10 @@ public class CPDefinitionModelImpl
 
 				@Override
 				public void accept(
-					CPDefinition cpDefinition, Object DDMStructureKey) {
+					CPDefinition cpDefinition, Object DDMStructureKeyObject) {
 
-					cpDefinition.setDDMStructureKey((String)DDMStructureKey);
+					cpDefinition.setDDMStructureKey(
+						(String)DDMStructureKeyObject);
 				}
 
 			});
@@ -966,9 +992,9 @@ public class CPDefinitionModelImpl
 
 				@Override
 				public void accept(
-					CPDefinition cpDefinition, Object published) {
+					CPDefinition cpDefinition, Object publishedObject) {
 
-					cpDefinition.setPublished((Boolean)published);
+					cpDefinition.setPublished((Boolean)publishedObject);
 				}
 
 			});
@@ -988,9 +1014,9 @@ public class CPDefinitionModelImpl
 
 				@Override
 				public void accept(
-					CPDefinition cpDefinition, Object displayDate) {
+					CPDefinition cpDefinition, Object displayDateObject) {
 
-					cpDefinition.setDisplayDate((Date)displayDate);
+					cpDefinition.setDisplayDate((Date)displayDateObject);
 				}
 
 			});
@@ -1010,9 +1036,9 @@ public class CPDefinitionModelImpl
 
 				@Override
 				public void accept(
-					CPDefinition cpDefinition, Object expirationDate) {
+					CPDefinition cpDefinition, Object expirationDateObject) {
 
-					cpDefinition.setExpirationDate((Date)expirationDate);
+					cpDefinition.setExpirationDate((Date)expirationDateObject);
 				}
 
 			});
@@ -1032,9 +1058,10 @@ public class CPDefinitionModelImpl
 
 				@Override
 				public void accept(
-					CPDefinition cpDefinition, Object lastPublishDate) {
+					CPDefinition cpDefinition, Object lastPublishDateObject) {
 
-					cpDefinition.setLastPublishDate((Date)lastPublishDate);
+					cpDefinition.setLastPublishDate(
+						(Date)lastPublishDateObject);
 				}
 
 			});
@@ -1054,10 +1081,11 @@ public class CPDefinitionModelImpl
 
 				@Override
 				public void accept(
-					CPDefinition cpDefinition, Object subscriptionEnabled) {
+					CPDefinition cpDefinition,
+					Object subscriptionEnabledObject) {
 
 					cpDefinition.setSubscriptionEnabled(
-						(Boolean)subscriptionEnabled);
+						(Boolean)subscriptionEnabledObject);
 				}
 
 			});
@@ -1077,10 +1105,11 @@ public class CPDefinitionModelImpl
 
 				@Override
 				public void accept(
-					CPDefinition cpDefinition, Object subscriptionLength) {
+					CPDefinition cpDefinition,
+					Object subscriptionLengthObject) {
 
 					cpDefinition.setSubscriptionLength(
-						(Integer)subscriptionLength);
+						(Integer)subscriptionLengthObject);
 				}
 
 			});
@@ -1100,9 +1129,10 @@ public class CPDefinitionModelImpl
 
 				@Override
 				public void accept(
-					CPDefinition cpDefinition, Object subscriptionType) {
+					CPDefinition cpDefinition, Object subscriptionTypeObject) {
 
-					cpDefinition.setSubscriptionType((String)subscriptionType);
+					cpDefinition.setSubscriptionType(
+						(String)subscriptionTypeObject);
 				}
 
 			});
@@ -1123,10 +1153,10 @@ public class CPDefinitionModelImpl
 				@Override
 				public void accept(
 					CPDefinition cpDefinition,
-					Object subscriptionTypeSettings) {
+					Object subscriptionTypeSettingsObject) {
 
 					cpDefinition.setSubscriptionTypeSettings(
-						(String)subscriptionTypeSettings);
+						(String)subscriptionTypeSettingsObject);
 				}
 
 			});
@@ -1146,10 +1176,11 @@ public class CPDefinitionModelImpl
 
 				@Override
 				public void accept(
-					CPDefinition cpDefinition, Object maxSubscriptionCycles) {
+					CPDefinition cpDefinition,
+					Object maxSubscriptionCyclesObject) {
 
 					cpDefinition.setMaxSubscriptionCycles(
-						(Long)maxSubscriptionCycles);
+						(Long)maxSubscriptionCyclesObject);
 				}
 
 			});
@@ -1170,10 +1201,10 @@ public class CPDefinitionModelImpl
 				@Override
 				public void accept(
 					CPDefinition cpDefinition,
-					Object accountGroupFilterEnabled) {
+					Object accountGroupFilterEnabledObject) {
 
 					cpDefinition.setAccountGroupFilterEnabled(
-						(Boolean)accountGroupFilterEnabled);
+						(Boolean)accountGroupFilterEnabledObject);
 				}
 
 			});
@@ -1193,10 +1224,11 @@ public class CPDefinitionModelImpl
 
 				@Override
 				public void accept(
-					CPDefinition cpDefinition, Object channelFilterEnabled) {
+					CPDefinition cpDefinition,
+					Object channelFilterEnabledObject) {
 
 					cpDefinition.setChannelFilterEnabled(
-						(Boolean)channelFilterEnabled);
+						(Boolean)channelFilterEnabledObject);
 				}
 
 			});
@@ -1215,8 +1247,10 @@ public class CPDefinitionModelImpl
 			new BiConsumer<CPDefinition, Object>() {
 
 				@Override
-				public void accept(CPDefinition cpDefinition, Object version) {
-					cpDefinition.setVersion((Integer)version);
+				public void accept(
+					CPDefinition cpDefinition, Object versionObject) {
+
+					cpDefinition.setVersion((Integer)versionObject);
 				}
 
 			});
@@ -1235,8 +1269,10 @@ public class CPDefinitionModelImpl
 			new BiConsumer<CPDefinition, Object>() {
 
 				@Override
-				public void accept(CPDefinition cpDefinition, Object status) {
-					cpDefinition.setStatus((Integer)status);
+				public void accept(
+					CPDefinition cpDefinition, Object statusObject) {
+
+					cpDefinition.setStatus((Integer)statusObject);
 				}
 
 			});
@@ -1256,9 +1292,9 @@ public class CPDefinitionModelImpl
 
 				@Override
 				public void accept(
-					CPDefinition cpDefinition, Object statusByUserId) {
+					CPDefinition cpDefinition, Object statusByUserIdObject) {
 
-					cpDefinition.setStatusByUserId((Long)statusByUserId);
+					cpDefinition.setStatusByUserId((Long)statusByUserIdObject);
 				}
 
 			});
@@ -1278,9 +1314,10 @@ public class CPDefinitionModelImpl
 
 				@Override
 				public void accept(
-					CPDefinition cpDefinition, Object statusByUserName) {
+					CPDefinition cpDefinition, Object statusByUserNameObject) {
 
-					cpDefinition.setStatusByUserName((String)statusByUserName);
+					cpDefinition.setStatusByUserName(
+						(String)statusByUserNameObject);
 				}
 
 			});
@@ -1300,9 +1337,9 @@ public class CPDefinitionModelImpl
 
 				@Override
 				public void accept(
-					CPDefinition cpDefinition, Object statusDate) {
+					CPDefinition cpDefinition, Object statusDateObject) {
 
-					cpDefinition.setStatusDate((Date)statusDate);
+					cpDefinition.setStatusDate((Date)statusDateObject);
 				}
 
 			});
@@ -2229,7 +2266,19 @@ public class CPDefinitionModelImpl
 
 	@Override
 	public void setSubscriptionEnabled(boolean subscriptionEnabled) {
+		_columnBitmask |= SUBSCRIPTIONENABLED_COLUMN_BITMASK;
+
+		if (!_setOriginalSubscriptionEnabled) {
+			_setOriginalSubscriptionEnabled = true;
+
+			_originalSubscriptionEnabled = _subscriptionEnabled;
+		}
+
 		_subscriptionEnabled = subscriptionEnabled;
+	}
+
+	public boolean getOriginalSubscriptionEnabled() {
+		return _originalSubscriptionEnabled;
 	}
 
 	@JSON
@@ -2673,6 +2722,11 @@ public class CPDefinitionModelImpl
 		cpDefinitionModelImpl._originalDisplayDate =
 			cpDefinitionModelImpl._displayDate;
 
+		cpDefinitionModelImpl._originalSubscriptionEnabled =
+			cpDefinitionModelImpl._subscriptionEnabled;
+
+		cpDefinitionModelImpl._setOriginalSubscriptionEnabled = false;
+
 		cpDefinitionModelImpl._originalStatus = cpDefinitionModelImpl._status;
 
 		cpDefinitionModelImpl._setOriginalStatus = false;
@@ -2979,6 +3033,8 @@ public class CPDefinitionModelImpl
 	private Date _expirationDate;
 	private Date _lastPublishDate;
 	private boolean _subscriptionEnabled;
+	private boolean _originalSubscriptionEnabled;
+	private boolean _setOriginalSubscriptionEnabled;
 	private int _subscriptionLength;
 	private String _subscriptionType;
 	private String _subscriptionTypeSettings;

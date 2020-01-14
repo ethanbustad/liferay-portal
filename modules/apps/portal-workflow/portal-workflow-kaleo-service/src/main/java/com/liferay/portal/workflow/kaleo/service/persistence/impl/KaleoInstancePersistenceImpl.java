@@ -3628,6 +3628,18 @@ public class KaleoInstancePersistenceImpl
 		}
 	}
 
+	public void clearCache(Set<Serializable> primaryKeys) {
+		finderCache.clearCache(FINDER_CLASS_NAME_ENTITY);
+		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
+		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
+
+		for (Serializable primaryKey : primaryKeys) {
+			entityCache.removeResult(
+				KaleoInstanceModelImpl.ENTITY_CACHE_ENABLED,
+				KaleoInstanceImpl.class, primaryKey);
+		}
+	}
+
 	/**
 	 * Creates a new kaleo instance with the primary key. Does not add the kaleo instance to the database.
 	 *

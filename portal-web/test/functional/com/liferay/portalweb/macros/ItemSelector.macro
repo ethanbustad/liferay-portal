@@ -20,7 +20,7 @@ definition {
 			locator1 = "Button#ENTER",
 			value1 = "Enter");
 
-		AssertElementPresent(locator1 = "ItemSelector#URL_IMAGE_SOURCE");
+		AssertElementPresent.pauseAssertVisible(locator1 = "ItemSelector#URL_IMAGE_SOURCE");
 
 		SelectFrameTop(value1 = "relative=top");
 

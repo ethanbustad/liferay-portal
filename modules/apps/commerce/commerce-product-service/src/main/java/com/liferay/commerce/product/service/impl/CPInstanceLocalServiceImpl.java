@@ -14,6 +14,7 @@
 
 package com.liferay.commerce.product.service.impl;
 
+import com.liferay.commerce.product.constants.CPField;
 import com.liferay.commerce.product.exception.CPInstanceDisplayDateException;
 import com.liferay.commerce.product.exception.CPInstanceExpirationDateException;
 import com.liferay.commerce.product.exception.CPInstanceJsonException;
@@ -26,7 +27,6 @@ import com.liferay.commerce.product.model.CPDefinitionOptionRel;
 import com.liferay.commerce.product.model.CPDefinitionOptionValueRel;
 import com.liferay.commerce.product.model.CPInstance;
 import com.liferay.commerce.product.model.CProduct;
-import com.liferay.commerce.product.search.CPInstanceIndexer;
 import com.liferay.commerce.product.service.base.CPInstanceLocalServiceBaseImpl;
 import com.liferay.commerce.product.util.DDMFormValuesUtil;
 import com.liferay.petra.string.StringPool;
@@ -176,7 +176,6 @@ public class CPInstanceLocalServiceImpl extends CPInstanceLocalServiceBaseImpl {
 			cpDefinitionId = newCPDefinition.getCPDefinitionId();
 		}
 
-		cpInstance.setUuid(serviceContext.getUuid());
 		cpInstance.setGroupId(groupId);
 		cpInstance.setCompanyId(user.getCompanyId());
 		cpInstance.setUserId(user.getUserId());
@@ -316,13 +315,13 @@ public class CPInstanceLocalServiceImpl extends CPInstanceLocalServiceBaseImpl {
 							serviceContext.getLanguageId())));
 
 				JSONArray valueJSONArray = JSONUtil.put(
-					String.valueOf(
-						cpDefinitionOptionValueRel.
-							getCPDefinitionOptionValueRelId()));
+					String.valueOf(cpDefinitionOptionValueRel.getKey()));
+
+				CPDefinitionOptionRel cpDefinitionOptionRel =
+					cpDefinitionOptionValueRel.getCPDefinitionOptionRel();
 
 				JSONObject jsonObject = JSONUtil.put(
-					"key",
-					cpDefinitionOptionValueRel.getCPDefinitionOptionRelId()
+					"key", cpDefinitionOptionRel.getKey()
 				).put(
 					"value", valueJSONArray
 				);
@@ -805,10 +804,6 @@ public class CPInstanceLocalServiceImpl extends CPInstanceLocalServiceBaseImpl {
 				cpInstance.getCPInstanceUuid());
 		}
 
-		Date now = new Date();
-
-		cpInstance.setModifiedDate(serviceContext.getModifiedDate(now));
-
 		cpInstance.setPrice(price);
 		cpInstance.setPromoPrice(promoPrice);
 		cpInstance.setCost(cost);
@@ -836,10 +831,6 @@ public class CPInstanceLocalServiceImpl extends CPInstanceLocalServiceBaseImpl {
 				newCPDefinition.getCPDefinitionId(),
 				cpInstance.getCPInstanceUuid());
 		}
-
-		Date now = new Date();
-
-		cpInstance.setModifiedDate(serviceContext.getModifiedDate(now));
 
 		cpInstance.setWidth(width);
 		cpInstance.setHeight(height);
@@ -879,8 +870,6 @@ public class CPInstanceLocalServiceImpl extends CPInstanceLocalServiceBaseImpl {
 		}
 
 		Date modifiedDate = serviceContext.getModifiedDate(now);
-
-		cpInstance.setModifiedDate(modifiedDate);
 
 		if (status == WorkflowConstants.STATUS_APPROVED) {
 			Date expirationDate = cpInstance.getExpirationDate();
@@ -928,10 +917,6 @@ public class CPInstanceLocalServiceImpl extends CPInstanceLocalServiceBaseImpl {
 				newCPDefinition.getCPDefinitionId(),
 				cpInstance.getCPInstanceUuid());
 		}
-
-		Date now = new Date();
-
-		cpInstance.setModifiedDate(serviceContext.getModifiedDate(now));
 
 		cpInstance.setOverrideSubscriptionInfo(overrideSubscriptionInfo);
 		cpInstance.setSubscriptionEnabled(subscriptionEnabled);
@@ -1047,13 +1032,11 @@ public class CPInstanceLocalServiceImpl extends CPInstanceLocalServiceBaseImpl {
 
 		Map<String, Serializable> attributes = new HashMap<>();
 
+		attributes.put(CPField.CP_DEFINITION_ID, cpDefinitionId);
+		attributes.put(
+			CPField.CP_DEFINITION_STATUS, WorkflowConstants.STATUS_ANY);
 		attributes.put(Field.CONTENT, keywords);
 		attributes.put(Field.STATUS, status);
-		attributes.put(
-			CPInstanceIndexer.FIELD_CP_DEFINITION_ID, cpDefinitionId);
-		attributes.put(
-			CPInstanceIndexer.FIELD_CP_DEFINITION_STATUS,
-			WorkflowConstants.STATUS_ANY);
 		attributes.put("params", params);
 
 		searchContext.setAttributes(attributes);

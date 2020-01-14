@@ -22,7 +22,6 @@ import com.liferay.commerce.product.service.CommerceChannelLocalService;
 import com.liferay.commerce.product.util.CPContentContributor;
 import com.liferay.commerce.product.util.CPSubscriptionType;
 import com.liferay.commerce.product.util.CPSubscriptionTypeRegistry;
-import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -31,6 +30,7 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.TextFormatter;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -83,7 +83,7 @@ public class SubscriptionInfoCPContentContributor
 
 	private String _getPeriodKey(long count, String period) {
 		if (count != 1) {
-			return StringUtil.toLowerCase(period) + CharPool.LOWER_CASE_S;
+			return StringUtil.toLowerCase(TextFormatter.formatPlural(period));
 		}
 
 		return period;

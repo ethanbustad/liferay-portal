@@ -26,14 +26,21 @@ import com.liferay.commerce.frontend.Pagination;
 import com.liferay.commerce.model.CommerceOrderItem;
 import com.liferay.commerce.order.content.web.internal.frontend.util.CommerceOrderClayTableUtil;
 import com.liferay.commerce.order.content.web.internal.model.OrderItem;
+import com.liferay.commerce.product.model.CPInstance;
+import com.liferay.commerce.product.model.CPSubscriptionInfo;
 import com.liferay.commerce.product.util.CPInstanceHelper;
+import com.liferay.commerce.product.util.CPSubscriptionType;
+import com.liferay.commerce.product.util.CPSubscriptionTypeRegistry;
 import com.liferay.commerce.service.CommerceOrderItemService;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.TextFormatter;
 import com.liferay.portal.kernel.util.WebKeys;
 
 import java.math.BigDecimal;
@@ -67,10 +74,10 @@ public class CommercePlacedOrderItemClayTable
 	public int countItems(HttpServletRequest httpServletRequest, Filter filter)
 		throws PortalException {
 
-		OrderFilterImpl orderFilter = (OrderFilterImpl)filter;
+		OrderFilterImpl orderFilterImpl = (OrderFilterImpl)filter;
 
 		return _commerceOrderItemService.getCommerceOrderItemsCount(
-			orderFilter.getOrderId());
+			orderFilterImpl.getCommerceOrderId());
 	}
 
 	@Override
@@ -120,7 +127,7 @@ public class CommercePlacedOrderItemClayTable
 
 		List<OrderItem> orderItems = new ArrayList<>();
 
-		OrderFilterImpl orderFilter = (OrderFilterImpl)filter;
+		OrderFilterImpl orderFilterImpl = (OrderFilterImpl)filter;
 
 		ThemeDisplay themeDisplay =
 			(ThemeDisplay)httpServletRequest.getAttribute(
@@ -128,8 +135,8 @@ public class CommercePlacedOrderItemClayTable
 
 		List<CommerceOrderItem> commerceOrderItems =
 			_commerceOrderItemService.getCommerceOrderItems(
-				orderFilter.getOrderId(), pagination.getStartPosition(),
-				pagination.getEndPosition());
+				orderFilterImpl.getCommerceOrderId(),
+				pagination.getStartPosition(), pagination.getEndPosition());
 
 		try {
 			for (CommerceOrderItem commerceOrderItem : commerceOrderItems) {
@@ -169,6 +176,38 @@ public class CommercePlacedOrderItemClayTable
 							themeDisplay);
 				}
 
+				String formattedSubscriptionPeriod = null;
+
+				CPInstance cpInstance = commerceOrderItem.getCPInstance();
+
+				CPSubscriptionInfo cpSubscriptionInfo =
+					cpInstance.getCPSubscriptionInfo();
+
+				if (cpSubscriptionInfo != null) {
+					String period = StringPool.BLANK;
+
+					CPSubscriptionType cpSubscriptionType =
+						_cpSubscriptionTypeRegistry.getCPSubscriptionType(
+							cpSubscriptionInfo.getSubscriptionType());
+
+					if (cpSubscriptionType != null) {
+						period = cpSubscriptionType.getLabel(locale);
+
+						if (cpSubscriptionInfo.getSubscriptionLength() > 1) {
+							period = LanguageUtil.get(
+								locale,
+								StringUtil.toLowerCase(
+									TextFormatter.formatPlural(period)));
+						}
+					}
+
+					formattedSubscriptionPeriod = LanguageUtil.format(
+						locale, "every-x-x",
+						new Object[] {
+							cpSubscriptionInfo.getSubscriptionLength(), period
+						});
+				}
+
 				orderItems.add(
 					new OrderItem(
 						commerceOrderItem.getCommerceOrderItemId(),
@@ -180,8 +219,8 @@ public class CommercePlacedOrderItemClayTable
 						commerceOrderItem.getQuantity(), formattedFinalPrice,
 						_cpInstanceHelper.getCPInstanceThumbnailSrc(
 							commerceOrderItem.getCPInstanceId()),
-						viewShipmentURL,
-						commerceOrderItem.getShippedQuantity()));
+						viewShipmentURL, commerceOrderItem.getShippedQuantity(),
+						null, formattedSubscriptionPeriod));
 			}
 		}
 		catch (Exception e) {
@@ -207,5 +246,8 @@ public class CommercePlacedOrderItemClayTable
 
 	@Reference
 	private CPInstanceHelper _cpInstanceHelper;
+
+	@Reference
+	private CPSubscriptionTypeRegistry _cpSubscriptionTypeRegistry;
 
 }

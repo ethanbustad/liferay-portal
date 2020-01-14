@@ -6,7 +6,8 @@ components:
             name: active
             required: false
             schema:
-                description: Active to filter
+                description:
+                    Active to filter
                 example: true
                 type: boolean
             style: form
@@ -16,7 +17,8 @@ components:
             name: groupId
             required: true
             schema:
-                description: Group to filter (Liferay site)
+                description:
+                    Group to filter (Liferay site)
                 example: 30130
                 format: int64
                 minimum: 0
@@ -28,7 +30,8 @@ components:
             name: id
             required: true
             schema:
-                description: The resource Id
+                description:
+                    The resource Id
                 example: 30130
                 format: int64
                 minimum: 0
@@ -56,7 +59,8 @@ components:
             name: type
             required: false
             schema:
-                description: Type to filter
+                description:
+                    Type to filter
                 example: 0
                 format: int32
                 maximum: 1
@@ -68,20 +72,22 @@ components:
             content:
                 application/json:
                     schema:
-                        $ref: '#/components/schemas/Error'
+                        $ref: "#/components/schemas/Error"
                 application/xml:
                     schema:
-                        $ref: '#/components/schemas/Error'
-            description: The specified resource was not found
+                        $ref: "#/components/schemas/Error"
+            description:
+                The specified resource was not found
         UnauthorizedError:
             content:
                 application/json:
                     schema:
-                        $ref: '#/components/schemas/Error'
+                        $ref: "#/components/schemas/Error"
                 application/xml:
                     schema:
-                        $ref: '#/components/schemas/Error'
-            description: Authentication information is missing or invalid
+                        $ref: "#/components/schemas/Error"
+            description:
+                Authentication information is missing or invalid
     schemas:
         AvailabilityEstimate:
             properties:
@@ -115,7 +121,8 @@ components:
         Error:
             properties:
                 errorCode:
-                    description: Internal error code mapping
+                    description:
+                        Internal error code mapping
                     example: 996
                     readOnly: true
                     type: integer
@@ -130,7 +137,8 @@ components:
                     readOnly: true
                     type: string
                 status:
-                    description: HTTP Status code
+                    description:
+                        HTTP Status code
                     example: 404
                     readOnly: true
                     type: integer
@@ -302,7 +310,8 @@ info:
     contact:
         email: team-commerce@liferay.com
         name: Commerce Team
-    description: Liferay Commerce Admin Site Setting API
+    description:
+        Liferay Commerce Admin Site Setting API
     title: Liferay Commerce Admin Site Setting API
     version: v1.0
 openapi: 3.0.0
@@ -316,7 +325,8 @@ paths:
                   name: id
                   required: true
                   schema:
-                      description: The resource Id
+                      description:
+                          The resource Id
                       example: 30130
                       format: int64
                       minimum: 0
@@ -324,16 +334,18 @@ paths:
                   style: simple
             responses:
                 204:
-                    description: No content
+                    description:
+                        No content
                 401:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Error'
+                                $ref: "#/components/schemas/Error"
                         application/xml:
                             schema:
-                                $ref: '#/components/schemas/Error'
-                    description: Authentication information is missing or invalid
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        Authentication information is missing or invalid
             security:
                 - BasicAuth: []
                 - BearerAuth: []
@@ -350,7 +362,8 @@ paths:
                   name: id
                   required: true
                   schema:
-                      description: The resource Id
+                      description:
+                          The resource Id
                       example: 30130
                       format: int64
                       minimum: 0
@@ -361,40 +374,45 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/AvailabilityEstimate'
+                                $ref: "#/components/schemas/AvailabilityEstimate"
                         application/xml:
                             schema:
-                                $ref: '#/components/schemas/AvailabilityEstimate'
-                    description: Successful operation
+                                $ref: "#/components/schemas/AvailabilityEstimate"
+                    description:
+                        Successful operation
                 400:
-                    description: Invalid input
+                    description:
+                        Invalid input
                 401:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Error'
+                                $ref: "#/components/schemas/Error"
                         application/xml:
                             schema:
-                                $ref: '#/components/schemas/Error'
-                    description: Authentication information is missing or invalid
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        Authentication information is missing or invalid
                 404:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Error'
+                                $ref: "#/components/schemas/Error"
                         application/xml:
                             schema:
-                                $ref: '#/components/schemas/Error'
-                    description: The specified resource was not found
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        The specified resource was not found
                 500:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Error'
+                                $ref: "#/components/schemas/Error"
                         application/xml:
                             schema:
-                                $ref: '#/components/schemas/Error'
-                    description: Unexpected error
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        Unexpected error
             security:
                 - BasicAuth: []
                 - BearerAuth: []
@@ -411,7 +429,8 @@ paths:
                   name: id
                   required: true
                   schema:
-                      description: The resource Id
+                      description:
+                          The resource Id
                       example: 30130
                       format: int64
                       minimum: 0
@@ -421,45 +440,51 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/AvailabilityEstimate'
+                            $ref: "#/components/schemas/AvailabilityEstimate"
                     application/xml:
                         schema:
-                            $ref: '#/components/schemas/AvailabilityEstimate'
+                            $ref: "#/components/schemas/AvailabilityEstimate"
                 required: true
             responses:
                 202:
-                    description: Async
+                    description:
+                        Async
                 204:
-                    description: Updated
+                    description:
+                        Updated
                 400:
-                    description: Invalid input
+                    description:
+                        Invalid input
                 401:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Error'
+                                $ref: "#/components/schemas/Error"
                         application/xml:
                             schema:
-                                $ref: '#/components/schemas/Error'
-                    description: Authentication information is missing or invalid
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        Authentication information is missing or invalid
                 404:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Error'
+                                $ref: "#/components/schemas/Error"
                         application/xml:
                             schema:
-                                $ref: '#/components/schemas/Error'
-                    description: The specified resource was not found
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        The specified resource was not found
                 500:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Error'
+                                $ref: "#/components/schemas/Error"
                         application/xml:
                             schema:
-                                $ref: '#/components/schemas/Error'
-                    description: Unexpected error
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        Unexpected error
             security:
                 - BasicAuth: []
                 - BearerAuth: []
@@ -477,7 +502,8 @@ paths:
                   name: groupId
                   required: true
                   schema:
-                      description: Group to filter (Liferay site)
+                      description:
+                          Group to filter (Liferay site)
                       example: 30130
                       format: int64
                       minimum: 0
@@ -503,41 +529,45 @@ paths:
                         application/json:
                             schema:
                                 items:
-                                    $ref: '#/components/schemas/AvailabilityEstimate'
+                                    $ref: "#/components/schemas/AvailabilityEstimate"
                                 type: array
                         application/xml:
                             schema:
                                 items:
-                                    $ref: '#/components/schemas/AvailabilityEstimate'
+                                    $ref: "#/components/schemas/AvailabilityEstimate"
                                 type: array
-                    description: Successful operation
+                    description:
+                        Successful operation
                 401:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Error'
+                                $ref: "#/components/schemas/Error"
                         application/xml:
                             schema:
-                                $ref: '#/components/schemas/Error'
-                    description: Authentication information is missing or invalid
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        Authentication information is missing or invalid
                 404:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Error'
+                                $ref: "#/components/schemas/Error"
                         application/xml:
                             schema:
-                                $ref: '#/components/schemas/Error'
-                    description: The specified resource was not found
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        The specified resource was not found
                 500:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Error'
+                                $ref: "#/components/schemas/Error"
                         application/xml:
                             schema:
-                                $ref: '#/components/schemas/Error'
-                    description: Unexpected error
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        Unexpected error
             security:
                 - BasicAuth: []
                 - BearerAuth: []
@@ -554,7 +584,8 @@ paths:
                   name: groupId
                   required: true
                   schema:
-                      description: Group to filter (Liferay site)
+                      description:
+                          Group to filter (Liferay site)
                       example: 30130
                       format: int64
                       minimum: 0
@@ -564,54 +595,61 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/AvailabilityEstimate'
+                            $ref: "#/components/schemas/AvailabilityEstimate"
                     application/xml:
                         schema:
-                            $ref: '#/components/schemas/AvailabilityEstimate'
+                            $ref: "#/components/schemas/AvailabilityEstimate"
                 required: true
             responses:
                 201:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/AvailabilityEstimate'
+                                $ref: "#/components/schemas/AvailabilityEstimate"
                         application/xml:
                             schema:
-                                $ref: '#/components/schemas/AvailabilityEstimate'
-                    description: Created
+                                $ref: "#/components/schemas/AvailabilityEstimate"
+                    description:
+                        Created
                 202:
-                    description: Async
+                    description:
+                        Async
                 204:
-                    description: Updated
+                    description:
+                        Updated
                 400:
-                    description: Invalid input
+                    description:
+                        Invalid input
                 401:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Error'
+                                $ref: "#/components/schemas/Error"
                         application/xml:
                             schema:
-                                $ref: '#/components/schemas/Error'
-                    description: Authentication information is missing or invalid
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        Authentication information is missing or invalid
                 404:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Error'
+                                $ref: "#/components/schemas/Error"
                         application/xml:
                             schema:
-                                $ref: '#/components/schemas/Error'
-                    description: The specified resource was not found
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        The specified resource was not found
                 500:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Error'
+                                $ref: "#/components/schemas/Error"
                         application/xml:
                             schema:
-                                $ref: '#/components/schemas/Error'
-                    description: Unexpected error
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        Unexpected error
             security:
                 - BasicAuth: []
                 - BearerAuth: []
@@ -629,7 +667,8 @@ paths:
                   name: groupId
                   required: true
                   schema:
-                      description: Group to filter (Liferay site)
+                      description:
+                          Group to filter (Liferay site)
                       example: 30130
                       format: int64
                       minimum: 0
@@ -640,7 +679,8 @@ paths:
                   name: type
                   required: false
                   schema:
-                      description: Type to filter
+                      description:
+                          Type to filter
                       example: 0
                       format: int32
                       maximum: 1
@@ -667,41 +707,45 @@ paths:
                         application/json:
                             schema:
                                 items:
-                                    $ref: '#/components/schemas/MeasurementUnit'
+                                    $ref: "#/components/schemas/MeasurementUnit"
                                 type: array
                         application/xml:
                             schema:
                                 items:
-                                    $ref: '#/components/schemas/MeasurementUnit'
+                                    $ref: "#/components/schemas/MeasurementUnit"
                                 type: array
-                    description: Successful operation
+                    description:
+                        Successful operation
                 401:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Error'
+                                $ref: "#/components/schemas/Error"
                         application/xml:
                             schema:
-                                $ref: '#/components/schemas/Error'
-                    description: Authentication information is missing or invalid
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        Authentication information is missing or invalid
                 404:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Error'
+                                $ref: "#/components/schemas/Error"
                         application/xml:
                             schema:
-                                $ref: '#/components/schemas/Error'
-                    description: The specified resource was not found
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        The specified resource was not found
                 500:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Error'
+                                $ref: "#/components/schemas/Error"
                         application/xml:
                             schema:
-                                $ref: '#/components/schemas/Error'
-                    description: Unexpected error
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        Unexpected error
             security:
                 - BasicAuth: []
                 - BearerAuth: []
@@ -718,7 +762,8 @@ paths:
                   name: groupId
                   required: true
                   schema:
-                      description: Group to filter (Liferay site)
+                      description:
+                          Group to filter (Liferay site)
                       example: 30130
                       format: int64
                       minimum: 0
@@ -728,54 +773,61 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/MeasurementUnit'
+                            $ref: "#/components/schemas/MeasurementUnit"
                     application/xml:
                         schema:
-                            $ref: '#/components/schemas/MeasurementUnit'
+                            $ref: "#/components/schemas/MeasurementUnit"
                 required: true
             responses:
                 201:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/MeasurementUnit'
+                                $ref: "#/components/schemas/MeasurementUnit"
                         application/xml:
                             schema:
-                                $ref: '#/components/schemas/MeasurementUnit'
-                    description: Created
+                                $ref: "#/components/schemas/MeasurementUnit"
+                    description:
+                        Created
                 202:
-                    description: Async
+                    description:
+                        Async
                 204:
-                    description: Updated
+                    description:
+                        Updated
                 400:
-                    description: Invalid input
+                    description:
+                        Invalid input
                 401:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Error'
+                                $ref: "#/components/schemas/Error"
                         application/xml:
                             schema:
-                                $ref: '#/components/schemas/Error'
-                    description: Authentication information is missing or invalid
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        Authentication information is missing or invalid
                 404:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Error'
+                                $ref: "#/components/schemas/Error"
                         application/xml:
                             schema:
-                                $ref: '#/components/schemas/Error'
-                    description: The specified resource was not found
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        The specified resource was not found
                 500:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Error'
+                                $ref: "#/components/schemas/Error"
                         application/xml:
                             schema:
-                                $ref: '#/components/schemas/Error'
-                    description: Unexpected error
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        Unexpected error
             security:
                 - BasicAuth: []
                 - BearerAuth: []
@@ -793,7 +845,8 @@ paths:
                   name: groupId
                   required: true
                   schema:
-                      description: Group to filter (Liferay site)
+                      description:
+                          Group to filter (Liferay site)
                       example: 30130
                       format: int64
                       minimum: 0
@@ -819,41 +872,45 @@ paths:
                         application/json:
                             schema:
                                 items:
-                                    $ref: '#/components/schemas/TaxCategory'
+                                    $ref: "#/components/schemas/TaxCategory"
                                 type: array
                         application/xml:
                             schema:
                                 items:
-                                    $ref: '#/components/schemas/TaxCategory'
+                                    $ref: "#/components/schemas/TaxCategory"
                                 type: array
-                    description: Successful operation
+                    description:
+                        Successful operation
                 401:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Error'
+                                $ref: "#/components/schemas/Error"
                         application/xml:
                             schema:
-                                $ref: '#/components/schemas/Error'
-                    description: Authentication information is missing or invalid
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        Authentication information is missing or invalid
                 404:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Error'
+                                $ref: "#/components/schemas/Error"
                         application/xml:
                             schema:
-                                $ref: '#/components/schemas/Error'
-                    description: The specified resource was not found
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        The specified resource was not found
                 500:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Error'
+                                $ref: "#/components/schemas/Error"
                         application/xml:
                             schema:
-                                $ref: '#/components/schemas/Error'
-                    description: Unexpected error
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        Unexpected error
             security:
                 - BasicAuth: []
                 - BearerAuth: []
@@ -870,7 +927,8 @@ paths:
                   name: groupId
                   required: true
                   schema:
-                      description: Group to filter (Liferay site)
+                      description:
+                          Group to filter (Liferay site)
                       example: 30130
                       format: int64
                       minimum: 0
@@ -880,54 +938,61 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/TaxCategory'
+                            $ref: "#/components/schemas/TaxCategory"
                     application/xml:
                         schema:
-                            $ref: '#/components/schemas/TaxCategory'
+                            $ref: "#/components/schemas/TaxCategory"
                 required: true
             responses:
                 201:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/TaxCategory'
+                                $ref: "#/components/schemas/TaxCategory"
                         application/xml:
                             schema:
-                                $ref: '#/components/schemas/TaxCategory'
-                    description: Created
+                                $ref: "#/components/schemas/TaxCategory"
+                    description:
+                        Created
                 202:
-                    description: Async
+                    description:
+                        Async
                 204:
-                    description: Updated
+                    description:
+                        Updated
                 400:
-                    description: Invalid input
+                    description:
+                        Invalid input
                 401:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Error'
+                                $ref: "#/components/schemas/Error"
                         application/xml:
                             schema:
-                                $ref: '#/components/schemas/Error'
-                    description: Authentication information is missing or invalid
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        Authentication information is missing or invalid
                 404:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Error'
+                                $ref: "#/components/schemas/Error"
                         application/xml:
                             schema:
-                                $ref: '#/components/schemas/Error'
-                    description: The specified resource was not found
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        The specified resource was not found
                 500:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Error'
+                                $ref: "#/components/schemas/Error"
                         application/xml:
                             schema:
-                                $ref: '#/components/schemas/Error'
-                    description: Unexpected error
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        Unexpected error
             security:
                 - BasicAuth: []
                 - BearerAuth: []
@@ -945,7 +1010,8 @@ paths:
                   name: groupId
                   required: true
                   schema:
-                      description: Group to filter (Liferay site)
+                      description:
+                          Group to filter (Liferay site)
                       example: 30130
                       format: int64
                       minimum: 0
@@ -956,7 +1022,8 @@ paths:
                   name: active
                   required: false
                   schema:
-                      description: Active to filter
+                      description:
+                          Active to filter
                       example: true
                       type: boolean
                   style: form
@@ -980,41 +1047,45 @@ paths:
                         application/json:
                             schema:
                                 items:
-                                    $ref: '#/components/schemas/Warehouse'
+                                    $ref: "#/components/schemas/Warehouse"
                                 type: array
                         application/xml:
                             schema:
                                 items:
-                                    $ref: '#/components/schemas/Warehouse'
+                                    $ref: "#/components/schemas/Warehouse"
                                 type: array
-                    description: Successful operation
+                    description:
+                        Successful operation
                 401:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Error'
+                                $ref: "#/components/schemas/Error"
                         application/xml:
                             schema:
-                                $ref: '#/components/schemas/Error'
-                    description: Authentication information is missing or invalid
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        Authentication information is missing or invalid
                 404:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Error'
+                                $ref: "#/components/schemas/Error"
                         application/xml:
                             schema:
-                                $ref: '#/components/schemas/Error'
-                    description: The specified resource was not found
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        The specified resource was not found
                 500:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Error'
+                                $ref: "#/components/schemas/Error"
                         application/xml:
                             schema:
-                                $ref: '#/components/schemas/Error'
-                    description: Unexpected error
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        Unexpected error
             security:
                 - BasicAuth: []
                 - BearerAuth: []
@@ -1031,7 +1102,8 @@ paths:
                   name: groupId
                   required: true
                   schema:
-                      description: Group to filter (Liferay site)
+                      description:
+                          Group to filter (Liferay site)
                       example: 30130
                       format: int64
                       minimum: 0
@@ -1041,54 +1113,61 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/Warehouse'
+                            $ref: "#/components/schemas/Warehouse"
                     application/xml:
                         schema:
-                            $ref: '#/components/schemas/Warehouse'
+                            $ref: "#/components/schemas/Warehouse"
                 required: true
             responses:
                 201:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Warehouse'
+                                $ref: "#/components/schemas/Warehouse"
                         application/xml:
                             schema:
-                                $ref: '#/components/schemas/Warehouse'
-                    description: Created
+                                $ref: "#/components/schemas/Warehouse"
+                    description:
+                        Created
                 202:
-                    description: Async
+                    description:
+                        Async
                 204:
-                    description: Updated
+                    description:
+                        Updated
                 400:
-                    description: Invalid input
+                    description:
+                        Invalid input
                 401:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Error'
+                                $ref: "#/components/schemas/Error"
                         application/xml:
                             schema:
-                                $ref: '#/components/schemas/Error'
-                    description: Authentication information is missing or invalid
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        Authentication information is missing or invalid
                 404:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Error'
+                                $ref: "#/components/schemas/Error"
                         application/xml:
                             schema:
-                                $ref: '#/components/schemas/Error'
-                    description: The specified resource was not found
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        The specified resource was not found
                 500:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Error'
+                                $ref: "#/components/schemas/Error"
                         application/xml:
                             schema:
-                                $ref: '#/components/schemas/Error'
-                    description: Unexpected error
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        Unexpected error
             security:
                 - BasicAuth: []
                 - BearerAuth: []
@@ -1106,7 +1185,8 @@ paths:
                   name: id
                   required: true
                   schema:
-                      description: The resource Id
+                      description:
+                          The resource Id
                       example: 30130
                       format: int64
                       minimum: 0
@@ -1114,16 +1194,18 @@ paths:
                   style: simple
             responses:
                 204:
-                    description: No content
+                    description:
+                        No content
                 401:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Error'
+                                $ref: "#/components/schemas/Error"
                         application/xml:
                             schema:
-                                $ref: '#/components/schemas/Error'
-                    description: Authentication information is missing or invalid
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        Authentication information is missing or invalid
             security:
                 - BasicAuth: []
                 - BearerAuth: []
@@ -1140,7 +1222,8 @@ paths:
                   name: id
                   required: true
                   schema:
-                      description: The resource Id
+                      description:
+                          The resource Id
                       example: 30130
                       format: int64
                       minimum: 0
@@ -1151,40 +1234,45 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/MeasurementUnit'
+                                $ref: "#/components/schemas/MeasurementUnit"
                         application/xml:
                             schema:
-                                $ref: '#/components/schemas/MeasurementUnit'
-                    description: Successful operation
+                                $ref: "#/components/schemas/MeasurementUnit"
+                    description:
+                        Successful operation
                 400:
-                    description: Invalid input
+                    description:
+                        Invalid input
                 401:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Error'
+                                $ref: "#/components/schemas/Error"
                         application/xml:
                             schema:
-                                $ref: '#/components/schemas/Error'
-                    description: Authentication information is missing or invalid
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        Authentication information is missing or invalid
                 404:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Error'
+                                $ref: "#/components/schemas/Error"
                         application/xml:
                             schema:
-                                $ref: '#/components/schemas/Error'
-                    description: The specified resource was not found
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        The specified resource was not found
                 500:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Error'
+                                $ref: "#/components/schemas/Error"
                         application/xml:
                             schema:
-                                $ref: '#/components/schemas/Error'
-                    description: Unexpected error
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        Unexpected error
             security:
                 - BasicAuth: []
                 - BearerAuth: []
@@ -1201,7 +1289,8 @@ paths:
                   name: id
                   required: true
                   schema:
-                      description: The resource Id
+                      description:
+                          The resource Id
                       example: 30130
                       format: int64
                       minimum: 0
@@ -1211,45 +1300,51 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/MeasurementUnit'
+                            $ref: "#/components/schemas/MeasurementUnit"
                     application/xml:
                         schema:
-                            $ref: '#/components/schemas/MeasurementUnit'
+                            $ref: "#/components/schemas/MeasurementUnit"
                 required: true
             responses:
                 202:
-                    description: Async
+                    description:
+                        Async
                 204:
-                    description: Updated
+                    description:
+                        Updated
                 400:
-                    description: Invalid input
+                    description:
+                        Invalid input
                 401:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Error'
+                                $ref: "#/components/schemas/Error"
                         application/xml:
                             schema:
-                                $ref: '#/components/schemas/Error'
-                    description: Authentication information is missing or invalid
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        Authentication information is missing or invalid
                 404:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Error'
+                                $ref: "#/components/schemas/Error"
                         application/xml:
                             schema:
-                                $ref: '#/components/schemas/Error'
-                    description: The specified resource was not found
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        The specified resource was not found
                 500:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Error'
+                                $ref: "#/components/schemas/Error"
                         application/xml:
                             schema:
-                                $ref: '#/components/schemas/Error'
-                    description: Unexpected error
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        Unexpected error
             security:
                 - BasicAuth: []
                 - BearerAuth: []
@@ -1267,7 +1362,8 @@ paths:
                   name: id
                   required: true
                   schema:
-                      description: The resource Id
+                      description:
+                          The resource Id
                       example: 30130
                       format: int64
                       minimum: 0
@@ -1275,16 +1371,18 @@ paths:
                   style: simple
             responses:
                 204:
-                    description: No content
+                    description:
+                        No content
                 401:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Error'
+                                $ref: "#/components/schemas/Error"
                         application/xml:
                             schema:
-                                $ref: '#/components/schemas/Error'
-                    description: Authentication information is missing or invalid
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        Authentication information is missing or invalid
             security:
                 - BasicAuth: []
                 - BearerAuth: []
@@ -1301,7 +1399,8 @@ paths:
                   name: id
                   required: true
                   schema:
-                      description: The resource Id
+                      description:
+                          The resource Id
                       example: 30130
                       format: int64
                       minimum: 0
@@ -1312,40 +1411,45 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/TaxCategory'
+                                $ref: "#/components/schemas/TaxCategory"
                         application/xml:
                             schema:
-                                $ref: '#/components/schemas/TaxCategory'
-                    description: Successful operation
+                                $ref: "#/components/schemas/TaxCategory"
+                    description:
+                        Successful operation
                 400:
-                    description: Invalid input
+                    description:
+                        Invalid input
                 401:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Error'
+                                $ref: "#/components/schemas/Error"
                         application/xml:
                             schema:
-                                $ref: '#/components/schemas/Error'
-                    description: Authentication information is missing or invalid
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        Authentication information is missing or invalid
                 404:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Error'
+                                $ref: "#/components/schemas/Error"
                         application/xml:
                             schema:
-                                $ref: '#/components/schemas/Error'
-                    description: The specified resource was not found
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        The specified resource was not found
                 500:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Error'
+                                $ref: "#/components/schemas/Error"
                         application/xml:
                             schema:
-                                $ref: '#/components/schemas/Error'
-                    description: Unexpected error
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        Unexpected error
             security:
                 - BasicAuth: []
                 - BearerAuth: []
@@ -1362,7 +1466,8 @@ paths:
                   name: id
                   required: true
                   schema:
-                      description: The resource Id
+                      description:
+                          The resource Id
                       example: 30130
                       format: int64
                       minimum: 0
@@ -1372,45 +1477,51 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/TaxCategory'
+                            $ref: "#/components/schemas/TaxCategory"
                     application/xml:
                         schema:
-                            $ref: '#/components/schemas/TaxCategory'
+                            $ref: "#/components/schemas/TaxCategory"
                 required: true
             responses:
                 202:
-                    description: Async
+                    description:
+                        Async
                 204:
-                    description: Updated
+                    description:
+                        Updated
                 400:
-                    description: Invalid input
+                    description:
+                        Invalid input
                 401:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Error'
+                                $ref: "#/components/schemas/Error"
                         application/xml:
                             schema:
-                                $ref: '#/components/schemas/Error'
-                    description: Authentication information is missing or invalid
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        Authentication information is missing or invalid
                 404:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Error'
+                                $ref: "#/components/schemas/Error"
                         application/xml:
                             schema:
-                                $ref: '#/components/schemas/Error'
-                    description: The specified resource was not found
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        The specified resource was not found
                 500:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Error'
+                                $ref: "#/components/schemas/Error"
                         application/xml:
                             schema:
-                                $ref: '#/components/schemas/Error'
-                    description: Unexpected error
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        Unexpected error
             security:
                 - BasicAuth: []
                 - BearerAuth: []
@@ -1428,7 +1539,8 @@ paths:
                   name: id
                   required: true
                   schema:
-                      description: The resource Id
+                      description:
+                          The resource Id
                       example: 30130
                       format: int64
                       minimum: 0
@@ -1436,16 +1548,18 @@ paths:
                   style: simple
             responses:
                 204:
-                    description: No content
+                    description:
+                        No content
                 401:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Error'
+                                $ref: "#/components/schemas/Error"
                         application/xml:
                             schema:
-                                $ref: '#/components/schemas/Error'
-                    description: Authentication information is missing or invalid
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        Authentication information is missing or invalid
             security:
                 - BasicAuth: []
                 - BearerAuth: []
@@ -1462,7 +1576,8 @@ paths:
                   name: id
                   required: true
                   schema:
-                      description: The resource Id
+                      description:
+                          The resource Id
                       example: 30130
                       format: int64
                       minimum: 0
@@ -1473,40 +1588,45 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Warehouse'
+                                $ref: "#/components/schemas/Warehouse"
                         application/xml:
                             schema:
-                                $ref: '#/components/schemas/Warehouse'
-                    description: Successful operation
+                                $ref: "#/components/schemas/Warehouse"
+                    description:
+                        Successful operation
                 400:
-                    description: Invalid input
+                    description:
+                        Invalid input
                 401:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Error'
+                                $ref: "#/components/schemas/Error"
                         application/xml:
                             schema:
-                                $ref: '#/components/schemas/Error'
-                    description: Authentication information is missing or invalid
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        Authentication information is missing or invalid
                 404:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Error'
+                                $ref: "#/components/schemas/Error"
                         application/xml:
                             schema:
-                                $ref: '#/components/schemas/Error'
-                    description: The specified resource was not found
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        The specified resource was not found
                 500:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Error'
+                                $ref: "#/components/schemas/Error"
                         application/xml:
                             schema:
-                                $ref: '#/components/schemas/Error'
-                    description: Unexpected error
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        Unexpected error
             security:
                 - BasicAuth: []
                 - BearerAuth: []
@@ -1523,7 +1643,8 @@ paths:
                   name: id
                   required: true
                   schema:
-                      description: The resource Id
+                      description:
+                          The resource Id
                       example: 30130
                       format: int64
                       minimum: 0
@@ -1533,45 +1654,51 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/Warehouse'
+                            $ref: "#/components/schemas/Warehouse"
                     application/xml:
                         schema:
-                            $ref: '#/components/schemas/Warehouse'
+                            $ref: "#/components/schemas/Warehouse"
                 required: true
             responses:
                 202:
-                    description: Async
+                    description:
+                        Async
                 204:
-                    description: Updated
+                    description:
+                        Updated
                 400:
-                    description: Invalid input
+                    description:
+                        Invalid input
                 401:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Error'
+                                $ref: "#/components/schemas/Error"
                         application/xml:
                             schema:
-                                $ref: '#/components/schemas/Error'
-                    description: Authentication information is missing or invalid
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        Authentication information is missing or invalid
                 404:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Error'
+                                $ref: "#/components/schemas/Error"
                         application/xml:
                             schema:
-                                $ref: '#/components/schemas/Error'
-                    description: The specified resource was not found
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        The specified resource was not found
                 500:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Error'
+                                $ref: "#/components/schemas/Error"
                         application/xml:
                             schema:
-                                $ref: '#/components/schemas/Error'
-                    description: Unexpected error
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        Unexpected error
             security:
                 - BasicAuth: []
                 - BearerAuth: []
@@ -1581,7 +1708,8 @@ paths:
             tags:
                 - Warehouse
 servers:
-    - description: Liferay Commerce API server
+    - description:
+          Liferay Commerce API server
       url: https://commerce.{environment}.liferay.com/commerce-admin-site-setting/{basePath}
       variables:
           basePath:
@@ -1592,8 +1720,9 @@ servers:
                   - api
                   - api.dev
                   - api.uat
-    - description: Liferay Commerce Local Development (Hosts file)
-      url: '{protocol}://{host}:{port}/o/commerce-admin-site-setting/{basePath}'
+    - description:
+          Liferay Commerce Local Development (Hosts file)
+      url: "{protocol}://{host}:{port}/o/commerce-admin-site-setting/{basePath}"
       variables:
           basePath:
               default: v1.0
@@ -1610,8 +1739,9 @@ servers:
               enum:
                   - http
                   - https
-    - description: Liferay Commerce Local Development with Ngrok
-      url: '{protocol}://{host}.ngrok.io/o/commerce-admin-site-setting/{basePath}'
+    - description:
+          Liferay Commerce Local Development with Ngrok
+      url: "{protocol}://{host}.ngrok.io/o/commerce-admin-site-setting/{basePath}"
       variables:
           basePath:
               default: v1.0
@@ -1622,14 +1752,19 @@ servers:
               enum:
                   - http
                   - https
-    - description: SwaggerHub API Auto Mocking
+    - description:
+          SwaggerHub API Auto Mocking
       url: https://virtserver.swaggerhub.com/liferay6/commerce-admin-site-setting/v1.0
 tags:
-    - description: Operations on Availability Estimates
+    - description:
+          Operations on Availability Estimates
       name: AvailabilityEstimate
-    - description: Operations on Measurement Units
+    - description:
+          Operations on Measurement Units
       name: MeasurementUnit
-    - description: Operations on Tax Categories
+    - description:
+          Operations on Tax Categories
       name: TaxCategory
-    - description: Operations on Warehouses
+    - description:
+          Operations on Warehouses
       name: Warehouse

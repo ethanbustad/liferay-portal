@@ -22,6 +22,8 @@
 		<field name="userName" type="String" />
 		<field name="createDate" type="Date" />
 		<field name="modifiedDate" type="Date" />
+		<field name="classNameId" type="long" />
+		<field name="classPK" type="long" />
 		<field name="commerceNotificationTemplateId" type="long" />
 		<field name="from" type="String" />
 		<field name="fromName" type="String" />
@@ -64,6 +66,7 @@
 		<field localized="true" name="fromName" type="String">
 			<validator name="required" />
 		</field>
+		<field name="to" type="String" />
 		<field name="cc" type="String">
 			<hint name="max-length">255</hint>
 		</field>

@@ -20,8 +20,6 @@ import com.liferay.headless.admin.workflow.resource.v1_0.WorkflowLogResource;
 import com.liferay.headless.admin.workflow.resource.v1_0.WorkflowTaskResource;
 import com.liferay.petra.function.UnsafeConsumer;
 import com.liferay.petra.function.UnsafeFunction;
-import com.liferay.portal.kernel.model.Company;
-import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.vulcan.accept.language.AcceptLanguage;
@@ -209,6 +207,7 @@ public class Query {
 
 		public WorkflowLogPage(Page workflowLogPage) {
 			items = workflowLogPage.getItems();
+			lastPage = workflowLogPage.getLastPage();
 			page = workflowLogPage.getPage();
 			pageSize = workflowLogPage.getPageSize();
 			totalCount = workflowLogPage.getTotalCount();
@@ -216,6 +215,9 @@ public class Query {
 
 		@GraphQLField
 		protected java.util.Collection<WorkflowLog> items;
+
+		@GraphQLField
+		protected long lastPage;
 
 		@GraphQLField
 		protected long page;
@@ -233,6 +235,7 @@ public class Query {
 
 		public WorkflowTaskPage(Page workflowTaskPage) {
 			items = workflowTaskPage.getItems();
+			lastPage = workflowTaskPage.getLastPage();
 			page = workflowTaskPage.getPage();
 			pageSize = workflowTaskPage.getPageSize();
 			totalCount = workflowTaskPage.getTotalCount();
@@ -240,6 +243,9 @@ public class Query {
 
 		@GraphQLField
 		protected java.util.Collection<WorkflowTask> items;
+
+		@GraphQLField
+		protected long lastPage;
 
 		@GraphQLField
 		protected long page;
@@ -304,10 +310,10 @@ public class Query {
 	private AcceptLanguage _acceptLanguage;
 	private BiFunction<Object, String, Filter> _filterBiFunction;
 	private BiFunction<Object, String, Sort[]> _sortsBiFunction;
-	private Company _company;
+	private com.liferay.portal.kernel.model.Company _company;
+	private com.liferay.portal.kernel.model.User _user;
 	private HttpServletRequest _httpServletRequest;
 	private HttpServletResponse _httpServletResponse;
 	private UriInfo _uriInfo;
-	private User _user;
 
 }

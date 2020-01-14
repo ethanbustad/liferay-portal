@@ -76,11 +76,10 @@ request.setAttribute("view.jsp-portletURL", portletURL);
 		/>
 
 		<li>
-			<aui:form action="<%= portletURL.toString() %>" name="searchFm">
-				<liferay-ui:input-search
-					markupView="lexicon"
-				/>
-			</aui:form>
+			<liferay-commerce:search-input
+				actionURL="<%= portletURL %>"
+				formName="searchFm"
+			/>
 		</li>
 	</liferay-frontend:management-bar-filters>
 
@@ -157,7 +156,7 @@ request.setAttribute("view.jsp-portletURL", portletURL);
 
 							<liferay-ui:search-container-column-text
 								name="price"
-								value="<%= HtmlUtil.escape(cpInstanceDisplayContext.formatPrice(company.getCompanyId(), cpInstance.getPrice())) %>"
+								value="<%= HtmlUtil.escape(cpInstanceDisplayContext.formatPrice(cpInstance)) %>"
 							/>
 
 							<c:if test='<%= cpInstanceDisplayContext.hasDynamicInclude("com.liferay.commerce.inventory.web#/inventory_data#") %>'>
@@ -175,7 +174,7 @@ request.setAttribute("view.jsp-portletURL", portletURL);
 
 							<liferay-ui:search-container-column-text
 								name="options"
-								value="<%= HtmlUtil.escape(cpInstanceDisplayContext.getOptions(cpInstance.getJson(), locale)) %>"
+								value="<%= HtmlUtil.escape(cpInstanceDisplayContext.getOptions(cpInstance.getCPDefinitionId(), cpInstance.getJson(), locale)) %>"
 							/>
 
 							<liferay-ui:search-container-column-status

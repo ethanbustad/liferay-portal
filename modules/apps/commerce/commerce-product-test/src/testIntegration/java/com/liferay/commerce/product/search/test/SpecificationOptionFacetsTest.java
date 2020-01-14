@@ -18,13 +18,15 @@ import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.commerce.product.model.CPDefinition;
 import com.liferay.commerce.product.model.CPOptionCategory;
 import com.liferay.commerce.product.model.CPSpecificationOption;
+import com.liferay.commerce.product.model.CommerceCatalog;
+import com.liferay.commerce.product.service.CPDefinitionLocalService;
 import com.liferay.commerce.product.service.CPDefinitionSpecificationOptionValueLocalService;
 import com.liferay.commerce.product.service.CPOptionCategoryLocalService;
 import com.liferay.commerce.product.service.CPSpecificationOptionLocalService;
+import com.liferay.commerce.product.service.CommerceCatalogLocalService;
 import com.liferay.commerce.product.test.util.CPTestUtil;
-import com.liferay.commerce.product.type.simple.constants.SimpleCPTypeConstants;
 import com.liferay.commerce.product.util.CPDefinitionHelper;
-import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.search.SearchContext;
@@ -34,11 +36,11 @@ import com.liferay.portal.kernel.search.facet.collector.FacetCollector;
 import com.liferay.portal.kernel.search.facet.collector.TermCollector;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
-import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
-import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.SearchContextTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerTestRule;
@@ -48,10 +50,10 @@ import java.util.List;
 
 import org.frutilla.FrutillaRule;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.ClassRule;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -59,7 +61,6 @@ import org.junit.runner.RunWith;
 /**
  * @author Luca Pellizzon
  */
-@Ignore
 @RunWith(Arquillian.class)
 public class SpecificationOptionFacetsTest {
 
@@ -72,7 +73,24 @@ public class SpecificationOptionFacetsTest {
 
 	@Before
 	public void setUp() throws Exception {
-		_group = GroupTestUtil.addGroup();
+		_commerceCatalog = _commerceCatalogLocalService.addCommerceCatalog(
+			RandomTestUtil.randomString(), RandomTestUtil.randomString(),
+			LocaleUtil.US.getDisplayLanguage(), null,
+			ServiceContextTestUtil.getServiceContext());
+	}
+
+	@After
+	public void tearDown() throws Exception {
+		List<CPDefinition> cpDefinitions =
+			_cpDefinitionLocalService.getCPDefinitions(
+				_commerceCatalog.getGroupId(), WorkflowConstants.STATUS_ANY,
+				QueryUtil.ALL_POS, QueryUtil.ALL_POS);
+
+		for (CPDefinition cpDefinition : cpDefinitions) {
+			_cpDefinitionLocalService.deleteCPDefinition(cpDefinition);
+		}
+
+		_commerceCatalogLocalService.deleteCommerceCatalog(_commerceCatalog);
 	}
 
 	@Test
@@ -80,7 +98,7 @@ public class SpecificationOptionFacetsTest {
 		frutillaRule.scenario(
 			"Add a facetable product specification"
 		).given(
-			"A group"
+			"A catalog"
 		).and(
 			"A product"
 		).when(
@@ -90,10 +108,11 @@ public class SpecificationOptionFacetsTest {
 		);
 
 		CPDefinition cpDefinition = CPTestUtil.addCPDefinition(
-			_group.getGroupId(), SimpleCPTypeConstants.NAME, true, true);
+			_commerceCatalog.getGroupId());
 
 		ServiceContext serviceContext =
-			ServiceContextTestUtil.getServiceContext(_group.getGroupId());
+			ServiceContextTestUtil.getServiceContext(
+				_commerceCatalog.getGroupId());
 
 		CPOptionCategory cpOptionCategory =
 			_cpOptionCategoryLocalService.addCPOptionCategory(
@@ -120,7 +139,7 @@ public class SpecificationOptionFacetsTest {
 				RandomTestUtil.randomDouble(), serviceContext);
 
 		SearchContext searchContext = SearchContextTestUtil.getSearchContext(
-			_group.getGroupId());
+			_commerceCatalog.getGroupId());
 
 		Facet facet = new SimpleFacet(searchContext);
 
@@ -153,7 +172,7 @@ public class SpecificationOptionFacetsTest {
 		frutillaRule.scenario(
 			"Add a facetable product specification"
 		).given(
-			"A group"
+			"A catalog"
 		).and(
 			"A product"
 		).when(
@@ -164,10 +183,11 @@ public class SpecificationOptionFacetsTest {
 		);
 
 		CPDefinition cpDefinition = CPTestUtil.addCPDefinition(
-			_group.getGroupId(), SimpleCPTypeConstants.NAME, false, true);
+			_commerceCatalog.getGroupId());
 
 		ServiceContext serviceContext =
-			ServiceContextTestUtil.getServiceContext(_group.getGroupId());
+			ServiceContextTestUtil.getServiceContext(
+				_commerceCatalog.getGroupId());
 
 		CPOptionCategory cpOptionCategory =
 			_cpOptionCategoryLocalService.addCPOptionCategory(
@@ -194,7 +214,7 @@ public class SpecificationOptionFacetsTest {
 				RandomTestUtil.randomDouble(), serviceContext);
 
 		SearchContext searchContext = SearchContextTestUtil.getSearchContext(
-			_group.getGroupId());
+			_commerceCatalog.getGroupId());
 
 		Facet facet = new SimpleFacet(searchContext);
 
@@ -217,8 +237,16 @@ public class SpecificationOptionFacetsTest {
 	@Rule
 	public FrutillaRule frutillaRule = new FrutillaRule();
 
+	private CommerceCatalog _commerceCatalog;
+
+	@Inject
+	private CommerceCatalogLocalService _commerceCatalogLocalService;
+
 	@Inject
 	private CPDefinitionHelper _cpDefinitionHelper;
+
+	@Inject
+	private CPDefinitionLocalService _cpDefinitionLocalService;
 
 	@Inject
 	private CPDefinitionSpecificationOptionValueLocalService
@@ -230,8 +258,5 @@ public class SpecificationOptionFacetsTest {
 	@Inject
 	private CPSpecificationOptionLocalService
 		_cpSpecificationOptionLocalService;
-
-	@DeleteAfterTestRun
-	private Group _group;
 
 }

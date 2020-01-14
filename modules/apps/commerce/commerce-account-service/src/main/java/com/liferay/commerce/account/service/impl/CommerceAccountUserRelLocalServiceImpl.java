@@ -14,6 +14,7 @@
 
 package com.liferay.commerce.account.service.impl;
 
+import com.liferay.commerce.account.configuration.CommerceAccountServiceConfiguration;
 import com.liferay.commerce.account.exception.CommerceAccountTypeException;
 import com.liferay.commerce.account.exception.CommerceAccountUserRelEmailAddressException;
 import com.liferay.commerce.account.model.CommerceAccount;
@@ -23,12 +24,19 @@ import com.liferay.commerce.account.service.persistence.CommerceAccountUserRelPK
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.Role;
+import com.liferay.portal.kernel.model.RoleConstants;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.spring.extender.service.ServiceReference;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Stream;
 
 /**
  * @author Marco Leo
@@ -69,7 +77,13 @@ public class CommerceAccountUserRelLocalServiceImpl
 				commerceAccountId, commerceAccountUserId);
 
 		CommerceAccountUserRel commerceAccountUserRel =
-			commerceAccountUserRelPersistence.create(commerceAccountUserRelPK);
+			commerceAccountUserRelPersistence.fetchByPrimaryKey(
+				commerceAccountUserRelPK);
+
+		if (commerceAccountUserRel == null) {
+			commerceAccountUserRel = commerceAccountUserRelPersistence.create(
+				commerceAccountUserRelPK);
+		}
 
 		commerceAccountUserRel.setCommerceAccountId(commerceAccountId);
 		commerceAccountUserRel.setCommerceAccountUserId(commerceAccountUserId);
@@ -78,6 +92,11 @@ public class CommerceAccountUserRelLocalServiceImpl
 		commerceAccountUserRel.setUserName(user.getFullName());
 
 		commerceAccountUserRelPersistence.update(commerceAccountUserRel);
+
+		// Default roles
+
+		commerceAccountUserRelLocalService.addDefaultRoles(
+			commerceAccountUserId);
 
 		return commerceAccountUserRel;
 	}
@@ -125,6 +144,56 @@ public class CommerceAccountUserRelLocalServiceImpl
 					commerceAccountId, emailAddress, roleIds, StringPool.BLANK,
 					serviceContext);
 			}
+		}
+	}
+
+	@Override
+	public void addDefaultRoles(long userId) throws PortalException {
+		CommerceAccountServiceConfiguration
+			commerceAccountServiceConfiguration =
+				_configurationProvider.getSystemConfiguration(
+					CommerceAccountServiceConfiguration.class);
+
+		String[] siteRoles = commerceAccountServiceConfiguration.siteRoles();
+
+		if ((siteRoles == null) && ArrayUtil.isEmpty(siteRoles)) {
+			return;
+		}
+
+		User user = userLocalService.getUser(userId);
+
+		Set<Role> roles = new HashSet<>();
+
+		for (String siteRole : siteRoles) {
+			Role role = roleLocalService.fetchRole(
+				user.getCompanyId(), siteRole);
+
+			if ((role == null) || (role.getType() != RoleConstants.TYPE_SITE)) {
+				continue;
+			}
+
+			roles.add(role);
+		}
+
+		Stream<Role> stream = roles.stream();
+
+		long[] roleIds = stream.mapToLong(
+			Role::getRoleId
+		).toArray();
+
+		List<CommerceAccountUserRel> commerceAccountUserRels =
+			commerceAccountUserRelPersistence.findByCommerceAccountUserId(
+				userId);
+
+		for (CommerceAccountUserRel commerceAccountUserRel :
+				commerceAccountUserRels) {
+
+			CommerceAccount commerceAccount =
+				commerceAccountLocalService.getCommerceAccount(
+					commerceAccountUserRel.getCommerceAccountId());
+
+			userGroupRoleLocalService.addUserGroupRoles(
+				userId, commerceAccount.getCommerceAccountGroupId(), roleIds);
 		}
 	}
 
@@ -301,5 +370,8 @@ public class CommerceAccountUserRelLocalServiceImpl
 			}
 		}
 	}
+
+	@ServiceReference(type = ConfigurationProvider.class)
+	private ConfigurationProvider _configurationProvider;
 
 }

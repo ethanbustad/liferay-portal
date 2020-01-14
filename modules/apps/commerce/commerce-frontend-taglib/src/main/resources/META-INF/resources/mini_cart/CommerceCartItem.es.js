@@ -29,6 +29,7 @@ CommerceCartItem.STATE = {
 	collapsed: Config.bool().value(false),
 	deleteDisabled: Config.bool().value(false),
 	deleting: Config.bool().value(false),
+	displayDiscountLevels: Config.bool().value(false),
 	errorMessages: Config.array().value(
 		[]
 	),

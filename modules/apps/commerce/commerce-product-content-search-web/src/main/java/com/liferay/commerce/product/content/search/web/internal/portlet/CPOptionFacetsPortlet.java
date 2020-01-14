@@ -17,13 +17,13 @@ package com.liferay.commerce.product.content.search.web.internal.portlet;
 import com.liferay.asset.kernel.model.AssetCategory;
 import com.liferay.commerce.account.model.CommerceAccount;
 import com.liferay.commerce.account.util.CommerceAccountHelper;
+import com.liferay.commerce.product.constants.CPField;
 import com.liferay.commerce.product.constants.CPPortletKeys;
 import com.liferay.commerce.product.content.search.web.internal.display.context.CPOptionFacetsDisplayContext;
 import com.liferay.commerce.product.content.search.web.internal.util.CPOptionFacetsUtil;
 import com.liferay.commerce.product.model.CPDefinition;
 import com.liferay.commerce.product.model.CPOption;
 import com.liferay.commerce.product.model.CommerceChannel;
-import com.liferay.commerce.product.search.CPDefinitionIndexer;
 import com.liferay.commerce.product.service.CPOptionLocalService;
 import com.liferay.commerce.product.service.CommerceChannelLocalService;
 import com.liferay.commerce.search.facet.SerializableMultiValueFacet;
@@ -109,7 +109,8 @@ public class CPOptionFacetsPortlet
 						facet.getFieldName());
 
 				Optional<String[]> parameterValuesOptional =
-					portletSharedSearchSettings.getParameterValues(cpOptionKey);
+					portletSharedSearchSettings.getParameterValues71(
+						cpOptionKey);
 
 				SerializableMultiValueFacet serializableMultiValueFacet =
 					new SerializableMultiValueFacet(searchContext);
@@ -126,6 +127,31 @@ public class CPOptionFacetsPortlet
 
 				portletSharedSearchSettings.addFacet(
 					serializableMultiValueFacet);
+			}
+
+			ThemeDisplay themeDisplay =
+				(ThemeDisplay)renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
+
+			long commerceChannelGroupId =
+				_commerceChannelLocalService.
+					getCommerceChannelGroupIdBySiteGroupId(
+						themeDisplay.getScopeGroupId());
+
+			if (commerceChannelGroupId > 0) {
+				searchContext.setAttribute(
+					CPField.CHANNEL_GROUP_ID, commerceChannelGroupId);
+				searchContext.setAttribute("secure", Boolean.TRUE);
+
+				CommerceAccount commerceAccount =
+					_commerceAccountHelper.getCurrentCommerceAccount(
+						commerceChannelGroupId, themeDisplay.getRequest());
+
+				long[] commerceAccountGroupIds =
+					_commerceAccountHelper.getCommerceAccountGroupIds(
+						commerceAccount.getCommerceAccountId());
+
+				searchContext.setAttribute(
+					"commerceAccountGroupIds", commerceAccountGroupIds);
 			}
 		}
 		catch (Exception e) {
@@ -184,8 +210,7 @@ public class CPOptionFacetsPortlet
 
 		queryConfig.setLocale(themeDisplay.getLocale());
 
-		searchContext.setAttribute(
-			CPDefinitionIndexer.FIELD_PUBLISHED, Boolean.TRUE);
+		searchContext.setAttribute(CPField.PUBLISHED, Boolean.TRUE);
 
 		CommerceChannel commerceChannel =
 			_commerceChannelLocalService.fetchCommerceChannelBySiteGroupId(
@@ -194,19 +219,20 @@ public class CPOptionFacetsPortlet
 		if (commerceChannel != null) {
 			searchContext.setAttribute(
 				"commerceChannelGroupId", commerceChannel.getGroupId());
-		}
 
-		CommerceAccount commerceAccount =
-			_commerceAccountHelper.getCurrentCommerceAccount(
-				_portal.getHttpServletRequest(renderRequest));
+			CommerceAccount commerceAccount =
+				_commerceAccountHelper.getCurrentCommerceAccount(
+					commerceChannel.getGroupId(),
+					_portal.getHttpServletRequest(renderRequest));
 
-		if (commerceAccount != null) {
-			long[] commerceAccountGroupIds =
-				_commerceAccountHelper.getCommerceAccountGroupIds(
-					commerceAccount.getCommerceAccountId());
+			if (commerceAccount != null) {
+				long[] commerceAccountGroupIds =
+					_commerceAccountHelper.getCommerceAccountGroupIds(
+						commerceAccount.getCommerceAccountId());
 
-			searchContext.setAttribute(
-				"commerceAccountGroupIds", commerceAccountGroupIds);
+				searchContext.setAttribute(
+					"commerceAccountGroupIds", commerceAccountGroupIds);
+			}
 		}
 
 		searchContext.setAttribute("secure", Boolean.TRUE);
@@ -234,14 +260,13 @@ public class CPOptionFacetsPortlet
 
 		Facet facet = new SimpleFacet(searchContext);
 
-		facet.setFieldName(CPDefinitionIndexer.FIELD_OPTION_NAMES);
+		facet.setFieldName(CPField.OPTION_NAMES);
 
 		searchContext.addFacet(facet);
 
 		QueryConfig queryConfig = searchContext.getQueryConfig();
 
-		queryConfig.addSelectedFieldNames(
-			CPDefinitionIndexer.FIELD_OPTION_NAMES);
+		queryConfig.addSelectedFieldNames(CPField.OPTION_NAMES);
 
 		queryConfig.setHighlightEnabled(false);
 		queryConfig.setScoreEnabled(false);

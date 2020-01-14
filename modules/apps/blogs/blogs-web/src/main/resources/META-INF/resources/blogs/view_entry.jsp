@@ -91,7 +91,9 @@ if (portletTitleBasedNavigation) {
 		<c:if test="<%= (previousEntry != null) || (nextEntry != null) %>">
 			<div class="row">
 				<div class="col-md-10 col-md-offset-1 entry-navigation">
-					<h2><strong><liferay-ui:message key="more-blog-entries" /></strong></h2>
+					<h2>
+						<strong><liferay-ui:message key="more-blog-entries" /></strong>
+					</h2>
 
 					<div class="row widget-mode-card">
 

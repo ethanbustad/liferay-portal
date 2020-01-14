@@ -52,6 +52,10 @@ public class CPAttachmentFileEntryLocalServiceUtil {
 		return getService().addCPAttachmentFileEntry(cpAttachmentFileEntry);
 	}
 
+	/**
+	 * @deprecated As of Mueller (7.2.x), pass userId and groupId directly
+	 */
+	@Deprecated
 	public static com.liferay.commerce.product.model.CPAttachmentFileEntry
 			addCPAttachmentFileEntry(
 				long classNameId, long classPK, long fileEntryId,
@@ -71,6 +75,28 @@ public class CPAttachmentFileEntryLocalServiceUtil {
 			expirationDateMonth, expirationDateDay, expirationDateYear,
 			expirationDateHour, expirationDateMinute, neverExpire, titleMap,
 			json, priority, type, serviceContext);
+	}
+
+	public static com.liferay.commerce.product.model.CPAttachmentFileEntry
+			addCPAttachmentFileEntry(
+				long userId, long groupId, long classNameId, long classPK,
+				long fileEntryId, int displayDateMonth, int displayDateDay,
+				int displayDateYear, int displayDateHour, int displayDateMinute,
+				int expirationDateMonth, int expirationDateDay,
+				int expirationDateYear, int expirationDateHour,
+				int expirationDateMinute, boolean neverExpire,
+				java.util.Map<java.util.Locale, String> titleMap, String json,
+				double priority, int type, String externalReferenceCode,
+				com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return getService().addCPAttachmentFileEntry(
+			userId, groupId, classNameId, classPK, fileEntryId,
+			displayDateMonth, displayDateDay, displayDateYear, displayDateHour,
+			displayDateMinute, expirationDateMonth, expirationDateDay,
+			expirationDateYear, expirationDateHour, expirationDateMinute,
+			neverExpire, titleMap, json, priority, type, externalReferenceCode,
+			serviceContext);
 	}
 
 	public static void checkCPAttachmentFileEntries()
@@ -171,7 +197,7 @@ public class CPAttachmentFileEntryLocalServiceUtil {
 	 * Performs a dynamic query on the database and returns a range of the matching rows.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPAttachmentFileEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPAttachmentFileEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param dynamicQuery the dynamic query
@@ -190,7 +216,7 @@ public class CPAttachmentFileEntryLocalServiceUtil {
 	 * Performs a dynamic query on the database and returns an ordered range of the matching rows.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPAttachmentFileEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPAttachmentFileEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param dynamicQuery the dynamic query
@@ -296,7 +322,7 @@ public class CPAttachmentFileEntryLocalServiceUtil {
 	 * Returns a range of all the cp attachment file entries.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPAttachmentFileEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPAttachmentFileEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param start the lower bound of the range of cp attachment file entries
@@ -486,6 +512,27 @@ public class CPAttachmentFileEntryLocalServiceUtil {
 	}
 
 	public static com.liferay.commerce.product.model.CPAttachmentFileEntry
+			updateCPAttachmentFileEntry(
+				long userId, long cpAttachmentFileEntryId, long fileEntryId,
+				int displayDateMonth, int displayDateDay, int displayDateYear,
+				int displayDateHour, int displayDateMinute,
+				int expirationDateMonth, int expirationDateDay,
+				int expirationDateYear, int expirationDateHour,
+				int expirationDateMinute, boolean neverExpire,
+				java.util.Map<java.util.Locale, String> titleMap, String json,
+				double priority, int type,
+				com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return getService().updateCPAttachmentFileEntry(
+			userId, cpAttachmentFileEntryId, fileEntryId, displayDateMonth,
+			displayDateDay, displayDateYear, displayDateHour, displayDateMinute,
+			expirationDateMonth, expirationDateDay, expirationDateYear,
+			expirationDateHour, expirationDateMinute, neverExpire, titleMap,
+			json, priority, type, serviceContext);
+	}
+
+	public static com.liferay.commerce.product.model.CPAttachmentFileEntry
 			updateStatus(
 				long userId, long cpAttachmentFileEntryId, int status,
 				com.liferay.portal.kernel.service.ServiceContext serviceContext,
@@ -497,9 +544,37 @@ public class CPAttachmentFileEntryLocalServiceUtil {
 			workflowContext);
 	}
 
+	/**
+	 * @param classNameId
+	 * @param classPK
+	 * @param fileEntryId
+	 * @param displayDateMonth
+	 * @param displayDateDay
+	 * @param displayDateYear
+	 * @param displayDateHour
+	 * @param displayDateMinute
+	 * @param expirationDateMonth
+	 * @param expirationDateDay
+	 * @param expirationDateYear
+	 * @param expirationDateHour
+	 * @param expirationDateMinute
+	 * @param neverExpire
+	 * @param titleMap
+	 * @param json
+	 * @param priority
+	 * @param type
+	 * @param externalReferenceCode
+	 * @param serviceContext
+	 * @throws PortalException
+	 * @deprecated As of Athanasius (7.3.x), use {@link
+	 #upsertCPAttachmentFileEntry(long, long, long, long, int,
+	 int, int, int, int, int, int, int, int, int, boolean, Map,
+	 String, double, int, String, ServiceContext)}
+	 */
+	@Deprecated
 	public static com.liferay.commerce.product.model.CPAttachmentFileEntry
 			upsertCPAttachmentFileEntry(
-				long classNameId, long classPK, long fileEntryId,
+				long groupId, long classNameId, long classPK, long fileEntryId,
 				int displayDateMonth, int displayDateDay, int displayDateYear,
 				int displayDateHour, int displayDateMinute,
 				int expirationDateMonth, int expirationDateDay,
@@ -511,11 +586,34 @@ public class CPAttachmentFileEntryLocalServiceUtil {
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return getService().upsertCPAttachmentFileEntry(
-			classNameId, classPK, fileEntryId, displayDateMonth, displayDateDay,
-			displayDateYear, displayDateHour, displayDateMinute,
+			groupId, classNameId, classPK, fileEntryId, displayDateMonth,
+			displayDateDay, displayDateYear, displayDateHour, displayDateMinute,
 			expirationDateMonth, expirationDateDay, expirationDateYear,
 			expirationDateHour, expirationDateMinute, neverExpire, titleMap,
 			json, priority, type, externalReferenceCode, serviceContext);
+	}
+
+	public static com.liferay.commerce.product.model.CPAttachmentFileEntry
+			upsertCPAttachmentFileEntry(
+				long groupId, long classNameId, long classPK,
+				long cpAttachmentFileEntryId, long fileEntryId,
+				int displayDateMonth, int displayDateDay, int displayDateYear,
+				int displayDateHour, int displayDateMinute,
+				int expirationDateMonth, int expirationDateDay,
+				int expirationDateYear, int expirationDateHour,
+				int expirationDateMinute, boolean neverExpire,
+				java.util.Map<java.util.Locale, String> titleMap, String json,
+				double priority, int type, String externalReferenceCode,
+				com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return getService().upsertCPAttachmentFileEntry(
+			groupId, classNameId, classPK, cpAttachmentFileEntryId, fileEntryId,
+			displayDateMonth, displayDateDay, displayDateYear, displayDateHour,
+			displayDateMinute, expirationDateMonth, expirationDateDay,
+			expirationDateYear, expirationDateHour, expirationDateMinute,
+			neverExpire, titleMap, json, priority, type, externalReferenceCode,
+			serviceContext);
 	}
 
 	public static CPAttachmentFileEntryLocalService getService() {

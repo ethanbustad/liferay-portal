@@ -1,5 +1,5 @@
 dependencies {
-	compileOnly group: "com.liferay", name: "com.liferay.petra.memory", version: "2.0.0"
+	compileOnly project(":core:petra:petra-memory")
 
 	testCompile group: "com.liferay.portal", name: "com.liferay.portal.kernel", version: "default"
 	testCompile project(":core:petra:petra-lang")

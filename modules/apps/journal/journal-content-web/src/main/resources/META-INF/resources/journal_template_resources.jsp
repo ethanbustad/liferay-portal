@@ -18,6 +18,7 @@
 
 <%
 DDMTemplate ddmTemplate = journalContentDisplayContext.getDDMTemplate();
+
 String ddmTemplateImageURL = ddmTemplate.getTemplateImageURL(themeDisplay);
 %>
 

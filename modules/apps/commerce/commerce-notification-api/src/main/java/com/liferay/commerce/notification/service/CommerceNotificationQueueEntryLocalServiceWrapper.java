@@ -53,6 +53,10 @@ public class CommerceNotificationQueueEntryLocalServiceWrapper
 			addCommerceNotificationQueueEntry(commerceNotificationQueueEntry);
 	}
 
+	/**
+	 * @deprecated As of Mueller (7.2.x), this method will be replaced
+	 */
+	@Deprecated
 	@Override
 	public
 		com.liferay.commerce.notification.model.CommerceNotificationQueueEntry
@@ -67,6 +71,23 @@ public class CommerceNotificationQueueEntryLocalServiceWrapper
 			addCommerceNotificationQueueEntry(
 				userId, groupId, commerceNotificationTemplateId, from, fromName,
 				to, toName, cc, bcc, subject, body, priority);
+	}
+
+	@Override
+	public
+		com.liferay.commerce.notification.model.CommerceNotificationQueueEntry
+				addCommerceNotificationQueueEntry(
+					long userId, long groupId, String className, long classPK,
+					long commerceNotificationTemplateId, String from,
+					String fromName, String to, String toName, String cc,
+					String bcc, String subject, String body, double priority)
+			throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _commerceNotificationQueueEntryLocalService.
+			addCommerceNotificationQueueEntry(
+				userId, groupId, className, classPK,
+				commerceNotificationTemplateId, from, fromName, to, toName, cc,
+				bcc, subject, body, priority);
 	}
 
 	/**
@@ -188,7 +209,7 @@ public class CommerceNotificationQueueEntryLocalServiceWrapper
 	 * Performs a dynamic query on the database and returns a range of the matching rows.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>com.liferay.commerce.notification.model.impl.CommerceNotificationQueueEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.notification.model.impl.CommerceNotificationQueueEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param dynamicQuery the dynamic query
@@ -209,7 +230,7 @@ public class CommerceNotificationQueueEntryLocalServiceWrapper
 	 * Performs a dynamic query on the database and returns an ordered range of the matching rows.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>com.liferay.commerce.notification.model.impl.CommerceNotificationQueueEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.notification.model.impl.CommerceNotificationQueueEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param dynamicQuery the dynamic query
@@ -290,7 +311,7 @@ public class CommerceNotificationQueueEntryLocalServiceWrapper
 	 * Returns a range of all the commerce notification queue entries.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>com.liferay.commerce.notification.model.impl.CommerceNotificationQueueEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.notification.model.impl.CommerceNotificationQueueEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param start the lower bound of the range of commerce notification queue entries
@@ -320,6 +341,22 @@ public class CommerceNotificationQueueEntryLocalServiceWrapper
 				groupId, start, end, orderByComparator);
 	}
 
+	@Override
+	public java.util.List
+		<com.liferay.commerce.notification.model.CommerceNotificationQueueEntry>
+			getCommerceNotificationQueueEntries(
+				long groupId, String className, long classPK, boolean sent,
+				int start, int end,
+				com.liferay.portal.kernel.util.OrderByComparator
+					<com.liferay.commerce.notification.model.
+						CommerceNotificationQueueEntry> orderByComparator) {
+
+		return _commerceNotificationQueueEntryLocalService.
+			getCommerceNotificationQueueEntries(
+				groupId, className, classPK, sent, start, end,
+				orderByComparator);
+	}
+
 	/**
 	 * Returns the number of commerce notification queue entries.
 	 *
@@ -335,6 +372,15 @@ public class CommerceNotificationQueueEntryLocalServiceWrapper
 	public int getCommerceNotificationQueueEntriesCount(long groupId) {
 		return _commerceNotificationQueueEntryLocalService.
 			getCommerceNotificationQueueEntriesCount(groupId);
+	}
+
+	@Override
+	public int getCommerceNotificationQueueEntriesCount(
+		long groupId, String className, long classPK, boolean sent) {
+
+		return _commerceNotificationQueueEntryLocalService.
+			getCommerceNotificationQueueEntriesCount(
+				groupId, className, classPK, sent);
 	}
 
 	/**

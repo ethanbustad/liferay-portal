@@ -45,7 +45,6 @@ import javax.portlet.PortletURL;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.osgi.service.component.annotations.Component;
@@ -104,16 +103,18 @@ public class CommerceCheckoutPortlet extends MVCPortlet {
 		try {
 			CommerceOrder commerceOrder = getCommerceOrder(renderRequest);
 
-			if (!isOrderApproved(commerceOrder)) {
-				HttpServletResponse httpServletResponse =
-					_portal.getHttpServletResponse(renderResponse);
+			if (commerceOrder != null) {
+				if (!isOrderApproved(commerceOrder)) {
+					HttpServletResponse httpServletResponse =
+						_portal.getHttpServletResponse(renderResponse);
 
-				httpServletResponse.sendRedirect(
-					getOrderDetailsURL(renderRequest));
+					httpServletResponse.sendRedirect(
+						getOrderDetailsURL(renderRequest));
+				}
+
+				renderRequest.setAttribute(
+					CommerceCheckoutWebKeys.COMMERCE_ORDER, commerceOrder);
 			}
-
-			renderRequest.setAttribute(
-				CommerceCheckoutWebKeys.COMMERCE_ORDER, commerceOrder);
 
 			CheckoutDisplayContext checkoutDisplayContext =
 				new CheckoutDisplayContext(
@@ -148,12 +149,10 @@ public class CommerceCheckoutPortlet extends MVCPortlet {
 	protected String getOrderDetailsURL(PortletRequest portletRequest)
 		throws PortalException {
 
-		HttpServletRequest httpServletRequest = _portal.getHttpServletRequest(
-			portletRequest);
-
 		PortletURL portletURL =
 			_commerceOrderHttpHelper.getCommerceCartPortletURL(
-				httpServletRequest, getCommerceOrder(portletRequest));
+				_portal.getHttpServletRequest(portletRequest),
+				getCommerceOrder(portletRequest));
 
 		if (portletURL == null) {
 			return StringPool.BLANK;

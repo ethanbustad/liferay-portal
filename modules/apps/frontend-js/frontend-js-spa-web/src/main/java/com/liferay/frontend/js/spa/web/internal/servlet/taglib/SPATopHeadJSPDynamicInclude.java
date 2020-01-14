@@ -56,6 +56,10 @@ public class SPATopHeadJSPDynamicInclude extends BaseJSPDynamicInclude {
 			String key)
 		throws IOException {
 
+		if (_spaUtil.isDisabled(request)) {
+			return;
+		}
+
 		ScriptData scriptData = new ScriptData();
 
 		Map<String, String> values = new HashMap<>();

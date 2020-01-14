@@ -34,7 +34,6 @@ import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.portlet.PortletQName;
@@ -89,14 +88,14 @@ public class CommerceAccountDisplayContext {
 	}
 
 	public AccountFilterImpl getAccountFilter() throws PortalException {
-		AccountFilterImpl accountFilter = new AccountFilterImpl();
+		AccountFilterImpl accountFilterImpl = new AccountFilterImpl();
 
-		accountFilter.setAccountId(getCurrentCommerceAccountId());
-		accountFilter.setUserId(getSelectedUserId());
+		accountFilterImpl.setAccountId(getCurrentCommerceAccountId());
+		accountFilterImpl.setUserId(getSelectedUserId());
 
-		accountFilter.setKeywords(getKeywords());
+		accountFilterImpl.setKeywords(getKeywords());
 
-		return accountFilter;
+		return accountFilterImpl;
 	}
 
 	public List<CommerceAddress> getBillingCommerceAddresses()
@@ -131,13 +130,13 @@ public class CommerceAccountDisplayContext {
 			commerceCountryId, true);
 	}
 
-	public int getCommerceSiteType() throws ConfigurationException {
+	public int getCommerceSiteType() throws PortalException {
 		CommerceAccountGroupServiceConfiguration
 			commerceAccountGroupServiceConfiguration =
 				_configurationProvider.getConfiguration(
 					CommerceAccountGroupServiceConfiguration.class,
 					new GroupServiceSettingsLocator(
-						_commerceAccountRequestHelper.getScopeGroupId(),
+						_commerceContext.getCommerceChannelGroupId(),
 						CommerceAccountConstants.SERVICE_NAME));
 
 		return commerceAccountGroupServiceConfiguration.commerceSiteType();
@@ -353,6 +352,23 @@ public class CommerceAccountDisplayContext {
 
 		return hasCommerceAccountModelPermissions(
 			getCurrentCommerceAccount(), actionId);
+	}
+
+	public boolean hasCommerceChannel() throws PortalException {
+		HttpServletRequest httpServletRequest =
+			_commerceAccountRequestHelper.getRequest();
+
+		CommerceContext commerceContext =
+			(CommerceContext)httpServletRequest.getAttribute(
+				CommerceWebKeys.COMMERCE_CONTEXT);
+
+		long commerceChannelId = commerceContext.getCommerceChannelId();
+
+		if (commerceChannelId > 0) {
+			return true;
+		}
+
+		return false;
 	}
 
 	public boolean hasManageCommerceAccountPermissions() {

@@ -23,6 +23,7 @@ import com.liferay.commerce.product.model.CPDefinition;
 import com.liferay.commerce.product.model.CPDefinitionOptionRel;
 import com.liferay.commerce.product.model.CPDefinitionOptionValueRel;
 import com.liferay.commerce.product.model.CPInstance;
+import com.liferay.commerce.product.model.CommerceCatalog;
 import com.liferay.commerce.product.service.CPDefinitionOptionRelService;
 import com.liferay.commerce.product.service.CPInstanceService;
 import com.liferay.commerce.product.util.CPInstanceHelper;
@@ -40,8 +41,6 @@ import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.taglib.util.CustomAttributesUtil;
-
-import java.math.BigDecimal;
 
 import java.util.Collections;
 import java.util.List;
@@ -93,14 +92,16 @@ public class CPInstanceDisplayContext
 		CPInstance cpInstance = _cpInstanceService.getCPInstance(cpInstanceId);
 
 		return _cpInstanceHelper.getCPDefinitionOptionRelsMap(
-			cpInstance.getJson());
+			cpInstance.getCPDefinitionId(), cpInstance.getJson());
 	}
 
-	public String formatPrice(long companyId, BigDecimal price)
-		throws PortalException {
+	public String formatPrice(CPInstance cpInstance) throws PortalException {
+		CommerceCatalog commerceCatalog = cpInstance.getCommerceCatalog();
 
 		return commercePriceFormatter.format(
-			companyId, price, cpRequestHelper.getLocale());
+			cpInstance.getCompanyId(),
+			commerceCatalog.getCommerceCurrencyCode(), cpInstance.getPrice(),
+			cpRequestHelper.getLocale());
 	}
 
 	public List<CPDefinitionOptionRel> getCPDefinitionOptionRels()
@@ -169,15 +170,15 @@ public class CPInstanceDisplayContext
 		List<ManagementBarFilterItem> managementBarFilterItems =
 			super.getManagementBarStatusFilterItems();
 
-		ThemeDisplay themeDisplay =
-			(ThemeDisplay)httpServletRequest.getAttribute(
-				WebKeys.THEME_DISPLAY);
-
 		CPDefinition cpDefinition = getCPDefinition();
 
 		if (cpDefinition == null) {
 			return managementBarFilterItems;
 		}
+
+		ThemeDisplay themeDisplay =
+			(ThemeDisplay)httpServletRequest.getAttribute(
+				WebKeys.THEME_DISPLAY);
 
 		int workflowDefinitionLinksCount =
 			WorkflowDefinitionLinkLocalServiceUtil.
@@ -204,11 +205,11 @@ public class CPInstanceDisplayContext
 		return managementBarFilterItems;
 	}
 
-	public String getOptions(String json, Locale locale)
+	public String getOptions(long cpDefinitionId, String json, Locale locale)
 		throws PortalException {
 
 		List<KeyValuePair> keyValuePairs = _cpInstanceHelper.getKeyValuePairs(
-			json, locale);
+			cpDefinitionId, json, locale);
 
 		StringJoiner stringJoiner = new StringJoiner(
 			StringPool.COMMA + StringPool.SPACE);

@@ -46,8 +46,7 @@ import java.util.List;
 /**
  * @author     Mika Koivisto
  * @deprecated As of Judson (7.1.x), replaced by {@link
- *             com.liferay.document.library.internal.util.
- *             DLProcessorRegistryImpl}
+ *             com.liferay.document.library.internal.util.DLProcessorRegistryImpl}
  */
 @Deprecated
 public class DLProcessorRegistryImpl implements DLProcessorRegistry {

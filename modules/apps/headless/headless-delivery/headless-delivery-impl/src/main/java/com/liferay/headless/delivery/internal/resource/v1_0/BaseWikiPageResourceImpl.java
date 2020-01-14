@@ -17,8 +17,6 @@ package com.liferay.headless.delivery.internal.resource.v1_0;
 import com.liferay.headless.delivery.dto.v1_0.WikiPage;
 import com.liferay.headless.delivery.resource.v1_0.WikiPageResource;
 import com.liferay.petra.function.UnsafeFunction;
-import com.liferay.portal.kernel.model.Company;
-import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.vulcan.accept.language.AcceptLanguage;
@@ -66,7 +64,7 @@ public abstract class BaseWikiPageResourceImpl implements WikiPageResource {
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -X 'GET' 'http://localhost:8080/o/headless-delivery/v1.0/wiki-nodes/{wikiNodeId}/wiki-pages/'  -u 'test@liferay.com:test'
+	 * curl -X 'GET' 'http://localhost:8080/o/headless-delivery/v1.0/wiki-nodes/{wikiNodeId}/wiki-pages'  -u 'test@liferay.com:test'
 	 */
 	@Override
 	@GET
@@ -83,7 +81,7 @@ public abstract class BaseWikiPageResourceImpl implements WikiPageResource {
 			@Parameter(in = ParameterIn.QUERY, name = "sort")
 		}
 	)
-	@Path("/wiki-nodes/{wikiNodeId}/wiki-pages/")
+	@Path("/wiki-nodes/{wikiNodeId}/wiki-pages")
 	@Produces({"application/json", "application/xml"})
 	@Tags(value = {@Tag(name = "WikiPage")})
 	public Page<WikiPage> getWikiNodeWikiPagesPage(
@@ -100,7 +98,7 @@ public abstract class BaseWikiPageResourceImpl implements WikiPageResource {
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -X 'POST' 'http://localhost:8080/o/headless-delivery/v1.0/wiki-nodes/{wikiNodeId}/wiki-pages/' -d $'{"content": ___, "customFields": ___, "description": ___, "encodingFormat": ___, "headline": ___, "keywords": ___, "taxonomyCategoryIds": ___, "viewableBy": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
+	 * curl -X 'POST' 'http://localhost:8080/o/headless-delivery/v1.0/wiki-nodes/{wikiNodeId}/wiki-pages' -d $'{"content": ___, "customFields": ___, "description": ___, "encodingFormat": ___, "headline": ___, "keywords": ___, "taxonomyCategoryIds": ___, "viewableBy": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
 	 */
 	@Override
 	@Consumes({"application/json", "application/xml"})
@@ -109,7 +107,7 @@ public abstract class BaseWikiPageResourceImpl implements WikiPageResource {
 	@Parameters(
 		value = {@Parameter(in = ParameterIn.PATH, name = "wikiNodeId")}
 	)
-	@Path("/wiki-nodes/{wikiNodeId}/wiki-pages/")
+	@Path("/wiki-nodes/{wikiNodeId}/wiki-pages")
 	@Produces({"application/json", "application/xml"})
 	@Tags(value = {@Tag(name = "WikiPage")})
 	public WikiPage postWikiNodeWikiPage(
@@ -281,7 +279,9 @@ public abstract class BaseWikiPageResourceImpl implements WikiPageResource {
 		this.contextAcceptLanguage = contextAcceptLanguage;
 	}
 
-	public void setContextCompany(Company contextCompany) {
+	public void setContextCompany(
+		com.liferay.portal.kernel.model.Company contextCompany) {
+
 		this.contextCompany = contextCompany;
 	}
 
@@ -301,7 +301,9 @@ public abstract class BaseWikiPageResourceImpl implements WikiPageResource {
 		this.contextUriInfo = contextUriInfo;
 	}
 
-	public void setContextUser(User contextUser) {
+	public void setContextUser(
+		com.liferay.portal.kernel.model.User contextUser) {
+
 		this.contextUser = contextUser;
 	}
 
@@ -337,10 +339,10 @@ public abstract class BaseWikiPageResourceImpl implements WikiPageResource {
 	}
 
 	protected AcceptLanguage contextAcceptLanguage;
-	protected Company contextCompany;
+	protected com.liferay.portal.kernel.model.Company contextCompany;
+	protected com.liferay.portal.kernel.model.User contextUser;
 	protected HttpServletRequest contextHttpServletRequest;
 	protected HttpServletResponse contextHttpServletResponse;
 	protected UriInfo contextUriInfo;
-	protected User contextUser;
 
 }

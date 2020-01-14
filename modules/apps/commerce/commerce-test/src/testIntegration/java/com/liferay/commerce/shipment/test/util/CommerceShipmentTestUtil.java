@@ -29,16 +29,20 @@ import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
  */
 public class CommerceShipmentTestUtil {
 
-	public static CommerceShipment createOrderShipment(
+	public static CommerceShipment createEmptyOrderShipment(
+			long groupId, long orderId)
+		throws PortalException {
+
+		return CommerceShipmentLocalServiceUtil.addCommerceShipment(
+			orderId, ServiceContextTestUtil.getServiceContext(groupId));
+	}
+
+	public static void createOrderItemsOnlyShipment(
 			long groupId, long orderId, long warehouseId)
 		throws PortalException {
 
 		ServiceContext serviceContext =
 			ServiceContextTestUtil.getServiceContext(groupId);
-
-		CommerceShipment commerceShipment =
-			CommerceShipmentLocalServiceUtil.addCommerceShipment(
-				orderId, serviceContext);
 
 		CommerceOrder commerceOrder =
 			CommerceOrderLocalServiceUtil.getCommerceOrder(orderId);
@@ -47,8 +51,57 @@ public class CommerceShipmentTestUtil {
 				commerceOrder.getCommerceOrderItems()) {
 
 			CommerceShipmentItemLocalServiceUtil.addCommerceShipmentItem(
+				0, commerceOrderItem.getCommerceOrderItemId(), warehouseId,
+				commerceOrderItem.getQuantity(), serviceContext);
+		}
+	}
+
+	public static CommerceShipment createOrderShipment(
+			long commerceOrderId, long commerceWarehouseId)
+		throws PortalException {
+
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext();
+
+		CommerceShipment commerceShipment =
+			CommerceShipmentLocalServiceUtil.addCommerceShipment(
+				commerceOrderId, serviceContext);
+
+		CommerceOrder commerceOrder =
+			CommerceOrderLocalServiceUtil.getCommerceOrder(commerceOrderId);
+
+		for (CommerceOrderItem commerceOrderItem :
+				commerceOrder.getCommerceOrderItems()) {
+
+			CommerceShipmentItemLocalServiceUtil.addCommerceShipmentItem(
 				commerceShipment.getCommerceShipmentId(),
-				commerceOrderItem.getCommerceOrderItemId(), warehouseId,
+				commerceOrderItem.getCommerceOrderItemId(), commerceWarehouseId,
+				commerceOrderItem.getQuantity(), serviceContext);
+		}
+
+		return commerceShipment;
+	}
+
+	public static CommerceShipment createOrderShipment(
+			long groupId, long commerceOrderId, long commerceWarehouseId)
+		throws PortalException {
+
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext(groupId);
+
+		CommerceShipment commerceShipment =
+			CommerceShipmentLocalServiceUtil.addCommerceShipment(
+				commerceOrderId, serviceContext);
+
+		CommerceOrder commerceOrder =
+			CommerceOrderLocalServiceUtil.getCommerceOrder(commerceOrderId);
+
+		for (CommerceOrderItem commerceOrderItem :
+				commerceOrder.getCommerceOrderItems()) {
+
+			CommerceShipmentItemLocalServiceUtil.addCommerceShipmentItem(
+				commerceShipment.getCommerceShipmentId(),
+				commerceOrderItem.getCommerceOrderItemId(), commerceWarehouseId,
 				commerceOrderItem.getQuantity(), serviceContext);
 		}
 

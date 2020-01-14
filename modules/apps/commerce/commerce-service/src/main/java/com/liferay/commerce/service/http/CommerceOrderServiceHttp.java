@@ -883,47 +883,6 @@ public class CommerceOrderServiceHttp {
 
 	public static java.util.List<com.liferay.commerce.model.CommerceOrder>
 			getPendingCommerceOrders(
-				HttpPrincipal httpPrincipal, long companyId, long groupId,
-				int start, int end)
-		throws com.liferay.portal.kernel.exception.PortalException {
-
-		try {
-			MethodKey methodKey = new MethodKey(
-				CommerceOrderServiceUtil.class, "getPendingCommerceOrders",
-				_getPendingCommerceOrdersParameterTypes21);
-
-			MethodHandler methodHandler = new MethodHandler(
-				methodKey, companyId, groupId, start, end);
-
-			Object returnObj = null;
-
-			try {
-				returnObj = TunnelUtil.invoke(httpPrincipal, methodHandler);
-			}
-			catch (Exception e) {
-				if (e instanceof
-						com.liferay.portal.kernel.exception.PortalException) {
-
-					throw (com.liferay.portal.kernel.exception.PortalException)
-						e;
-				}
-
-				throw new com.liferay.portal.kernel.exception.SystemException(
-					e);
-			}
-
-			return (java.util.List<com.liferay.commerce.model.CommerceOrder>)
-				returnObj;
-		}
-		catch (com.liferay.portal.kernel.exception.SystemException se) {
-			_log.error(se, se);
-
-			throw se;
-		}
-	}
-
-	public static java.util.List<com.liferay.commerce.model.CommerceOrder>
-			getPendingCommerceOrders(
 				HttpPrincipal httpPrincipal, long groupId,
 				long commerceAccountId, String keywords, int start, int end)
 		throws com.liferay.portal.kernel.exception.PortalException {
@@ -931,7 +890,7 @@ public class CommerceOrderServiceHttp {
 		try {
 			MethodKey methodKey = new MethodKey(
 				CommerceOrderServiceUtil.class, "getPendingCommerceOrders",
-				_getPendingCommerceOrdersParameterTypes22);
+				_getPendingCommerceOrdersParameterTypes21);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, groupId, commerceAccountId, keywords, start, end);
@@ -970,7 +929,7 @@ public class CommerceOrderServiceHttp {
 		try {
 			MethodKey methodKey = new MethodKey(
 				CommerceOrderServiceUtil.class, "getPendingCommerceOrdersCount",
-				_getPendingCommerceOrdersCountParameterTypes23);
+				_getPendingCommerceOrdersCountParameterTypes22);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, companyId, groupId);
@@ -1009,7 +968,7 @@ public class CommerceOrderServiceHttp {
 		try {
 			MethodKey methodKey = new MethodKey(
 				CommerceOrderServiceUtil.class, "getPendingCommerceOrdersCount",
-				_getPendingCommerceOrdersCountParameterTypes24);
+				_getPendingCommerceOrdersCountParameterTypes23);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, groupId, commerceAccountId, keywords);
@@ -1049,7 +1008,7 @@ public class CommerceOrderServiceHttp {
 		try {
 			MethodKey methodKey = new MethodKey(
 				CommerceOrderServiceUtil.class, "getPlacedCommerceOrders",
-				_getPlacedCommerceOrdersParameterTypes25);
+				_getPlacedCommerceOrdersParameterTypes24);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, companyId, groupId, start, end);
@@ -1090,7 +1049,7 @@ public class CommerceOrderServiceHttp {
 		try {
 			MethodKey methodKey = new MethodKey(
 				CommerceOrderServiceUtil.class, "getPlacedCommerceOrders",
-				_getPlacedCommerceOrdersParameterTypes26);
+				_getPlacedCommerceOrdersParameterTypes25);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, groupId, commerceAccountId, keywords, start, end);
@@ -1129,7 +1088,7 @@ public class CommerceOrderServiceHttp {
 		try {
 			MethodKey methodKey = new MethodKey(
 				CommerceOrderServiceUtil.class, "getPlacedCommerceOrdersCount",
-				_getPlacedCommerceOrdersCountParameterTypes27);
+				_getPlacedCommerceOrdersCountParameterTypes26);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, companyId, groupId);
@@ -1168,7 +1127,7 @@ public class CommerceOrderServiceHttp {
 		try {
 			MethodKey methodKey = new MethodKey(
 				CommerceOrderServiceUtil.class, "getPlacedCommerceOrdersCount",
-				_getPlacedCommerceOrdersCountParameterTypes28);
+				_getPlacedCommerceOrdersCountParameterTypes27);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, groupId, commerceAccountId, keywords);
@@ -1199,6 +1158,168 @@ public class CommerceOrderServiceHttp {
 		}
 	}
 
+	public static java.util.List<com.liferay.commerce.model.CommerceOrder>
+			getUserPendingCommerceOrders(
+				HttpPrincipal httpPrincipal, long companyId, long groupId,
+				String keywords, int start, int end)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		try {
+			MethodKey methodKey = new MethodKey(
+				CommerceOrderServiceUtil.class, "getUserPendingCommerceOrders",
+				_getUserPendingCommerceOrdersParameterTypes28);
+
+			MethodHandler methodHandler = new MethodHandler(
+				methodKey, companyId, groupId, keywords, start, end);
+
+			Object returnObj = null;
+
+			try {
+				returnObj = TunnelUtil.invoke(httpPrincipal, methodHandler);
+			}
+			catch (Exception e) {
+				if (e instanceof
+						com.liferay.portal.kernel.exception.PortalException) {
+
+					throw (com.liferay.portal.kernel.exception.PortalException)
+						e;
+				}
+
+				throw new com.liferay.portal.kernel.exception.SystemException(
+					e);
+			}
+
+			return (java.util.List<com.liferay.commerce.model.CommerceOrder>)
+				returnObj;
+		}
+		catch (com.liferay.portal.kernel.exception.SystemException se) {
+			_log.error(se, se);
+
+			throw se;
+		}
+	}
+
+	public static long getUserPendingCommerceOrdersCount(
+			HttpPrincipal httpPrincipal, long companyId, long groupId,
+			String keywords)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		try {
+			MethodKey methodKey = new MethodKey(
+				CommerceOrderServiceUtil.class,
+				"getUserPendingCommerceOrdersCount",
+				_getUserPendingCommerceOrdersCountParameterTypes29);
+
+			MethodHandler methodHandler = new MethodHandler(
+				methodKey, companyId, groupId, keywords);
+
+			Object returnObj = null;
+
+			try {
+				returnObj = TunnelUtil.invoke(httpPrincipal, methodHandler);
+			}
+			catch (Exception e) {
+				if (e instanceof
+						com.liferay.portal.kernel.exception.PortalException) {
+
+					throw (com.liferay.portal.kernel.exception.PortalException)
+						e;
+				}
+
+				throw new com.liferay.portal.kernel.exception.SystemException(
+					e);
+			}
+
+			return ((Long)returnObj).longValue();
+		}
+		catch (com.liferay.portal.kernel.exception.SystemException se) {
+			_log.error(se, se);
+
+			throw se;
+		}
+	}
+
+	public static java.util.List<com.liferay.commerce.model.CommerceOrder>
+			getUserPlacedCommerceOrders(
+				HttpPrincipal httpPrincipal, long companyId, long groupId,
+				String keywords, int start, int end)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		try {
+			MethodKey methodKey = new MethodKey(
+				CommerceOrderServiceUtil.class, "getUserPlacedCommerceOrders",
+				_getUserPlacedCommerceOrdersParameterTypes30);
+
+			MethodHandler methodHandler = new MethodHandler(
+				methodKey, companyId, groupId, keywords, start, end);
+
+			Object returnObj = null;
+
+			try {
+				returnObj = TunnelUtil.invoke(httpPrincipal, methodHandler);
+			}
+			catch (Exception e) {
+				if (e instanceof
+						com.liferay.portal.kernel.exception.PortalException) {
+
+					throw (com.liferay.portal.kernel.exception.PortalException)
+						e;
+				}
+
+				throw new com.liferay.portal.kernel.exception.SystemException(
+					e);
+			}
+
+			return (java.util.List<com.liferay.commerce.model.CommerceOrder>)
+				returnObj;
+		}
+		catch (com.liferay.portal.kernel.exception.SystemException se) {
+			_log.error(se, se);
+
+			throw se;
+		}
+	}
+
+	public static long getUserPlacedCommerceOrdersCount(
+			HttpPrincipal httpPrincipal, long companyId, long groupId,
+			String keywords)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		try {
+			MethodKey methodKey = new MethodKey(
+				CommerceOrderServiceUtil.class,
+				"getUserPlacedCommerceOrdersCount",
+				_getUserPlacedCommerceOrdersCountParameterTypes31);
+
+			MethodHandler methodHandler = new MethodHandler(
+				methodKey, companyId, groupId, keywords);
+
+			Object returnObj = null;
+
+			try {
+				returnObj = TunnelUtil.invoke(httpPrincipal, methodHandler);
+			}
+			catch (Exception e) {
+				if (e instanceof
+						com.liferay.portal.kernel.exception.PortalException) {
+
+					throw (com.liferay.portal.kernel.exception.PortalException)
+						e;
+				}
+
+				throw new com.liferay.portal.kernel.exception.SystemException(
+					e);
+			}
+
+			return ((Long)returnObj).longValue();
+		}
+		catch (com.liferay.portal.kernel.exception.SystemException se) {
+			_log.error(se, se);
+
+			throw se;
+		}
+	}
+
 	public static void mergeGuestCommerceOrder(
 			HttpPrincipal httpPrincipal, long guestCommerceOrderId,
 			long userCommerceOrderId,
@@ -1209,7 +1330,7 @@ public class CommerceOrderServiceHttp {
 		try {
 			MethodKey methodKey = new MethodKey(
 				CommerceOrderServiceUtil.class, "mergeGuestCommerceOrder",
-				_mergeGuestCommerceOrderParameterTypes29);
+				_mergeGuestCommerceOrderParameterTypes32);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, guestCommerceOrderId, userCommerceOrderId,
@@ -1245,7 +1366,7 @@ public class CommerceOrderServiceHttp {
 		try {
 			MethodKey methodKey = new MethodKey(
 				CommerceOrderServiceUtil.class, "reorderCommerceOrder",
-				_reorderCommerceOrderParameterTypes30);
+				_reorderCommerceOrderParameterTypes33);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, commerceOrderId, commerceContext);
@@ -1283,7 +1404,7 @@ public class CommerceOrderServiceHttp {
 		try {
 			MethodKey methodKey = new MethodKey(
 				CommerceOrderServiceUtil.class, "submitCommerceOrder",
-				_submitCommerceOrderParameterTypes31);
+				_submitCommerceOrderParameterTypes34);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, commerceOrderId);
@@ -1325,7 +1446,7 @@ public class CommerceOrderServiceHttp {
 		try {
 			MethodKey methodKey = new MethodKey(
 				CommerceOrderServiceUtil.class, "updateBillingAddress",
-				_updateBillingAddressParameterTypes32);
+				_updateBillingAddressParameterTypes35);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, commerceOrderId, name, description, street1, street2,
@@ -1371,7 +1492,7 @@ public class CommerceOrderServiceHttp {
 		try {
 			MethodKey methodKey = new MethodKey(
 				CommerceOrderServiceUtil.class, "updateCommerceOrder",
-				_updateCommerceOrderParameterTypes33);
+				_updateCommerceOrderParameterTypes36);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, commerceOrderId, billingAddressId, shippingAddressId,
@@ -1419,7 +1540,7 @@ public class CommerceOrderServiceHttp {
 		try {
 			MethodKey methodKey = new MethodKey(
 				CommerceOrderServiceUtil.class, "updateCommerceOrder",
-				_updateCommerceOrderParameterTypes34);
+				_updateCommerceOrderParameterTypes37);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, commerceOrderId, billingAddressId, shippingAddressId,
@@ -1480,7 +1601,7 @@ public class CommerceOrderServiceHttp {
 		try {
 			MethodKey methodKey = new MethodKey(
 				CommerceOrderServiceUtil.class, "updateCommerceOrderPrices",
-				_updateCommerceOrderPricesParameterTypes35);
+				_updateCommerceOrderPricesParameterTypes38);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, commerceOrderId, subtotal, subtotalDiscountAmount,
@@ -1532,7 +1653,7 @@ public class CommerceOrderServiceHttp {
 			MethodKey methodKey = new MethodKey(
 				CommerceOrderServiceUtil.class,
 				"updateCommercePaymentMethodKey",
-				_updateCommercePaymentMethodKeyParameterTypes36);
+				_updateCommercePaymentMethodKeyParameterTypes39);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, commerceOrderId, commercePaymentMethodKey);
@@ -1571,7 +1692,7 @@ public class CommerceOrderServiceHttp {
 		try {
 			MethodKey methodKey = new MethodKey(
 				CommerceOrderServiceUtil.class, "updateCustomFields",
-				_updateCustomFieldsParameterTypes37);
+				_updateCustomFieldsParameterTypes40);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, commerceOrderId, serviceContext);
@@ -1613,13 +1734,55 @@ public class CommerceOrderServiceHttp {
 		try {
 			MethodKey methodKey = new MethodKey(
 				CommerceOrderServiceUtil.class, "updateInfo",
-				_updateInfoParameterTypes38);
+				_updateInfoParameterTypes41);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, commerceOrderId, printedNote,
 				requestedDeliveryDateMonth, requestedDeliveryDateDay,
 				requestedDeliveryDateYear, requestedDeliveryDateHour,
 				requestedDeliveryDateMinute, serviceContext);
+
+			Object returnObj = null;
+
+			try {
+				returnObj = TunnelUtil.invoke(httpPrincipal, methodHandler);
+			}
+			catch (Exception e) {
+				if (e instanceof
+						com.liferay.portal.kernel.exception.PortalException) {
+
+					throw (com.liferay.portal.kernel.exception.PortalException)
+						e;
+				}
+
+				throw new com.liferay.portal.kernel.exception.SystemException(
+					e);
+			}
+
+			return (com.liferay.commerce.model.CommerceOrder)returnObj;
+		}
+		catch (com.liferay.portal.kernel.exception.SystemException se) {
+			_log.error(se, se);
+
+			throw se;
+		}
+	}
+
+	public static com.liferay.commerce.model.CommerceOrder updateOrderDate(
+			HttpPrincipal httpPrincipal, long commerceOrderId,
+			int orderDateMonth, int orderDateDay, int orderDateYear,
+			int orderDateHour, int orderDateMinute,
+			com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		try {
+			MethodKey methodKey = new MethodKey(
+				CommerceOrderServiceUtil.class, "updateOrderDate",
+				_updateOrderDateParameterTypes42);
+
+			MethodHandler methodHandler = new MethodHandler(
+				methodKey, commerceOrderId, orderDateMonth, orderDateDay,
+				orderDateYear, orderDateHour, orderDateMinute, serviceContext);
 
 			Object returnObj = null;
 
@@ -1654,7 +1817,7 @@ public class CommerceOrderServiceHttp {
 		try {
 			MethodKey methodKey = new MethodKey(
 				CommerceOrderServiceUtil.class, "updateOrderStatus",
-				_updateOrderStatusParameterTypes39);
+				_updateOrderStatusParameterTypes43);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, commerceOrderId, orderStatus);
@@ -1693,7 +1856,7 @@ public class CommerceOrderServiceHttp {
 		try {
 			MethodKey methodKey = new MethodKey(
 				CommerceOrderServiceUtil.class, "updatePaymentStatus",
-				_updatePaymentStatusParameterTypes40);
+				_updatePaymentStatusParameterTypes44);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, commerceOrderId, paymentStatus);
@@ -1734,10 +1897,49 @@ public class CommerceOrderServiceHttp {
 			MethodKey methodKey = new MethodKey(
 				CommerceOrderServiceUtil.class,
 				"updatePaymentStatusAndTransactionId",
-				_updatePaymentStatusAndTransactionIdParameterTypes41);
+				_updatePaymentStatusAndTransactionIdParameterTypes45);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, commerceOrderId, paymentStatus, transactionId);
+
+			Object returnObj = null;
+
+			try {
+				returnObj = TunnelUtil.invoke(httpPrincipal, methodHandler);
+			}
+			catch (Exception e) {
+				if (e instanceof
+						com.liferay.portal.kernel.exception.PortalException) {
+
+					throw (com.liferay.portal.kernel.exception.PortalException)
+						e;
+				}
+
+				throw new com.liferay.portal.kernel.exception.SystemException(
+					e);
+			}
+
+			return (com.liferay.commerce.model.CommerceOrder)returnObj;
+		}
+		catch (com.liferay.portal.kernel.exception.SystemException se) {
+			_log.error(se, se);
+
+			throw se;
+		}
+	}
+
+	public static com.liferay.commerce.model.CommerceOrder updatePrintedNote(
+			HttpPrincipal httpPrincipal, long commerceOrderId,
+			String printedNote)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		try {
+			MethodKey methodKey = new MethodKey(
+				CommerceOrderServiceUtil.class, "updatePrintedNote",
+				_updatePrintedNoteParameterTypes46);
+
+			MethodHandler methodHandler = new MethodHandler(
+				methodKey, commerceOrderId, printedNote);
 
 			Object returnObj = null;
 
@@ -1774,7 +1976,7 @@ public class CommerceOrderServiceHttp {
 		try {
 			MethodKey methodKey = new MethodKey(
 				CommerceOrderServiceUtil.class, "updatePurchaseOrderNumber",
-				_updatePurchaseOrderNumberParameterTypes42);
+				_updatePurchaseOrderNumberParameterTypes47);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, commerceOrderId, purchaseOrderNumber);
@@ -1817,7 +2019,7 @@ public class CommerceOrderServiceHttp {
 		try {
 			MethodKey methodKey = new MethodKey(
 				CommerceOrderServiceUtil.class, "updateShippingAddress",
-				_updateShippingAddressParameterTypes43);
+				_updateShippingAddressParameterTypes48);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, commerceOrderId, name, description, street1, street2,
@@ -1858,7 +2060,7 @@ public class CommerceOrderServiceHttp {
 		try {
 			MethodKey methodKey = new MethodKey(
 				CommerceOrderServiceUtil.class, "updateTransactionId",
-				_updateTransactionIdParameterTypes44);
+				_updateTransactionIdParameterTypes49);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, commerceOrderId, transactionId);
@@ -1896,7 +2098,7 @@ public class CommerceOrderServiceHttp {
 		try {
 			MethodKey methodKey = new MethodKey(
 				CommerceOrderServiceUtil.class, "updateUser",
-				_updateUserParameterTypes45);
+				_updateUserParameterTypes50);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, commerceOrderId, userId);
@@ -1943,7 +2145,7 @@ public class CommerceOrderServiceHttp {
 		try {
 			MethodKey methodKey = new MethodKey(
 				CommerceOrderServiceUtil.class, "upsertCommerceOrder",
-				_upsertCommerceOrderParameterTypes46);
+				_upsertCommerceOrderParameterTypes51);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, userId, groupId, commerceAccountId,
@@ -2044,59 +2246,73 @@ public class CommerceOrderServiceHttp {
 	private static final Class<?>[] _getCommerceOrdersCountParameterTypes20 =
 		new Class[] {long.class, long.class};
 	private static final Class<?>[] _getPendingCommerceOrdersParameterTypes21 =
-		new Class[] {long.class, long.class, int.class, int.class};
-	private static final Class<?>[] _getPendingCommerceOrdersParameterTypes22 =
 		new Class[] {
 			long.class, long.class, String.class, int.class, int.class
+		};
+	private static final Class<?>[]
+		_getPendingCommerceOrdersCountParameterTypes22 = new Class[] {
+			long.class, long.class
 		};
 	private static final Class<?>[]
 		_getPendingCommerceOrdersCountParameterTypes23 = new Class[] {
-			long.class, long.class
-		};
-	private static final Class<?>[]
-		_getPendingCommerceOrdersCountParameterTypes24 = new Class[] {
 			long.class, long.class, String.class
 		};
-	private static final Class<?>[] _getPlacedCommerceOrdersParameterTypes25 =
+	private static final Class<?>[] _getPlacedCommerceOrdersParameterTypes24 =
 		new Class[] {long.class, long.class, int.class, int.class};
-	private static final Class<?>[] _getPlacedCommerceOrdersParameterTypes26 =
+	private static final Class<?>[] _getPlacedCommerceOrdersParameterTypes25 =
 		new Class[] {
 			long.class, long.class, String.class, int.class, int.class
 		};
 	private static final Class<?>[]
-		_getPlacedCommerceOrdersCountParameterTypes27 = new Class[] {
+		_getPlacedCommerceOrdersCountParameterTypes26 = new Class[] {
 			long.class, long.class
 		};
 	private static final Class<?>[]
-		_getPlacedCommerceOrdersCountParameterTypes28 = new Class[] {
+		_getPlacedCommerceOrdersCountParameterTypes27 = new Class[] {
 			long.class, long.class, String.class
 		};
-	private static final Class<?>[] _mergeGuestCommerceOrderParameterTypes29 =
+	private static final Class<?>[]
+		_getUserPendingCommerceOrdersParameterTypes28 = new Class[] {
+			long.class, long.class, String.class, int.class, int.class
+		};
+	private static final Class<?>[]
+		_getUserPendingCommerceOrdersCountParameterTypes29 = new Class[] {
+			long.class, long.class, String.class
+		};
+	private static final Class<?>[]
+		_getUserPlacedCommerceOrdersParameterTypes30 = new Class[] {
+			long.class, long.class, String.class, int.class, int.class
+		};
+	private static final Class<?>[]
+		_getUserPlacedCommerceOrdersCountParameterTypes31 = new Class[] {
+			long.class, long.class, String.class
+		};
+	private static final Class<?>[] _mergeGuestCommerceOrderParameterTypes32 =
 		new Class[] {
 			long.class, long.class,
 			com.liferay.commerce.context.CommerceContext.class,
 			com.liferay.portal.kernel.service.ServiceContext.class
 		};
-	private static final Class<?>[] _reorderCommerceOrderParameterTypes30 =
+	private static final Class<?>[] _reorderCommerceOrderParameterTypes33 =
 		new Class[] {
 			long.class, com.liferay.commerce.context.CommerceContext.class
 		};
-	private static final Class<?>[] _submitCommerceOrderParameterTypes31 =
+	private static final Class<?>[] _submitCommerceOrderParameterTypes34 =
 		new Class[] {long.class};
-	private static final Class<?>[] _updateBillingAddressParameterTypes32 =
+	private static final Class<?>[] _updateBillingAddressParameterTypes35 =
 		new Class[] {
 			long.class, String.class, String.class, String.class, String.class,
 			String.class, String.class, String.class, long.class, long.class,
 			String.class, com.liferay.portal.kernel.service.ServiceContext.class
 		};
-	private static final Class<?>[] _updateCommerceOrderParameterTypes33 =
+	private static final Class<?>[] _updateCommerceOrderParameterTypes36 =
 		new Class[] {
 			long.class, long.class, long.class, String.class, long.class,
 			String.class, String.class, java.math.BigDecimal.class,
 			java.math.BigDecimal.class, java.math.BigDecimal.class,
 			String.class, com.liferay.commerce.context.CommerceContext.class
 		};
-	private static final Class<?>[] _updateCommerceOrderParameterTypes34 =
+	private static final Class<?>[] _updateCommerceOrderParameterTypes37 =
 		new Class[] {
 			long.class, long.class, long.class, String.class, long.class,
 			String.class, String.class, java.math.BigDecimal.class,
@@ -2104,7 +2320,7 @@ public class CommerceOrderServiceHttp {
 			String.class, String.class,
 			com.liferay.commerce.context.CommerceContext.class
 		};
-	private static final Class<?>[] _updateCommerceOrderPricesParameterTypes35 =
+	private static final Class<?>[] _updateCommerceOrderPricesParameterTypes38 =
 		new Class[] {
 			long.class, java.math.BigDecimal.class, java.math.BigDecimal.class,
 			java.math.BigDecimal.class, java.math.BigDecimal.class,
@@ -2118,39 +2334,46 @@ public class CommerceOrderServiceHttp {
 			java.math.BigDecimal.class
 		};
 	private static final Class<?>[]
-		_updateCommercePaymentMethodKeyParameterTypes36 = new Class[] {
+		_updateCommercePaymentMethodKeyParameterTypes39 = new Class[] {
 			long.class, String.class
 		};
-	private static final Class<?>[] _updateCustomFieldsParameterTypes37 =
+	private static final Class<?>[] _updateCustomFieldsParameterTypes40 =
 		new Class[] {
 			long.class, com.liferay.portal.kernel.service.ServiceContext.class
 		};
-	private static final Class<?>[] _updateInfoParameterTypes38 = new Class[] {
+	private static final Class<?>[] _updateInfoParameterTypes41 = new Class[] {
 		long.class, String.class, int.class, int.class, int.class, int.class,
 		int.class, com.liferay.portal.kernel.service.ServiceContext.class
 	};
-	private static final Class<?>[] _updateOrderStatusParameterTypes39 =
+	private static final Class<?>[] _updateOrderDateParameterTypes42 =
+		new Class[] {
+			long.class, int.class, int.class, int.class, int.class, int.class,
+			com.liferay.portal.kernel.service.ServiceContext.class
+		};
+	private static final Class<?>[] _updateOrderStatusParameterTypes43 =
 		new Class[] {long.class, int.class};
-	private static final Class<?>[] _updatePaymentStatusParameterTypes40 =
+	private static final Class<?>[] _updatePaymentStatusParameterTypes44 =
 		new Class[] {long.class, int.class};
 	private static final Class<?>[]
-		_updatePaymentStatusAndTransactionIdParameterTypes41 = new Class[] {
+		_updatePaymentStatusAndTransactionIdParameterTypes45 = new Class[] {
 			long.class, int.class, String.class
 		};
-	private static final Class<?>[] _updatePurchaseOrderNumberParameterTypes42 =
+	private static final Class<?>[] _updatePrintedNoteParameterTypes46 =
 		new Class[] {long.class, String.class};
-	private static final Class<?>[] _updateShippingAddressParameterTypes43 =
+	private static final Class<?>[] _updatePurchaseOrderNumberParameterTypes47 =
+		new Class[] {long.class, String.class};
+	private static final Class<?>[] _updateShippingAddressParameterTypes48 =
 		new Class[] {
 			long.class, String.class, String.class, String.class, String.class,
 			String.class, String.class, String.class, long.class, long.class,
 			String.class, com.liferay.portal.kernel.service.ServiceContext.class
 		};
-	private static final Class<?>[] _updateTransactionIdParameterTypes44 =
+	private static final Class<?>[] _updateTransactionIdParameterTypes49 =
 		new Class[] {long.class, String.class};
-	private static final Class<?>[] _updateUserParameterTypes45 = new Class[] {
+	private static final Class<?>[] _updateUserParameterTypes50 = new Class[] {
 		long.class, long.class
 	};
-	private static final Class<?>[] _upsertCommerceOrderParameterTypes46 =
+	private static final Class<?>[] _upsertCommerceOrderParameterTypes51 =
 		new Class[] {
 			long.class, long.class, long.class, long.class, long.class,
 			long.class, String.class, long.class, String.class, String.class,

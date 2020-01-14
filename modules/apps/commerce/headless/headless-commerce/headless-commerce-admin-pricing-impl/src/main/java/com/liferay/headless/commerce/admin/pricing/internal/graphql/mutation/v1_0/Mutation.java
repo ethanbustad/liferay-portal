@@ -126,17 +126,6 @@ public class Mutation {
 			tierPriceResourceComponentServiceObjects;
 	}
 
-	@GraphQLField
-	@GraphQLInvokeDetached
-	public Discount postDiscount(@GraphQLName("discount") Discount discount)
-		throws Exception {
-
-		return _applyComponentServiceObjects(
-			_discountResourceComponentServiceObjects,
-			this::_populateResourceContext,
-			discountResource -> discountResource.postDiscount(discount));
-	}
-
 	@GraphQLInvokeDetached
 	public Response deleteDiscountByExternalReferenceCode(
 			@GraphQLName("externalReferenceCode") String externalReferenceCode)
@@ -184,6 +173,17 @@ public class Mutation {
 			_discountResourceComponentServiceObjects,
 			this::_populateResourceContext,
 			discountResource -> discountResource.patchDiscount(id, discount));
+	}
+
+	@GraphQLField
+	@GraphQLInvokeDetached
+	public Discount postDiscount(@GraphQLName("discount") Discount discount)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_discountResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			discountResource -> discountResource.postDiscount(discount));
 	}
 
 	@GraphQLInvokeDetached
@@ -451,18 +451,6 @@ public class Mutation {
 				id, priceEntry));
 	}
 
-	@GraphQLField
-	@GraphQLInvokeDetached
-	public PriceList postPriceList(
-			@GraphQLName("priceList") PriceList priceList)
-		throws Exception {
-
-		return _applyComponentServiceObjects(
-			_priceListResourceComponentServiceObjects,
-			this::_populateResourceContext,
-			priceListResource -> priceListResource.postPriceList(priceList));
-	}
-
 	@GraphQLInvokeDetached
 	public Response deletePriceListByExternalReferenceCode(
 			@GraphQLName("externalReferenceCode") String externalReferenceCode)
@@ -511,6 +499,18 @@ public class Mutation {
 			this::_populateResourceContext,
 			priceListResource -> priceListResource.patchPriceList(
 				id, priceList));
+	}
+
+	@GraphQLField
+	@GraphQLInvokeDetached
+	public PriceList postPriceList(
+			@GraphQLName("priceList") PriceList priceList)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_priceListResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			priceListResource -> priceListResource.postPriceList(priceList));
 	}
 
 	@GraphQLInvokeDetached

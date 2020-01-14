@@ -49,8 +49,8 @@ import javax.servlet.ServletException;
 /**
  * @author     Shuyang Zhou
  * @deprecated As of Judson (7.1.x), replaced by {@link
- *             com.liferay.petra.process. ClassPathUtil} and {@link
- *             com.liferay.portal.util. PortalClassPathUtil}
+ *             com.liferay.petra.process.ClassPathUtil} and {@link
+ *             com.liferay.portal.util.PortalClassPathUtil}
  */
 @Deprecated
 public class ClassPathUtil {
@@ -94,8 +94,8 @@ public class ClassPathUtil {
 
 	/**
 	 * @deprecated As of Judson (7.1.x), replaced by {@link
-	 *             com.liferay.petra.process.
-	 *             ClassPathUtil#getClassPathURLs(String)}
+	 *             com.liferay.petra.process.ClassPathUtil#getClassPathURLs(
+	 *             String)}
 	 */
 	@Deprecated
 	public static URL[] getClassPathURLs(String classPath)
@@ -111,8 +111,8 @@ public class ClassPathUtil {
 
 	/**
 	 * @deprecated As of Judson (7.1.x), replaced by {@link
-	 *             com.liferay.petra.process.
-	 *             ClassPathUtil#getJVMClassPath(boolean)}
+	 *             com.liferay.petra.process.ClassPathUtil#getJVMClassPath(
+	 *             boolean)}
 	 */
 	@Deprecated
 	public static String getJVMClassPath(boolean includeBootClassPath) {

@@ -80,8 +80,8 @@ public class CommerceShipmentModelImpl
 		{"commerceAddressId", Types.BIGINT},
 		{"commerceShippingMethodId", Types.BIGINT},
 		{"shippingOptionName", Types.VARCHAR}, {"carrier", Types.VARCHAR},
-		{"trackingNumber", Types.VARCHAR}, {"status", Types.INTEGER},
-		{"shippingDate", Types.TIMESTAMP}, {"expectedDate", Types.TIMESTAMP}
+		{"trackingNumber", Types.VARCHAR}, {"shippingDate", Types.TIMESTAMP},
+		{"expectedDate", Types.TIMESTAMP}, {"status", Types.INTEGER}
 	};
 
 	public static final Map<String, Integer> TABLE_COLUMNS_MAP =
@@ -101,13 +101,13 @@ public class CommerceShipmentModelImpl
 		TABLE_COLUMNS_MAP.put("shippingOptionName", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("carrier", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("trackingNumber", Types.VARCHAR);
-		TABLE_COLUMNS_MAP.put("status", Types.INTEGER);
 		TABLE_COLUMNS_MAP.put("shippingDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("expectedDate", Types.TIMESTAMP);
+		TABLE_COLUMNS_MAP.put("status", Types.INTEGER);
 	}
 
 	public static final String TABLE_SQL_CREATE =
-		"create table CommerceShipment (commerceShipmentId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,commerceAccountId LONG,commerceAddressId LONG,commerceShippingMethodId LONG,shippingOptionName VARCHAR(75) null,carrier VARCHAR(75) null,trackingNumber VARCHAR(75) null,status INTEGER,shippingDate DATE null,expectedDate DATE null)";
+		"create table CommerceShipment (commerceShipmentId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,commerceAccountId LONG,commerceAddressId LONG,commerceShippingMethodId LONG,shippingOptionName VARCHAR(75) null,carrier VARCHAR(75) null,trackingNumber VARCHAR(75) null,shippingDate DATE null,expectedDate DATE null,status INTEGER)";
 
 	public static final String TABLE_SQL_DROP = "drop table CommerceShipment";
 
@@ -171,9 +171,9 @@ public class CommerceShipmentModelImpl
 		model.setShippingOptionName(soapModel.getShippingOptionName());
 		model.setCarrier(soapModel.getCarrier());
 		model.setTrackingNumber(soapModel.getTrackingNumber());
-		model.setStatus(soapModel.getStatus());
 		model.setShippingDate(soapModel.getShippingDate());
 		model.setExpectedDate(soapModel.getExpectedDate());
+		model.setStatus(soapModel.getStatus());
 
 		return model;
 	}
@@ -349,10 +349,10 @@ public class CommerceShipmentModelImpl
 				@Override
 				public void accept(
 					CommerceShipment commerceShipment,
-					Object commerceShipmentId) {
+					Object commerceShipmentIdObject) {
 
 					commerceShipment.setCommerceShipmentId(
-						(Long)commerceShipmentId);
+						(Long)commerceShipmentIdObject);
 				}
 
 			});
@@ -372,9 +372,9 @@ public class CommerceShipmentModelImpl
 
 				@Override
 				public void accept(
-					CommerceShipment commerceShipment, Object groupId) {
+					CommerceShipment commerceShipment, Object groupIdObject) {
 
-					commerceShipment.setGroupId((Long)groupId);
+					commerceShipment.setGroupId((Long)groupIdObject);
 				}
 
 			});
@@ -394,9 +394,9 @@ public class CommerceShipmentModelImpl
 
 				@Override
 				public void accept(
-					CommerceShipment commerceShipment, Object companyId) {
+					CommerceShipment commerceShipment, Object companyIdObject) {
 
-					commerceShipment.setCompanyId((Long)companyId);
+					commerceShipment.setCompanyId((Long)companyIdObject);
 				}
 
 			});
@@ -416,9 +416,9 @@ public class CommerceShipmentModelImpl
 
 				@Override
 				public void accept(
-					CommerceShipment commerceShipment, Object userId) {
+					CommerceShipment commerceShipment, Object userIdObject) {
 
-					commerceShipment.setUserId((Long)userId);
+					commerceShipment.setUserId((Long)userIdObject);
 				}
 
 			});
@@ -438,9 +438,9 @@ public class CommerceShipmentModelImpl
 
 				@Override
 				public void accept(
-					CommerceShipment commerceShipment, Object userName) {
+					CommerceShipment commerceShipment, Object userNameObject) {
 
-					commerceShipment.setUserName((String)userName);
+					commerceShipment.setUserName((String)userNameObject);
 				}
 
 			});
@@ -460,9 +460,10 @@ public class CommerceShipmentModelImpl
 
 				@Override
 				public void accept(
-					CommerceShipment commerceShipment, Object createDate) {
+					CommerceShipment commerceShipment,
+					Object createDateObject) {
 
-					commerceShipment.setCreateDate((Date)createDate);
+					commerceShipment.setCreateDate((Date)createDateObject);
 				}
 
 			});
@@ -482,9 +483,10 @@ public class CommerceShipmentModelImpl
 
 				@Override
 				public void accept(
-					CommerceShipment commerceShipment, Object modifiedDate) {
+					CommerceShipment commerceShipment,
+					Object modifiedDateObject) {
 
-					commerceShipment.setModifiedDate((Date)modifiedDate);
+					commerceShipment.setModifiedDate((Date)modifiedDateObject);
 				}
 
 			});
@@ -505,10 +507,10 @@ public class CommerceShipmentModelImpl
 				@Override
 				public void accept(
 					CommerceShipment commerceShipment,
-					Object commerceAccountId) {
+					Object commerceAccountIdObject) {
 
 					commerceShipment.setCommerceAccountId(
-						(Long)commerceAccountId);
+						(Long)commerceAccountIdObject);
 				}
 
 			});
@@ -529,10 +531,10 @@ public class CommerceShipmentModelImpl
 				@Override
 				public void accept(
 					CommerceShipment commerceShipment,
-					Object commerceAddressId) {
+					Object commerceAddressIdObject) {
 
 					commerceShipment.setCommerceAddressId(
-						(Long)commerceAddressId);
+						(Long)commerceAddressIdObject);
 				}
 
 			});
@@ -553,10 +555,10 @@ public class CommerceShipmentModelImpl
 				@Override
 				public void accept(
 					CommerceShipment commerceShipment,
-					Object commerceShippingMethodId) {
+					Object commerceShippingMethodIdObject) {
 
 					commerceShipment.setCommerceShippingMethodId(
-						(Long)commerceShippingMethodId);
+						(Long)commerceShippingMethodIdObject);
 				}
 
 			});
@@ -577,10 +579,10 @@ public class CommerceShipmentModelImpl
 				@Override
 				public void accept(
 					CommerceShipment commerceShipment,
-					Object shippingOptionName) {
+					Object shippingOptionNameObject) {
 
 					commerceShipment.setShippingOptionName(
-						(String)shippingOptionName);
+						(String)shippingOptionNameObject);
 				}
 
 			});
@@ -600,9 +602,9 @@ public class CommerceShipmentModelImpl
 
 				@Override
 				public void accept(
-					CommerceShipment commerceShipment, Object carrier) {
+					CommerceShipment commerceShipment, Object carrierObject) {
 
-					commerceShipment.setCarrier((String)carrier);
+					commerceShipment.setCarrier((String)carrierObject);
 				}
 
 			});
@@ -622,31 +624,11 @@ public class CommerceShipmentModelImpl
 
 				@Override
 				public void accept(
-					CommerceShipment commerceShipment, Object trackingNumber) {
+					CommerceShipment commerceShipment,
+					Object trackingNumberObject) {
 
-					commerceShipment.setTrackingNumber((String)trackingNumber);
-				}
-
-			});
-		attributeGetterFunctions.put(
-			"status",
-			new Function<CommerceShipment, Object>() {
-
-				@Override
-				public Object apply(CommerceShipment commerceShipment) {
-					return commerceShipment.getStatus();
-				}
-
-			});
-		attributeSetterBiConsumers.put(
-			"status",
-			new BiConsumer<CommerceShipment, Object>() {
-
-				@Override
-				public void accept(
-					CommerceShipment commerceShipment, Object status) {
-
-					commerceShipment.setStatus((Integer)status);
+					commerceShipment.setTrackingNumber(
+						(String)trackingNumberObject);
 				}
 
 			});
@@ -666,9 +648,10 @@ public class CommerceShipmentModelImpl
 
 				@Override
 				public void accept(
-					CommerceShipment commerceShipment, Object shippingDate) {
+					CommerceShipment commerceShipment,
+					Object shippingDateObject) {
 
-					commerceShipment.setShippingDate((Date)shippingDate);
+					commerceShipment.setShippingDate((Date)shippingDateObject);
 				}
 
 			});
@@ -688,9 +671,32 @@ public class CommerceShipmentModelImpl
 
 				@Override
 				public void accept(
-					CommerceShipment commerceShipment, Object expectedDate) {
+					CommerceShipment commerceShipment,
+					Object expectedDateObject) {
 
-					commerceShipment.setExpectedDate((Date)expectedDate);
+					commerceShipment.setExpectedDate((Date)expectedDateObject);
+				}
+
+			});
+		attributeGetterFunctions.put(
+			"status",
+			new Function<CommerceShipment, Object>() {
+
+				@Override
+				public Object apply(CommerceShipment commerceShipment) {
+					return commerceShipment.getStatus();
+				}
+
+			});
+		attributeSetterBiConsumers.put(
+			"status",
+			new BiConsumer<CommerceShipment, Object>() {
+
+				@Override
+				public void accept(
+					CommerceShipment commerceShipment, Object statusObject) {
+
+					commerceShipment.setStatus((Integer)statusObject);
 				}
 
 			});
@@ -902,6 +908,28 @@ public class CommerceShipmentModelImpl
 
 	@JSON
 	@Override
+	public Date getShippingDate() {
+		return _shippingDate;
+	}
+
+	@Override
+	public void setShippingDate(Date shippingDate) {
+		_shippingDate = shippingDate;
+	}
+
+	@JSON
+	@Override
+	public Date getExpectedDate() {
+		return _expectedDate;
+	}
+
+	@Override
+	public void setExpectedDate(Date expectedDate) {
+		_expectedDate = expectedDate;
+	}
+
+	@JSON
+	@Override
 	public int getStatus() {
 		return _status;
 	}
@@ -921,28 +949,6 @@ public class CommerceShipmentModelImpl
 
 	public int getOriginalStatus() {
 		return _originalStatus;
-	}
-
-	@JSON
-	@Override
-	public Date getShippingDate() {
-		return _shippingDate;
-	}
-
-	@Override
-	public void setShippingDate(Date shippingDate) {
-		_shippingDate = shippingDate;
-	}
-
-	@JSON
-	@Override
-	public Date getExpectedDate() {
-		return _expectedDate;
-	}
-
-	@Override
-	public void setExpectedDate(Date expectedDate) {
-		_expectedDate = expectedDate;
 	}
 
 	public long getColumnBitmask() {
@@ -995,9 +1001,9 @@ public class CommerceShipmentModelImpl
 		commerceShipmentImpl.setShippingOptionName(getShippingOptionName());
 		commerceShipmentImpl.setCarrier(getCarrier());
 		commerceShipmentImpl.setTrackingNumber(getTrackingNumber());
-		commerceShipmentImpl.setStatus(getStatus());
 		commerceShipmentImpl.setShippingDate(getShippingDate());
 		commerceShipmentImpl.setExpectedDate(getExpectedDate());
+		commerceShipmentImpl.setStatus(getStatus());
 
 		commerceShipmentImpl.resetOriginalValues();
 
@@ -1149,8 +1155,6 @@ public class CommerceShipmentModelImpl
 			commerceShipmentCacheModel.trackingNumber = null;
 		}
 
-		commerceShipmentCacheModel.status = getStatus();
-
 		Date shippingDate = getShippingDate();
 
 		if (shippingDate != null) {
@@ -1168,6 +1172,8 @@ public class CommerceShipmentModelImpl
 		else {
 			commerceShipmentCacheModel.expectedDate = Long.MIN_VALUE;
 		}
+
+		commerceShipmentCacheModel.status = getStatus();
 
 		return commerceShipmentCacheModel;
 	}
@@ -1258,11 +1264,11 @@ public class CommerceShipmentModelImpl
 	private String _shippingOptionName;
 	private String _carrier;
 	private String _trackingNumber;
+	private Date _shippingDate;
+	private Date _expectedDate;
 	private int _status;
 	private int _originalStatus;
 	private boolean _setOriginalStatus;
-	private Date _shippingDate;
-	private Date _expectedDate;
 	private long _columnBitmask;
 	private CommerceShipment _escapedModel;
 

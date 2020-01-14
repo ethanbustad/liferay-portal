@@ -15,6 +15,7 @@
 package com.liferay.commerce.product.definitions.web.internal.portlet.action;
 
 import com.liferay.commerce.product.constants.CPPortletKeys;
+import com.liferay.commerce.product.exception.CPAttachmentFileEntryExpirationDateException;
 import com.liferay.commerce.product.exception.DuplicateCPAttachmentFileEntryException;
 import com.liferay.commerce.product.exception.NoSuchCPAttachmentFileEntryException;
 import com.liferay.commerce.product.model.CPAttachmentFileEntry;
@@ -122,7 +123,9 @@ public class EditCPAttachmentFileEntryMVCActionCommand
 
 				actionResponse.setRenderParameter("mvcPath", "/error.jsp");
 			}
-			else if (e instanceof DuplicateCPAttachmentFileEntryException ||
+			else if (e instanceof
+						CPAttachmentFileEntryExpirationDateException ||
+					 e instanceof DuplicateCPAttachmentFileEntryException ||
 					 e instanceof NoSuchFileEntryException) {
 
 				hideDefaultErrorMessage(actionRequest);
@@ -225,9 +228,6 @@ public class EditCPAttachmentFileEntryMVCActionCommand
 		double priority = ParamUtil.getDouble(actionRequest, "priority");
 		int type = ParamUtil.getInteger(actionRequest, "type");
 
-		ddmFormValues = _ddmFormValuesHelper.cleanDDMFormValuesJSON(
-			ddmFormValues);
-
 		CPDefinition cpDefinition = _cpDefinitionService.getCPDefinition(
 			cpDefinitionId);
 
@@ -249,6 +249,7 @@ public class EditCPAttachmentFileEntryMVCActionCommand
 			long classNameId = _portal.getClassNameId(CPDefinition.class);
 
 			_cpAttachmentFileEntryService.addCPAttachmentFileEntry(
+				serviceContext.getUserId(), serviceContext.getScopeGroupId(),
 				classNameId, cpDefinitionId, fileEntryId, displayDateMonth,
 				displayDateDay, displayDateYear, displayDateHour,
 				displayDateMinute, expirationDateMonth, expirationDateDay,

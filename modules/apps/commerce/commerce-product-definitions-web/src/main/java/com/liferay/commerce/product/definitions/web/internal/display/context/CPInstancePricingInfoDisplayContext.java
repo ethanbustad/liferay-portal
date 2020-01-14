@@ -18,13 +18,13 @@ import com.liferay.commerce.currency.model.CommerceCurrency;
 import com.liferay.commerce.currency.service.CommerceCurrencyLocalService;
 import com.liferay.commerce.currency.util.CommercePriceFormatter;
 import com.liferay.commerce.product.definitions.web.portlet.action.ActionHelper;
+import com.liferay.commerce.product.model.CPInstance;
+import com.liferay.commerce.product.model.CommerceCatalog;
 import com.liferay.commerce.product.service.CPDefinitionOptionRelService;
 import com.liferay.commerce.product.service.CPInstanceService;
 import com.liferay.commerce.product.util.CPInstanceHelper;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.theme.ThemeDisplay;
-import com.liferay.portal.kernel.util.WebKeys;
 
 import java.math.BigDecimal;
 
@@ -52,7 +52,7 @@ public class CPInstancePricingInfoDisplayContext
 		_commerceCurrencyLocalService = commerceCurrencyLocalService;
 	}
 
-	public String getCommerceCurrencyCode() {
+	public String getCommerceCurrencyCode() throws PortalException {
 		CommerceCurrency commerceCurrency = getCommerceCurrency();
 
 		if (commerceCurrency != null) {
@@ -62,7 +62,7 @@ public class CPInstancePricingInfoDisplayContext
 		return StringPool.BLANK;
 	}
 
-	public BigDecimal round(BigDecimal value) {
+	public BigDecimal round(BigDecimal value) throws PortalException {
 		CommerceCurrency commerceCurrency = getCommerceCurrency();
 
 		if (commerceCurrency == null) {
@@ -72,13 +72,14 @@ public class CPInstancePricingInfoDisplayContext
 		return commerceCurrency.round(value);
 	}
 
-	protected CommerceCurrency getCommerceCurrency() {
-		ThemeDisplay themeDisplay =
-			(ThemeDisplay)httpServletRequest.getAttribute(
-				WebKeys.THEME_DISPLAY);
+	protected CommerceCurrency getCommerceCurrency() throws PortalException {
+		CPInstance cpInstance = getCPInstance();
 
-		return _commerceCurrencyLocalService.fetchPrimaryCommerceCurrency(
-			themeDisplay.getCompanyId());
+		CommerceCatalog commerceCatalog = cpInstance.getCommerceCatalog();
+
+		return _commerceCurrencyLocalService.getCommerceCurrency(
+			commerceCatalog.getCompanyId(),
+			commerceCatalog.getCommerceCurrencyCode());
 	}
 
 	private final CommerceCurrencyLocalService _commerceCurrencyLocalService;

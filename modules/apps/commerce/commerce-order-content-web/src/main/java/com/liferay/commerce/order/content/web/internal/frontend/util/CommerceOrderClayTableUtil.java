@@ -17,6 +17,8 @@ package com.liferay.commerce.order.content.web.internal.frontend.util;
 import com.liferay.commerce.constants.CommerceOrderConstants;
 import com.liferay.commerce.currency.model.CommerceMoney;
 import com.liferay.commerce.model.CommerceOrder;
+import com.liferay.commerce.order.content.web.internal.frontend.CommercePendingOrderClayTable;
+import com.liferay.commerce.order.content.web.internal.frontend.CommercePlacedOrderClayTable;
 import com.liferay.commerce.order.content.web.internal.model.Order;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -27,6 +29,7 @@ import com.liferay.portal.kernel.portlet.PortletURLFactoryUtil;
 import com.liferay.portal.kernel.theme.PortletDisplay;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
+import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 
@@ -34,6 +37,7 @@ import java.text.DateFormat;
 import java.text.Format;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -54,6 +58,22 @@ public class CommerceOrderClayTableUtil {
 		PortletURL portletURL = PortletURLFactoryUtil.create(
 			themeDisplay.getRequest(), portletDisplay.getId(),
 			themeDisplay.getPlid(), PortletRequest.RENDER_PHASE);
+
+		PortletURL backURL = portletURL;
+
+		String pageSize = ParamUtil.getString(
+			themeDisplay.getRequest(), "pageSize");
+
+		String pageNumber = ParamUtil.getString(
+			themeDisplay.getRequest(), "page");
+
+		backURL.setParameter("itemsPerPage", pageSize);
+		backURL.setParameter("pageNumber", pageNumber);
+		backURL.setParameter("tableName", CommercePendingOrderClayTable.NAME);
+
+		portletURL.setParameter(
+			PortletQName.PUBLIC_RENDER_PARAMETER_NAMESPACE + "backURL",
+			backURL.toString());
 
 		portletURL.setParameter("mvcRenderCommandName", "editCommerceOrder");
 		portletURL.setParameter(
@@ -108,13 +128,19 @@ public class CommerceOrderClayTableUtil {
 				resourceBundle,
 				WorkflowConstants.getStatusLabel(commerceOrder.getStatus()));
 
+			Date orderDate = commerceOrder.getCreateDate();
+
+			if (commerceOrder.getOrderDate() != null) {
+				orderDate = commerceOrder.getOrderDate();
+			}
+
 			orders.add(
 				new Order(
 					commerceOrder.getCommerceOrderId(),
 					commerceOrder.getCommerceAccountName(),
-					dateFormat.format(commerceOrder.getCreateDate()),
-					commerceOrder.getUserName(), commerceOrderStatusLabel,
-					workflowStatusLabel, amount, url));
+					dateFormat.format(orderDate), commerceOrder.getUserName(),
+					commerceOrderStatusLabel, workflowStatusLabel, amount,
+					url));
 		}
 
 		return orders;
@@ -130,14 +156,26 @@ public class CommerceOrderClayTableUtil {
 			themeDisplay.getRequest(), portletDisplay.getId(),
 			themeDisplay.getPlid(), PortletRequest.RENDER_PHASE);
 
+		PortletURL backURL = portletURL;
+
+		String pageSize = ParamUtil.getString(
+			themeDisplay.getRequest(), "pageSize");
+
+		String pageNumber = ParamUtil.getString(
+			themeDisplay.getRequest(), "page");
+
+		backURL.setParameter("itemsPerPage", pageSize);
+		backURL.setParameter("pageNumber", pageNumber);
+		backURL.setParameter("tableName", CommercePlacedOrderClayTable.NAME);
+
+		portletURL.setParameter(
+			PortletQName.PUBLIC_RENDER_PARAMETER_NAMESPACE + "backURL",
+			backURL.toString());
+
 		portletURL.setParameter(
 			"mvcRenderCommandName", "viewCommerceOrderDetails");
 		portletURL.setParameter(
 			"commerceOrderId", String.valueOf(commerceOrderId));
-
-		portletURL.setParameter(
-			PortletQName.PUBLIC_RENDER_PARAMETER_NAMESPACE + "backURL",
-			themeDisplay.getURLCurrent());
 
 		return portletURL.toString();
 	}

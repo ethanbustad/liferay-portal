@@ -1,25 +1,59 @@
 .price {
-	&__value {
-		font-weight: 600;
-		font-weight: bold;
-		margin-right: 10px;
+  align-items: center;
+  display: grid;
+  grid-template-columns: 140px 1fr;
 
-		&--big {
-			font-size: 18px;
-		}
+  &-label {
+    font-size: .8em;
+    font-variant: small-caps;
+    font-weight: 500;
+    margin-bottom: 10px;
+    text-transform: lowercase;
+  }
 
-		&--discount {
-			color: $color-mood-bad
-		}
+  &-value {
+    font-size: 20px;
+    font-weight: 500;
 
-		&--promo-price {
-			color: $color-mood-bad
-		}
+    &:not(&-discount):first-letter {
+      margin-left: 4px;
+      margin-right: 4px;
+    }
 
-		&--inactive {
-			color: $color-fg-alt;
-			font-weight: normal;
-			text-decoration: line-through;
-		}
-	}
+    &:last-child {
+      margin-right: 0;
+    }
+
+    &-discount {
+      color: $color-mood-bad !important;
+    }
+
+    &-big,
+    &-final,
+    &-promo {
+      color: $color-mood-bad;
+      font-weight: 600;
+    }
+
+    &-inactive {
+      color: $color-fg-alt !important;
+      font-size: 14px;
+      font-weight: normal;
+      text-decoration: line-through;
+    }
+
+    &-percentages {
+      font-size: 10px;
+      white-space: nowrap;
+
+      &::after {
+        color: $color-fg;
+        content: ' | ';
+      }
+
+      &:last-child::after {
+        content: '';
+      }
+    }
+  }
 }

@@ -50,7 +50,12 @@ public class CommerceAccountRoleHelperImpl
 		throws PortalException {
 
 		_checkRole(
-			CommerceAccountConstants.ACCOUNT_ADMINISTRATOR_ROLE_NAME,
+			CommerceAccountConstants.ROLE_NAME_ACCOUNT_ADMINISTRATOR,
+			serviceContext);
+		_checkRole(
+			CommerceAccountConstants.ROLE_NAME_ACCOUNT_BUYER, serviceContext);
+		_checkRole(
+			CommerceAccountConstants.ROLE_NAME_ACCOUNT_ORDER_MANAGER,
 			serviceContext);
 	}
 
@@ -98,7 +103,7 @@ public class CommerceAccountRoleHelperImpl
 		String name = role.getName();
 
 		if (name.equals(
-				CommerceAccountConstants.ACCOUNT_ADMINISTRATOR_ROLE_NAME)) {
+				CommerceAccountConstants.ROLE_NAME_ACCOUNT_ADMINISTRATOR)) {
 
 			resourceActionIds.put(
 				"com.liferay.commerce.account.model.CommerceAccount",
@@ -108,6 +113,28 @@ public class CommerceAccountRoleHelperImpl
 					ActionKeys.VIEW, CommerceAccountActionKeys.VIEW_ADDRESSES,
 					CommerceAccountActionKeys.VIEW_MEMBERS
 				});
+
+			resourceActionIds.put(
+				"com.liferay.commerce.order",
+				new String[] {
+					"ADD_COMMERCE_ORDER", "APPROVE_OPEN_COMMERCE_ORDERS",
+					"CHECKOUT_OPEN_COMMERCE_ORDERS", "DELETE_COMMERCE_ORDERS",
+					"MANAGE_COMMERCE_ORDERS", "VIEW_COMMERCE_ORDERS",
+					"VIEW_OPEN_COMMERCE_ORDERS"
+				});
+		}
+		else if (name.equals(
+					CommerceAccountConstants.ROLE_NAME_ACCOUNT_BUYER)) {
+
+			resourceActionIds.put(
+				"com.liferay.commerce.order",
+				new String[] {
+					"ADD_COMMERCE_ORDER", "CHECKOUT_OPEN_COMMERCE_ORDERS",
+					"VIEW_COMMERCE_ORDERS", "VIEW_OPEN_COMMERCE_ORDERS"
+				});
+		}
+		else if (name.equals(
+					CommerceAccountConstants.ROLE_NAME_ACCOUNT_ORDER_MANAGER)) {
 
 			resourceActionIds.put(
 				"com.liferay.commerce.order",

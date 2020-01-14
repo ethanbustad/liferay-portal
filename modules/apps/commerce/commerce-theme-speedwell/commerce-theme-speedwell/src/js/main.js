@@ -1,22 +1,24 @@
-var Speedwell = Speedwell || { features: {}, initializeFeatures: function() {} };
-
-
 AUI().ready(
 	function() {
-		console.log('%c[ AUI ready ]', 'background-color: #000; color: #00FFFF');
+		if (!!Speedwell && !!Speedwell.features) {
+			Speedwell.features.init.initializeFeatures();
 
-		!!Speedwell && Speedwell.initializeFeatures();
-	}
-);
+			Speedwell.features.sliders = [];
 
-Liferay.Portlet.ready(
-	function(portletId, node) {}
-);
+			if ('sliderCallbacks' in Speedwell.features &&
+				Speedwell.features.sliderCallbacks.length) {
 
-Liferay.on(
-	'allPortletsReady',
+				Speedwell.features.sliderCallbacks.forEach(function(cb) {
+					const componentReady = Liferay.component('SpeedwellSlider');
 
-	function() {
-		console.log('%c[ All portlets ready ]', 'background-color: #000; color: #FFFF00');
+					if (componentReady) {
+						Speedwell.features
+							.sliders.push(cb(componentReady));
+					}
+				});
+
+				Speedwell.features.sliderCallbacks = [];
+			}
+		}
 	}
 );

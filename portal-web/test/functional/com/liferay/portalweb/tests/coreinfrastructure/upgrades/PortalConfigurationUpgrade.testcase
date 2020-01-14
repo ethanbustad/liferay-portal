@@ -5,7 +5,7 @@ definition {
 	property portal.release = "true";
 	property portal.upstream = "true";
 	property ignore.errors = "Plugin security management is not enabled. Enable a security manager, then restart.";
-	property testray.main.component.name = "Upgrades Core Infrastructure";
+	property testray.main.component.name = "Upgrades User and System Management";
 
 	setUp {
 		User.loginPG(

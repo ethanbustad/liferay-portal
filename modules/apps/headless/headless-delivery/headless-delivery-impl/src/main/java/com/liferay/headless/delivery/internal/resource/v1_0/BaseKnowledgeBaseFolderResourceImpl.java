@@ -17,8 +17,6 @@ package com.liferay.headless.delivery.internal.resource.v1_0;
 import com.liferay.headless.delivery.dto.v1_0.KnowledgeBaseFolder;
 import com.liferay.headless.delivery.resource.v1_0.KnowledgeBaseFolderResource;
 import com.liferay.petra.function.UnsafeFunction;
-import com.liferay.portal.kernel.model.Company;
-import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.vulcan.accept.language.AcceptLanguage;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
@@ -292,7 +290,7 @@ public abstract class BaseKnowledgeBaseFolderResourceImpl
 	@Override
 	@GET
 	@Operation(
-		description = "Retrieves the Site's knowledge base folders. Results can be paginated."
+		description = "Retrieves the site's knowledge base folders. Results can be paginated."
 	)
 	@Parameters(
 		value = {
@@ -337,7 +335,9 @@ public abstract class BaseKnowledgeBaseFolderResourceImpl
 		this.contextAcceptLanguage = contextAcceptLanguage;
 	}
 
-	public void setContextCompany(Company contextCompany) {
+	public void setContextCompany(
+		com.liferay.portal.kernel.model.Company contextCompany) {
+
 		this.contextCompany = contextCompany;
 	}
 
@@ -357,7 +357,9 @@ public abstract class BaseKnowledgeBaseFolderResourceImpl
 		this.contextUriInfo = contextUriInfo;
 	}
 
-	public void setContextUser(User contextUser) {
+	public void setContextUser(
+		com.liferay.portal.kernel.model.User contextUser) {
+
 		this.contextUser = contextUser;
 	}
 
@@ -395,10 +397,10 @@ public abstract class BaseKnowledgeBaseFolderResourceImpl
 	}
 
 	protected AcceptLanguage contextAcceptLanguage;
-	protected Company contextCompany;
+	protected com.liferay.portal.kernel.model.Company contextCompany;
+	protected com.liferay.portal.kernel.model.User contextUser;
 	protected HttpServletRequest contextHttpServletRequest;
 	protected HttpServletResponse contextHttpServletResponse;
 	protected UriInfo contextUriInfo;
-	protected User contextUser;
 
 }

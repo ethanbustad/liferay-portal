@@ -17,6 +17,7 @@ package com.liferay.commerce.currency.test.util;
 import com.liferay.commerce.currency.model.CommerceCurrency;
 import com.liferay.commerce.currency.model.CommerceCurrencyConstants;
 import com.liferay.commerce.currency.service.CommerceCurrencyLocalServiceUtil;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
@@ -33,6 +34,24 @@ import java.util.Map;
  * @author Luca Pellizzon
  */
 public class CommerceCurrencyTestUtil {
+
+	public static CommerceCurrency addCommerceCurrency()
+		throws PortalException {
+
+		Map<Locale, String> formatPatternMap = new HashMap();
+
+		formatPatternMap.put(
+			LocaleUtil.US, CommerceCurrencyConstants.DEFAULT_FORMAT_PATTERN);
+
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext();
+
+		return CommerceCurrencyLocalServiceUtil.addCommerceCurrency(
+			serviceContext.getUserId(), RandomTestUtil.randomString(),
+			RandomTestUtil.randomLocaleStringMap(), BigDecimal.ONE,
+			formatPatternMap, 2, 2, StringPool.BLANK, false,
+			RandomTestUtil.randomDouble(), true, serviceContext);
+	}
 
 	public static CommerceCurrency addCommerceCurrency(long groupId)
 		throws PortalException {
@@ -55,8 +74,8 @@ public class CommerceCurrencyTestUtil {
 		return CommerceCurrencyLocalServiceUtil.addCommerceCurrency(
 			serviceContext.getUserId(), code,
 			RandomTestUtil.randomLocaleStringMap(), BigDecimal.ONE,
-			formatPatternMap, 2, 2, "", false, RandomTestUtil.randomDouble(),
-			true, serviceContext);
+			formatPatternMap, 2, 2, StringPool.BLANK, false,
+			RandomTestUtil.randomDouble(), true, serviceContext);
 	}
 
 }

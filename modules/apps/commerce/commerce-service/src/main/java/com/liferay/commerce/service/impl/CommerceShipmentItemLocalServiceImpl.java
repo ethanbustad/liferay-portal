@@ -14,11 +14,13 @@
 
 package com.liferay.commerce.service.impl;
 
-import com.liferay.commerce.constants.CommerceDestinationNames;
+import com.liferay.commerce.exception.CommerceShipmentInactiveWarehouseException;
 import com.liferay.commerce.exception.CommerceShipmentItemQuantityException;
 import com.liferay.commerce.inventory.engine.CommerceInventoryEngine;
+import com.liferay.commerce.inventory.model.CommerceInventoryWarehouse;
 import com.liferay.commerce.inventory.model.CommerceInventoryWarehouseItem;
 import com.liferay.commerce.inventory.service.CommerceInventoryWarehouseItemLocalService;
+import com.liferay.commerce.inventory.service.CommerceInventoryWarehouseLocalService;
 import com.liferay.commerce.model.CommerceOrderItem;
 import com.liferay.commerce.model.CommerceShipmentItem;
 import com.liferay.commerce.product.model.CPInstance;
@@ -26,22 +28,18 @@ import com.liferay.commerce.service.base.CommerceShipmentItemLocalServiceBaseImp
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.messaging.Message;
-import com.liferay.portal.kernel.messaging.MessageBusUtil;
 import com.liferay.portal.kernel.model.SystemEventConstants;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
-import com.liferay.portal.kernel.transaction.TransactionCommitCallbackUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.spring.extender.service.ServiceReference;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
 
 /**
  * @author Alessio Antonio Rendina
@@ -120,14 +118,9 @@ public class CommerceShipmentItemLocalServiceImpl
 				commerceOrderItemLocalService.incrementShippedQuantity(
 					commerceShipmentItem.getCommerceOrderItemId(),
 					shippedQuantity);
-		}
-		catch (PortalException pe) {
-			_log.error(pe, pe);
-		}
 
-		// Stock quantity
+			// Stock quantity
 
-		try {
 			_restoreStockQuantity(commerceOrderItem, commerceShipmentItem);
 		}
 		catch (PortalException pe) {
@@ -242,6 +235,14 @@ public class CommerceShipmentItemLocalServiceImpl
 			commerceOrderItem.getQuantity() -
 				commerceOrderItem.getShippedQuantity();
 
+		CommerceInventoryWarehouse commerceInventoryWarehouse =
+			_commerceInventoryWarehouseLocalService.
+				fetchCommerceInventoryWarehouse(commerceInventoryWarehouseId);
+
+		if (!commerceInventoryWarehouse.isActive()) {
+			throw new CommerceShipmentInactiveWarehouseException();
+		}
+
 		int commerceInventoryWarehouseQuantity =
 			commerceOrderItemLocalService.
 				getCommerceInventoryWarehouseItemQuantity(
@@ -320,23 +321,6 @@ public class CommerceShipmentItemLocalServiceImpl
 			commerceShipmentItem.getCommerceInventoryWarehouseId(),
 			commerceOrderItem.getSku(), commerceShipmentItem.getQuantity(),
 			commerceOrderItem.getBookedQuantityId(), context);
-
-		TransactionCommitCallbackUtil.registerCallback(
-			new Callable<Void>() {
-
-				@Override
-				public Void call() throws Exception {
-					Message message = new Message();
-
-					message.put("cpInstanceId", cpInstance.getCPInstanceId());
-
-					MessageBusUtil.sendMessage(
-						CommerceDestinationNames.STOCK_QUANTITY, message);
-
-					return null;
-				}
-
-			});
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
@@ -348,5 +332,9 @@ public class CommerceShipmentItemLocalServiceImpl
 	@ServiceReference(type = CommerceInventoryWarehouseItemLocalService.class)
 	private CommerceInventoryWarehouseItemLocalService
 		_commerceInventoryWarehouseItemLocalService;
+
+	@ServiceReference(type = CommerceInventoryWarehouseLocalService.class)
+	private CommerceInventoryWarehouseLocalService
+		_commerceInventoryWarehouseLocalService;
 
 }

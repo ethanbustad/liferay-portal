@@ -4,7 +4,7 @@
 <service-builder auto-namespace-tables="false" package-path="com.liferay.commerce">
 	<author>Alessio Antonio Rendina</author>
 	<namespace>Commerce</namespace>
-	<entity local-service="true" name="CommerceAddress" remote-service="true">
+	<entity external-reference-code="true" local-service="true" name="CommerceAddress" remote-service="true">
 
 		<!-- PK fields -->
 
@@ -280,9 +280,11 @@
 		<column name="totalDiscountPercentageLevel4" type="BigDecimal" />
 		<column name="advanceStatus" type="String" />
 		<column name="paymentStatus" type="int" />
+		<column name="orderDate" type="Date" />
 		<column name="orderStatus" type="int" />
 		<column name="printedNote" type="String" />
 		<column name="requestedDeliveryDate" type="Date" />
+		<column name="manuallyAdjusted" type="boolean" />
 		<column name="status" type="int" />
 		<column name="statusByUserId" type="long" />
 		<column name="statusByUserName" type="String" />
@@ -314,6 +316,10 @@
 		<finder name="G_C" return-type="Collection">
 			<finder-column name="groupId" />
 			<finder-column name="commerceAccountId" />
+		</finder>
+		<finder name="G_CP" return-type="Collection">
+			<finder-column name="groupId" />
+			<finder-column name="commercePaymentMethodKey" />
 		</finder>
 		<finder name="G_U_O" return-type="Collection">
 			<finder-column name="groupId" />
@@ -380,6 +386,7 @@
 		<column name="printedNote" type="String" />
 		<column name="requestedDeliveryDate" type="Date" />
 		<column name="bookedQuantityId" type="long" />
+		<column name="manuallyAdjusted" type="boolean" />
 
 		<!-- Order -->
 
@@ -709,8 +716,14 @@
 
 		<!-- Finder methods -->
 
+		<finder name="GroupId" return-type="Collection">
+			<finder-column name="groupId" />
+		</finder>
 		<finder name="CompanyId" return-type="Collection">
 			<finder-column name="companyId" />
+		</finder>
+		<finder name="CommerceOrderItemId" return-type="CommerceSubscriptionEntry" unique="true">
+			<finder-column name="commerceOrderItemId" />
 		</finder>
 		<finder name="SubscriptionStatus" return-type="Collection">
 			<finder-column name="subscriptionStatus" />
@@ -810,6 +823,7 @@
 		<exception>CommerceCountryTwoLettersISOCode</exception>
 		<exception>CommerceGeocoder</exception>
 		<exception>CommerceOrderBillingAddress</exception>
+		<exception>CommerceOrderDate</exception>
 		<exception>CommerceOrderItemRequestedDeliveryDate</exception>
 		<exception>CommerceOrderNoteContent</exception>
 		<exception>CommerceOrderPaymentMethod</exception>

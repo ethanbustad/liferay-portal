@@ -1765,6 +1765,18 @@ public class KaleoNodePersistenceImpl
 		}
 	}
 
+	public void clearCache(Set<Serializable> primaryKeys) {
+		finderCache.clearCache(FINDER_CLASS_NAME_ENTITY);
+		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
+		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
+
+		for (Serializable primaryKey : primaryKeys) {
+			entityCache.removeResult(
+				KaleoNodeModelImpl.ENTITY_CACHE_ENABLED, KaleoNodeImpl.class,
+				primaryKey);
+		}
+	}
+
 	/**
 	 * Creates a new kaleo node with the primary key. Does not add the kaleo node to the database.
 	 *

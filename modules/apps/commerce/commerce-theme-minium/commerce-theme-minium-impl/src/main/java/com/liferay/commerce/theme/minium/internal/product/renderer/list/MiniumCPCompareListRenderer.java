@@ -24,7 +24,7 @@ import com.liferay.commerce.product.constants.CPPortletKeys;
 import com.liferay.commerce.product.content.constants.CPContentWebKeys;
 import com.liferay.commerce.product.content.render.list.CPContentListRenderer;
 import com.liferay.commerce.product.content.util.CPCompareContentHelper;
-import com.liferay.commerce.product.util.CPCompareUtil;
+import com.liferay.commerce.product.util.CPCompareHelperUtil;
 import com.liferay.commerce.product.util.CPDefinitionHelper;
 import com.liferay.commerce.theme.minium.internal.product.model.ProductCompareModel;
 import com.liferay.frontend.js.loader.modules.extender.npm.NPMResolver;
@@ -115,8 +115,12 @@ public class MiniumCPCompareListRenderer implements CPContentListRenderer {
 		int limit = cpCompareContentHelper.getProductsLimit(
 			themeDisplay.getPortletDisplay());
 
-		List<Long> cpDefinitionIds = CPCompareUtil.getCPDefinitionIds(
-			httpServletRequest);
+		HttpServletRequest originalHttpServletRequest =
+			_portal.getOriginalServletRequest(httpServletRequest);
+
+		List<Long> cpDefinitionIds = CPCompareHelperUtil.getCPDefinitionIds(
+			commerceContext.getCommerceChannelGroupId(), commerceAccountId,
+			originalHttpServletRequest.getSession());
 
 		List<ProductCompareModel> products = new ArrayList<>();
 
@@ -150,11 +154,9 @@ public class MiniumCPCompareListRenderer implements CPContentListRenderer {
 		editCompareProductActionURL.setParameter(
 			ActionRequest.ACTION_NAME, "editCompareProduct");
 
-		String moduleName = _npmResolver.resolveModuleName(
-			"commerce-theme-minium-impl/products_compare/ProductsCompare.es");
-
-		ComponentDescriptor testDescriptor = new ComponentDescriptor(
-			"ProductsCompare.render", moduleName, null, null);
+		ComponentDescriptor componentDescriptor = new ComponentDescriptor(
+			"ProductsCompare.render",
+			"commerce-frontend-taglib/products_compare/ProductsCompare.es");
 
 		Map<String, Object> context = new HashMap<>();
 
@@ -179,7 +181,8 @@ public class MiniumCPCompareListRenderer implements CPContentListRenderer {
 		context.put("products", products);
 
 		_soyComponentRenderer.renderSoyComponent(
-			httpServletRequest, httpServletResponse, testDescriptor, context);
+			httpServletRequest, httpServletResponse, componentDescriptor,
+			context);
 	}
 
 	@Reference

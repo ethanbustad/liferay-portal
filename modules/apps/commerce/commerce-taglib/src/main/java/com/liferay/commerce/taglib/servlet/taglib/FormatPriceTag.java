@@ -80,6 +80,7 @@ public class FormatPriceTag extends IncludeTag {
 	protected void cleanUp() {
 		super.cleanUp();
 
+		_formattedPrice = null;
 		_price = BigDecimal.ZERO;
 	}
 

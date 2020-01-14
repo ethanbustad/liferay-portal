@@ -15,6 +15,7 @@
 package com.liferay.commerce.cart.taglib.servlet.taglib.internal.servlet;
 
 import com.liferay.commerce.service.CommerceOrderItemService;
+import com.liferay.frontend.js.loader.modules.extender.npm.NPMResolver;
 
 import javax.servlet.ServletContext;
 
@@ -30,21 +31,25 @@ import org.osgi.service.component.annotations.Reference;
 public class ServletContextUtil {
 
 	public static final CommerceOrderItemService getCommerceOrderItemService() {
-		return _instance._getCommerceOrderItemService();
+		return _servletContextUtil._getCommerceOrderItemService();
+	}
+
+	public static final NPMResolver getNPMResolver() {
+		return _servletContextUtil._getNPMResolver();
 	}
 
 	public static final ServletContext getServletContext() {
-		return _instance._getServletContext();
+		return _servletContextUtil._getServletContext();
 	}
 
 	@Activate
 	protected void activate() {
-		_instance = this;
+		_servletContextUtil = this;
 	}
 
 	@Deactivate
 	protected void deactivate() {
-		_instance = null;
+		_servletContextUtil = null;
 	}
 
 	@Reference(unbind = "-")
@@ -52,6 +57,11 @@ public class ServletContextUtil {
 		CommerceOrderItemService commerceOrderItemService) {
 
 		_commerceOrderItemService = commerceOrderItemService;
+	}
+
+	@Reference(unbind = "-")
+	protected void setNPMResolver(NPMResolver npmResolver) {
+		_npmResolver = npmResolver;
 	}
 
 	@Reference(
@@ -66,13 +76,18 @@ public class ServletContextUtil {
 		return _commerceOrderItemService;
 	}
 
+	private NPMResolver _getNPMResolver() {
+		return _npmResolver;
+	}
+
 	private ServletContext _getServletContext() {
 		return _servletContext;
 	}
 
-	private static ServletContextUtil _instance;
+	private static ServletContextUtil _servletContextUtil;
 
 	private CommerceOrderItemService _commerceOrderItemService;
+	private NPMResolver _npmResolver;
 	private ServletContext _servletContext;
 
 }

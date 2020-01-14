@@ -2843,15 +2843,15 @@ definition {
 		);
 
 		DynamicDataMapping.addField(
-			field = "Text",
-			fieldFieldLabel = "Text",
-			fieldName = "Text"
-		);
-
-		DynamicDataMapping.addField(
 			field = "Image",
 			fieldFieldLabel = "Image",
 			fieldName = "image"
+		);
+
+		DynamicDataMapping.addField(
+			field = "Text",
+			fieldFieldLabel = "Text",
+			fieldName = "Text"
 		);
 
 		WebContentStructures.saveCP(structureName = "WC Structure Name");
@@ -2867,7 +2867,7 @@ definition {
 		WebContentTemplates.addCP(
 			structureName = "WC Structure Name",
 			templateDescription = "WC Template Description",
-			templateFieldNames = "Text,Image",
+			templateFieldNames = "Image,Text",
 			templateName = "WC Template Name"
 		);
 

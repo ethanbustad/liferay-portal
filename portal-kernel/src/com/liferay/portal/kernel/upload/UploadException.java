@@ -45,8 +45,8 @@ public class UploadException extends PortalException {
 	}
 
 	/**
-	 * @deprecated As of Wilberforce (7.0.x), replaced by {@link #
-	 *             isExceededUploadRequestSizeLimit()}
+	 * @deprecated As of Wilberforce (7.0.x), replaced by {@link
+	 *             #isExceededUploadRequestSizeLimit()}
 	 */
 	@Deprecated
 	public boolean isExceededSizeLimit() {
@@ -68,8 +68,8 @@ public class UploadException extends PortalException {
 	}
 
 	/**
-	 * @deprecated As of Wilberforce (7.0.x), replaced by {@link #
-	 *             setExceededUploadRequestSizeLimit(boolean)}
+	 * @deprecated As of Wilberforce (7.0.x), replaced by {@link
+	 *             #setExceededUploadRequestSizeLimit(boolean)}
 	 */
 	@Deprecated
 	public void setExceededSizeLimit(boolean exceededSizeLimit) {

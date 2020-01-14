@@ -299,7 +299,7 @@ definition {
 	macro addSmallImageViaURL {
 		Panel.expandPanel(panel = "Small Image");
 
-		Check(locator1 = "WCEditWebContent#USE_SMALL_IMAGE_CHECKBOX");
+		Click.clickAt(locator1 = "WCEditWebContent#USE_SMALL_IMAGE_CHECKBOX");
 		Click(locator1 = "WCEditWebContent#SMALL_IMAGE_URL");
 
 		Type(
@@ -492,6 +492,20 @@ definition {
 		AssetCategorization.addMultipleCategories(
 			categoryNameList = "${categoryNameList}",
 			vocabularyName = "${vocabularyName}");
+
+		PortletEntry.publish();
+	}
+
+	macro addWithPriorityCP {
+		WebContent.addCP(
+			webContentContent = "${webContentContent}",
+			webContentTitle = "${webContentTitle}");
+
+		Panel.expandPanel(panel = "Metadata");
+
+		Type(
+			locator1 = "TextInput#ASSET_PRIORITY",
+			value1 = "${assetPriority}");
 
 		PortletEntry.publish();
 	}

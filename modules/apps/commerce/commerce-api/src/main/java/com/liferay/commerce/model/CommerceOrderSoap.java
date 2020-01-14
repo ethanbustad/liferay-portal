@@ -88,9 +88,11 @@ public class CommerceOrderSoap implements Serializable {
 			model.getTotalDiscountPercentageLevel4());
 		soapModel.setAdvanceStatus(model.getAdvanceStatus());
 		soapModel.setPaymentStatus(model.getPaymentStatus());
+		soapModel.setOrderDate(model.getOrderDate());
 		soapModel.setOrderStatus(model.getOrderStatus());
 		soapModel.setPrintedNote(model.getPrintedNote());
 		soapModel.setRequestedDeliveryDate(model.getRequestedDeliveryDate());
+		soapModel.setManuallyAdjusted(model.isManuallyAdjusted());
 		soapModel.setStatus(model.getStatus());
 		soapModel.setStatusByUserId(model.getStatusByUserId());
 		soapModel.setStatusByUserName(model.getStatusByUserName());
@@ -500,6 +502,14 @@ public class CommerceOrderSoap implements Serializable {
 		_paymentStatus = paymentStatus;
 	}
 
+	public Date getOrderDate() {
+		return _orderDate;
+	}
+
+	public void setOrderDate(Date orderDate) {
+		_orderDate = orderDate;
+	}
+
 	public int getOrderStatus() {
 		return _orderStatus;
 	}
@@ -522,6 +532,18 @@ public class CommerceOrderSoap implements Serializable {
 
 	public void setRequestedDeliveryDate(Date requestedDeliveryDate) {
 		_requestedDeliveryDate = requestedDeliveryDate;
+	}
+
+	public boolean getManuallyAdjusted() {
+		return _manuallyAdjusted;
+	}
+
+	public boolean isManuallyAdjusted() {
+		return _manuallyAdjusted;
+	}
+
+	public void setManuallyAdjusted(boolean manuallyAdjusted) {
+		_manuallyAdjusted = manuallyAdjusted;
 	}
 
 	public int getStatus() {
@@ -597,9 +619,11 @@ public class CommerceOrderSoap implements Serializable {
 	private BigDecimal _totalDiscountPercentageLevel4;
 	private String _advanceStatus;
 	private int _paymentStatus;
+	private Date _orderDate;
 	private int _orderStatus;
 	private String _printedNote;
 	private Date _requestedDeliveryDate;
+	private boolean _manuallyAdjusted;
 	private int _status;
 	private long _statusByUserId;
 	private String _statusByUserName;

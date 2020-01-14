@@ -312,6 +312,16 @@ public class LayoutPageTemplateEntryLocalServiceWrapper
 
 	@Override
 	public com.liferay.layout.page.template.model.LayoutPageTemplateEntry
+		fetchDefaultLayoutPageTemplateEntry(
+			long groupId, long classNameId, long classTypeId) {
+
+		return _layoutPageTemplateEntryLocalService.
+			fetchDefaultLayoutPageTemplateEntry(
+				groupId, classNameId, classTypeId);
+	}
+
+	@Override
+	public com.liferay.layout.page.template.model.LayoutPageTemplateEntry
 		fetchFirstLayoutPageTemplateEntry(long layoutPrototypeId) {
 
 		return _layoutPageTemplateEntryLocalService.

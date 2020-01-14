@@ -31,21 +31,21 @@
 }
 
 @mixin specialPricesStyles() {
-  &--promo-price {
+  &.price-value-promo {
     color: $color-mood-bad;
   }
 
-  &--inactive {
+  &.price-value-inactive {
     font-size: 14px;
     margin-left: 10px;
     text-decoration: line-through;
 
-    @media only screen and (max-width: 767px) {
+    @media only screen and (max-width: $bp-small) {
       font-size: 11px;
     }
   }
 
-  &--discount {
+  &.price-value-discount {
     color: $color-mood-bad;
 
     &::before {

@@ -116,7 +116,6 @@ public class CommerceDiscountLocalServiceImpl
 		CommerceDiscount commerceDiscount = commerceDiscountPersistence.create(
 			commerceDiscountId);
 
-		commerceDiscount.setUuid(serviceContext.getUuid());
 		commerceDiscount.setCompanyId(user.getCompanyId());
 		commerceDiscount.setUserId(user.getUserId());
 		commerceDiscount.setUserName(user.getFullName());
@@ -407,10 +406,6 @@ public class CommerceDiscountLocalServiceImpl
 			status = WorkflowConstants.STATUS_SCHEDULED;
 		}
 
-		Date modifiedDate = serviceContext.getModifiedDate(now);
-
-		commerceDiscount.setModifiedDate(modifiedDate);
-
 		if (status == WorkflowConstants.STATUS_APPROVED) {
 			Date expirationDate = commerceDiscount.getExpirationDate();
 
@@ -426,7 +421,7 @@ public class CommerceDiscountLocalServiceImpl
 		commerceDiscount.setStatus(status);
 		commerceDiscount.setStatusByUserId(user.getUserId());
 		commerceDiscount.setStatusByUserName(user.getFullName());
-		commerceDiscount.setStatusDate(modifiedDate);
+		commerceDiscount.setStatusDate(serviceContext.getModifiedDate(now));
 
 		commerceDiscountPersistence.update(commerceDiscount);
 
@@ -512,10 +507,10 @@ public class CommerceDiscountLocalServiceImpl
 
 		Map<String, Serializable> attributes = new HashMap<>();
 
-		attributes.put(Field.ENTRY_CLASS_PK, keywords);
-		attributes.put(Field.TITLE, keywords);
-		attributes.put(Field.STATUS, status);
 		attributes.put(CommerceDiscountIndexer.FIELD_GROUP_IDS, groupIds);
+		attributes.put(Field.ENTRY_CLASS_PK, keywords);
+		attributes.put(Field.STATUS, status);
+		attributes.put(Field.TITLE, keywords);
 		attributes.put("params", params);
 
 		searchContext.setAttributes(attributes);

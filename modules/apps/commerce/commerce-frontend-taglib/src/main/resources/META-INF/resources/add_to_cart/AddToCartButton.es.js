@@ -6,18 +6,7 @@ import '../quantity_selector/QuantitySelector.es';
 
 let notificationDidShow = false;
 
-const selectInput = (element) => {
-	const inputBox = element.querySelector('input');
-	const selectBox = element.querySelector('select');
-
-	if (inputBox) {
-		inputBox.focus();
-		inputBox.select();
-	}
-	else if (selectBox) {
-		selectBox.focus();
-	}
-};
+const ALL = 'all';
 
 function showNotification(message, type) {
 	!notificationDidShow && AUI().use(
@@ -48,29 +37,12 @@ function showNotification(message, type) {
 }
 
 function resetInputQuantity() {
-	setTimeout(
-		() => {
-			this.inputQuantity = (this.settings.allowedQuantities && this.settings.allowedQuantities.length) ?
-				this.settings.allowedQuantities[0] : this.settings.minQuantity;
-		}, 500);
-}
-
-function doFocusOut() {
-	const parentElement = this.element.parentElement;
-	const tabbableElement = !!parentElement &&
-        !!parentElement.closest && parentElement.closest('[tabindex="0"]');
-
-	if (tabbableElement) {
-		parentElement.focus();
-	}
-	else if (parentElement) {
-
-		// IE compatibility
-
-		parentElement.parentElement.focus();
-	}
-
-	this.editMode = false;
+	this.inputQuantity = (
+		this.settings.allowedQuantities &&
+		this.settings.allowedQuantities.length
+	) ?
+		this.settings.allowedQuantities[0] :
+		this.settings.minQuantity;
 }
 
 function doSubmit() {
@@ -80,16 +52,15 @@ function doSubmit() {
 	formData.append('groupId', themeDisplay.getScopeGroupId());
 	formData.append('productId', this.productId);
 	formData.append('languageId', themeDisplay.getLanguageId());
-	formData.append('quantity', this.quantity);
+	formData.append('quantity', this.inputQuantity);
 	formData.append('options', this.options);
-	formData.append('p_auth', Liferay.authToken);
 
 	if (this.orderId) {
 		formData.append('orderId', this.orderId);
 	}
 
 	return fetch(
-		this.cartAPI,
+		this.cartAPI + `?p_auth=${window.Liferay.authToken}`,
 		{
 			body: formData,
 			method: 'POST'
@@ -106,7 +77,8 @@ function doSubmit() {
 							detailsUrl: jsonresponse.detailsUrl,
 							orderId: jsonresponse.orderId,
 							products: jsonresponse.products,
-							summary: jsonresponse.summary
+							summary: jsonresponse.summary,
+							valid: jsonresponse.valid
 						}
 					);
 				}
@@ -121,9 +93,9 @@ function doSubmit() {
 					this.orderId = jsonresponse.orderId;
 				}
 
-				this.initialQuantity = this.quantity;
-				this.hasQuantityChanged = true;
-				this.emit('submitQuantity', this.productId, this.quantity);
+				this._animateMarker(this.quantity);
+				this.quantity = this.inputQuantity;
+				resetInputQuantity.call(this);
 			}
 			else if (jsonresponse.errorMessages) {
 				showNotification(jsonresponse.errorMessages[0], 'danger');
@@ -152,132 +124,143 @@ function doSubmit() {
 class AddToCartButton extends Component {
 
 	created() {
-		this.initialQuantity = this.quantity;
+		this.quantity = this.quantity;
 		resetInputQuantity.call(this);
-		this.hasQuantityChanged = false;
+		this._handleMarkerAnimation = this._handleMarkerAnimation.bind(this);
+	}
 
+	_animateMarker(prevQuantity) {
+		if (prevQuantity === 0) {
+			this.updatingTransition = 'adding';
+		}
+		else {
+			this.updatingTransition = 'incrementing';
+		}
+
+		this.refs.marker.addEventListener('animationend', this._handleMarkerAnimation, this);
+	}
+
+	_handleMarkerAnimation() {
+		this.updatingTransition = null;
+		this.refs.marker.removeEventListener('animationend', this._handleMarkerAnimation, this);
+	}
+
+	attached() {
 		window.Liferay.on('accountSelected', this._handleAccountChange, this);
+		window.Liferay.on('productRemovedFromCart', this._handleCartProductRemoval, this);
+
+		// TODO: event definition to be imported as a constant
+
+		window.Liferay.on('current-product-status-changed', this._handleCurrentProductStatusChange, this);
 	}
 
 	detached() {
 		window.Liferay.detach('accountSelected', this._handleAccountChange, this);
+		window.Liferay.detach('productRemovedFromCart', this._handleCartProductRemoval, this);
+
+		// TODO: event definition to be imported as a constant
+
+		window.Liferay.detach('current-product-status-changed', this._handleCurrentProductStatusChange, this);
 	}
 
-	willReceiveState(changes) {
-		if (changes.editMode) {
-			setTimeout(
-				() => selectInput(this.element),
-				100
-			);
-		}
-	}
-
-	_updateQuantity(quantity) {
+	_handleUpdateQuantity(quantity) {
 		this.inputQuantity = quantity;
 	}
 
-	_submitQuantity(quantity) {
-		this._updateQuantity(quantity);
+	_handleSubmitQuantity(quantity) {
+		this._handleUpdateQuantity(quantity);
 		this._handleSubmitClick();
 	}
 
-	_enableEditMode() {
-		this.editMode = true;
-	}
-
-	_disableEditMode() {
-		this.editMode = false;
-		this.quantity = this.initialQuantity;
-		this.hasQuantityChanged = false;
-		doFocusOut.call(this);
-	}
-
-	_handleBtnClick(e) {
-		if (
-			!this.editMode &&
-            this.element === e.target &&
-            !this.disabled &&
-            !!this.accountId
-		) {
-			this._enableEditMode();
+	_handleCurrentProductStatusChange(e) {
+		if (this.id && (this.id !== e.addToCartId)) {
+			return;
 		}
-		else if (!this.accountId) {
-			const message = Liferay.Language.get('no-account-selected');
-			const type = 'danger';
-
-			showNotification(message, type);
+		if (e.productId) {
+			this.productId = e.productId;
+			this.options = e.options;
+			this.quantity = e.quantity;
+			this.settings = e.settings;
+			this.disabled = false;
+		}
+		else {
+			this.disabled = true;
 		}
 	}
 
 	_handleAccountChange(e) {
 		this.accountId = e.accountId;
 		this.orderId = null;
+
+		// TODO: quantity should be imported from the outside
+
 		this.quantity = 0;
 		resetInputQuantity.call(this);
 	}
 
-	_handleBtnFocus(e) {
-		this._handleBtnClick(e);
-	}
+	_handleCartProductRemoval(e) {
+		if (e.productId === this.productId ||
+			e.productId === ALL) {
 
-	_handleBtnFocusin() {
-		clearTimeout(this.closingTimeout);
-	}
-
-	_handleBtnFocusout(e) {
-		this.closingTimeout = setTimeout(
-			() => this._disableEditMode(),
-			(this.hasQuantityChanged ? 1000 : 100)
-		);
+			this.quantity = 0;
+			resetInputQuantity.call(this);
+		}
 	}
 
 	_handleSubmitClick() {
+		if (!this.accountId) {
+			const message = Liferay.Language.get('no-account-selected');
+			const type = 'danger';
+
+			showNotification(message, type);
+		}
+
 		if (this.disabled) {
 			return null;
 		}
 
-		this.quantity = this.inputQuantity;
-		resetInputQuantity.call(this);
-
-		doSubmit.call(this)
-			.then(() => doFocusOut.call(this));
+		doSubmit.call(this);
 	}
 }
 
 Soy.register(AddToCartButton, template);
 
 AddToCartButton.STATE = {
+	id: Config.string(),
 	accountId: Config.oneOfType(
 		[
 			Config.number(),
 			Config.string()
 		]
 	),
-	buttonVariant: Config.oneOf(
+	buttonStyle: Config.oneOf(
 		[
-			'compact',
+			'block',
 			'inline'
 		]
 	).value('inline'),
 	cartAPI: Config.string().required(),
 	disabled: Config.bool().value(false),
-	editMode: Config.bool().value(false),
-	hasQuantityChanged: Config.bool().value(false),
 	inputQuantity: Config.number(),
-	options: Config.string().value('[]'),
+	options: Config.oneOfType(
+		[
+			Config.object(),
+			Config.string()
+		]
+	).value('[]'),
 	orderId: Config.oneOfType(
 		[
 			Config.number(),
 			Config.string()
 		]
 	),
+	quantity: Config.number(),
 	productId: Config.oneOfType(
 		[
 			Config.number(),
 			Config.string()
 		]
 	).required(),
-	quantity: Config.number().value(0),
 	settings: Config.shapeOf(
 		{
 			allowedQuantity: Config.array(Config.number()),
@@ -285,7 +268,13 @@ AddToCartButton.STATE = {
 			minQuantity: Config.number(),
 			multipleQuantity: Config.number()
 		}
-	).value({})
+	).value({}),
+	updatingTransition: Config.oneOf(
+		[
+			'adding',
+			'incrementing'
+		]
+	)
 };
 
 export {AddToCartButton};

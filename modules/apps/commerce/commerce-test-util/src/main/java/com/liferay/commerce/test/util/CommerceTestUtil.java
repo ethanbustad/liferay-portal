@@ -16,6 +16,7 @@ package com.liferay.commerce.test.util;
 
 import com.liferay.commerce.account.model.CommerceAccount;
 import com.liferay.commerce.account.service.CommerceAccountLocalServiceUtil;
+import com.liferay.commerce.constants.CommerceShipmentConstants;
 import com.liferay.commerce.context.CommerceContext;
 import com.liferay.commerce.currency.model.CommerceCurrency;
 import com.liferay.commerce.currency.test.util.CommerceCurrencyTestUtil;
@@ -29,10 +30,17 @@ import com.liferay.commerce.model.CommerceRegion;
 import com.liferay.commerce.model.CommerceShippingMethod;
 import com.liferay.commerce.payment.model.CommercePaymentMethodGroupRel;
 import com.liferay.commerce.payment.service.CommercePaymentMethodGroupRelLocalServiceUtil;
+import com.liferay.commerce.payment.test.util.TestCommercePaymentMethod;
+import com.liferay.commerce.product.constants.CPConstants;
 import com.liferay.commerce.product.model.CPDefinition;
 import com.liferay.commerce.product.model.CPInstance;
+import com.liferay.commerce.product.model.CommerceCatalog;
+import com.liferay.commerce.product.model.CommerceChannel;
+import com.liferay.commerce.product.model.CommerceChannelRel;
 import com.liferay.commerce.product.service.CPInstanceLocalServiceUtil;
+import com.liferay.commerce.product.service.CommerceCatalogServiceUtil;
 import com.liferay.commerce.product.service.CommerceChannelLocalServiceUtil;
+import com.liferay.commerce.product.service.CommerceChannelRelLocalServiceUtil;
 import com.liferay.commerce.product.test.util.CPTestUtil;
 import com.liferay.commerce.service.CPDefinitionInventoryLocalServiceUtil;
 import com.liferay.commerce.service.CommerceAddressLocalServiceUtil;
@@ -49,6 +57,7 @@ import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
 
 import java.math.BigDecimal;
 
@@ -59,6 +68,92 @@ import java.util.Collections;
  * @author Luca Pellizzon
  */
 public class CommerceTestUtil {
+
+	public static CommerceAccount addAccount(long groupId, long userId)
+		throws Exception {
+
+		return CommerceAccountLocalServiceUtil.addPersonalCommerceAccount(
+			userId, StringPool.BLANK, StringPool.BLANK,
+			ServiceContextTestUtil.getServiceContext(groupId));
+	}
+
+	public static CommerceOrder addB2BCommerceOrder(
+			long groupId, long userId, long commerceAccountId,
+			long commerceCurrencyId)
+		throws Exception {
+
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext(groupId);
+
+		if (userId == 0) {
+			userId = serviceContext.getUserId();
+		}
+
+		if (commerceCurrencyId == 0) {
+			CommerceCurrency commerceCurrency =
+				CommerceCurrencyTestUtil.addCommerceCurrency(groupId);
+
+			commerceCurrencyId = commerceCurrency.getCommerceCurrencyId();
+		}
+
+		long commerceChannelGroupId =
+			CommerceChannelLocalServiceUtil.
+				getCommerceChannelGroupIdBySiteGroupId(groupId);
+
+		return CommerceOrderLocalServiceUtil.addCommerceOrder(
+			userId, commerceChannelGroupId, commerceAccountId,
+			commerceCurrencyId);
+	}
+
+	public static CommerceOrder addB2CCommerceOrder(
+			CommerceAccount commerceAccount, long commerceCurrencyId,
+			long siteGroupId)
+		throws Exception {
+
+		if (commerceCurrencyId == 0) {
+			CommerceCurrency commerceCurrency =
+				CommerceCurrencyTestUtil.addCommerceCurrency();
+
+			commerceCurrencyId = commerceCurrency.getCommerceCurrencyId();
+		}
+
+		long commerceChannelGroupId =
+			CommerceChannelLocalServiceUtil.
+				getCommerceChannelGroupIdBySiteGroupId(siteGroupId);
+
+		return CommerceOrderLocalServiceUtil.addCommerceOrder(
+			commerceAccount.getUserId(), commerceChannelGroupId,
+			commerceAccount.getCommerceAccountId(), commerceCurrencyId);
+	}
+
+	public static CommerceOrder addB2CCommerceOrder(
+			long userId, long siteGroupId, CommerceCurrency commerceCurrency)
+		throws Exception {
+
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext();
+
+		if (userId == 0) {
+			userId = serviceContext.getUserId();
+		}
+
+		if (commerceCurrency == null) {
+			commerceCurrency = CommerceCurrencyTestUtil.addCommerceCurrency();
+		}
+
+		CommerceAccount commerceAccount =
+			CommerceAccountLocalServiceUtil.addPersonalCommerceAccount(
+				userId, StringPool.BLANK, StringPool.BLANK, serviceContext);
+
+		long commerceChannelGroupId =
+			CommerceChannelLocalServiceUtil.
+				getCommerceChannelGroupIdBySiteGroupId(siteGroupId);
+
+		return CommerceOrderLocalServiceUtil.addCommerceOrder(
+			userId, commerceChannelGroupId,
+			commerceAccount.getCommerceAccountId(),
+			commerceCurrency.getCommerceCurrencyId());
+	}
 
 	public static CommerceOrder addB2CCommerceOrder(
 			long groupId, long userId, long commerceCurrencyId)
@@ -91,6 +186,68 @@ public class CommerceTestUtil {
 			commerceAccount.getCommerceAccountId(), commerceCurrencyId);
 	}
 
+	public static CommerceOrder addB2CCommerceOrder(
+			long userId, long commerceAccountId, long siteGroupId,
+			CommerceCurrency commerceCurrency)
+		throws Exception {
+
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext();
+
+		if (userId == 0) {
+			userId = serviceContext.getUserId();
+		}
+
+		if (commerceCurrency == null) {
+			commerceCurrency = CommerceCurrencyTestUtil.addCommerceCurrency();
+		}
+
+		CommerceAccount commerceAccount =
+			CommerceAccountLocalServiceUtil.getCommerceAccount(
+				commerceAccountId);
+
+		long commerceChannelGroupId =
+			CommerceChannelLocalServiceUtil.
+				getCommerceChannelGroupIdBySiteGroupId(siteGroupId);
+
+		return CommerceOrderLocalServiceUtil.addCommerceOrder(
+			userId, commerceChannelGroupId,
+			commerceAccount.getCommerceAccountId(),
+			commerceCurrency.getCommerceCurrencyId());
+	}
+
+	public static CommerceOrder addB2CCommerceOrder(
+			long groupId, long userId, long commerceCurrencyId,
+			long siteGroupId)
+		throws Exception {
+
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext(groupId);
+
+		if (userId == 0) {
+			userId = serviceContext.getUserId();
+		}
+
+		if (commerceCurrencyId == 0) {
+			CommerceCurrency commerceCurrency =
+				CommerceCurrencyTestUtil.addCommerceCurrency(groupId);
+
+			commerceCurrencyId = commerceCurrency.getCommerceCurrencyId();
+		}
+
+		CommerceAccount commerceAccount =
+			CommerceAccountLocalServiceUtil.addPersonalCommerceAccount(
+				userId, StringPool.BLANK, StringPool.BLANK, serviceContext);
+
+		long commerceChannelGroupId =
+			CommerceChannelLocalServiceUtil.
+				getCommerceChannelGroupIdBySiteGroupId(siteGroupId);
+
+		return CommerceOrderLocalServiceUtil.addCommerceOrder(
+			userId, commerceChannelGroupId,
+			commerceAccount.getCommerceAccountId(), commerceCurrencyId);
+	}
+
 	public static CPDefinitionInventory addBackOrderCPDefinitionInventory(
 			CPDefinition cpDefinition)
 		throws PortalException {
@@ -105,7 +262,7 @@ public class CommerceTestUtil {
 	}
 
 	public static CommerceOrder addCheckoutDetailsToUserOrder(
-			CommerceOrder commerceOrder, long userId)
+			CommerceOrder commerceOrder, long userId, boolean subscription)
 		throws Exception {
 
 		long groupId = commerceOrder.getGroupId();
@@ -116,10 +273,26 @@ public class CommerceTestUtil {
 
 		cpInstance.setPrice(price);
 
+		if (subscription) {
+			cpInstance.setOverrideSubscriptionInfo(true);
+			cpInstance.setSubscriptionEnabled(true);
+			cpInstance.setSubscriptionLength(1);
+			cpInstance.setSubscriptionType(CPConstants.DAILY_SUBSCRIPTION_TYPE);
+			cpInstance.setMaxSubscriptionCycles(2);
+		}
+
 		CPInstanceLocalServiceUtil.updateCPInstance(cpInstance);
 
 		CommerceInventoryWarehouse commerceInventoryWarehouse =
-			CommerceInventoryTestUtil.addCommerceInventoryWarehouse(groupId);
+			CommerceInventoryTestUtil.addCommerceInventoryWarehouse();
+
+		CommerceChannel commerceChannel =
+			CommerceChannelLocalServiceUtil.getCommerceChannelByOrderGroupId(
+				commerceOrder.getGroupId());
+
+		addWarehouseCommerceChannelRel(
+			commerceInventoryWarehouse.getCommerceInventoryWarehouseId(),
+			commerceChannel.getCommerceChannelId());
 
 		CommerceInventoryTestUtil.addCommerceInventoryWarehouseItem(
 			userId, commerceInventoryWarehouse, cpInstance.getSku(), 10);
@@ -139,7 +312,9 @@ public class CommerceTestUtil {
 			shippingCommerceAddress.getCommerceAddressId());
 
 		CommercePaymentMethodGroupRel commercePaymentMethodGroupRel =
-			addCommercePaymentMethodGroupRel(groupId);
+			addCommercePaymentMethodGroupRel(
+				commerceOrder.getCompanyId(), groupId, userId,
+				commerceChannel.getSiteGroupId());
 
 		commerceOrder.setCommercePaymentMethodKey(
 			commercePaymentMethodGroupRel.getEngineKey());
@@ -162,6 +337,53 @@ public class CommerceTestUtil {
 		return CommerceOrderLocalServiceUtil.updateCommerceOrder(commerceOrder);
 	}
 
+	public static CommerceCatalog addCommerceCatalog(
+			long groupId, String commerceCurrencyCode)
+		throws Exception {
+
+		return CommerceCatalogServiceUtil.addCommerceCatalog(
+			RandomTestUtil.randomString(), commerceCurrencyCode,
+			LocaleUtil.toLanguageId(LocaleUtil.US), null,
+			ServiceContextTestUtil.getServiceContext(groupId));
+	}
+
+	public static CommerceChannel addCommerceChannel() throws Exception {
+		CommerceCurrency commerceCurrency =
+			CommerceCurrencyTestUtil.addCommerceCurrency();
+
+		return addCommerceChannel(commerceCurrency.getCode());
+	}
+
+	public static CommerceChannel addCommerceChannel(
+			long groupId, String commerceCurrencyCode)
+		throws Exception {
+
+		return CommerceChannelLocalServiceUtil.addCommerceChannel(
+			groupId, RandomTestUtil.randomString(),
+			RandomTestUtil.randomString(), null, commerceCurrencyCode,
+			StringPool.BLANK,
+			ServiceContextTestUtil.getServiceContext(groupId));
+	}
+
+	public static CommerceChannel addCommerceChannel(
+			String commerceCurrencyCode)
+		throws Exception {
+
+		return CommerceChannelLocalServiceUtil.addCommerceChannel(
+			RandomTestUtil.nextLong(), RandomTestUtil.randomString(),
+			RandomTestUtil.randomString(), null, commerceCurrencyCode,
+			StringPool.BLANK, ServiceContextTestUtil.getServiceContext());
+	}
+
+	public static CommerceChannelRel addCommerceChannelRel(
+			long groupId, long commerceChannelId, long warehouseId)
+		throws Exception {
+
+		return CommerceChannelRelLocalServiceUtil.addCommerceChannelRel(
+			RandomTestUtil.randomString(), warehouseId, commerceChannelId,
+			ServiceContextTestUtil.getServiceContext(groupId));
+	}
+
 	public static CommerceOrderItem addCommerceOrderItem(
 			long commerceOrderId, long cpInstanceId, int quantity)
 		throws Exception {
@@ -180,9 +402,13 @@ public class CommerceTestUtil {
 			CommerceOrderLocalServiceUtil.updateCommerceOrder(commerceOrder);
 		}
 
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext(
+				commerceOrder.getGroupId());
+
 		CommerceContext commerceContext = new TestCommerceContext(
-			commerceOrder.getCommerceCurrency(), null, null, null,
-			commerceOrder);
+			commerceOrder.getCommerceCurrency(), null, null,
+			serviceContext.getScopeGroup(), null, commerceOrder);
 
 		return addCommerceOrderItem(
 			commerceOrderId, cpInstanceId, quantity, commerceContext);
@@ -206,15 +432,23 @@ public class CommerceTestUtil {
 	}
 
 	public static CommercePaymentMethodGroupRel
-			addCommercePaymentMethodGroupRel(long groupId)
+			addCommercePaymentMethodGroupRel(
+				long companyId, long groupId, long userId, long scopeGroupId)
 		throws Exception {
+
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext(
+				companyId, groupId, userId);
+
+		serviceContext.setScopeGroupId(scopeGroupId);
 
 		return CommercePaymentMethodGroupRelLocalServiceUtil.
 			addCommercePaymentMethodGroupRel(
 				RandomTestUtil.randomLocaleStringMap(),
-				RandomTestUtil.randomLocaleStringMap(), null, "money-order",
+				RandomTestUtil.randomLocaleStringMap(), null,
+				TestCommercePaymentMethod.KEY,
 				Collections.<String, String>emptyMap(), 1, true,
-				ServiceContextTestUtil.getServiceContext(groupId));
+				serviceContext);
 	}
 
 	public static CommerceShippingFixedOption addCommerceShippingFixedOption(
@@ -222,6 +456,13 @@ public class CommerceTestUtil {
 		throws Exception {
 
 		BigDecimal value = BigDecimal.valueOf(RandomTestUtil.randomDouble());
+
+		return addCommerceShippingFixedOption(commerceShippingMethod, value);
+	}
+
+	public static CommerceShippingFixedOption addCommerceShippingFixedOption(
+			CommerceShippingMethod commerceShippingMethod, BigDecimal value)
+		throws Exception {
 
 		ServiceContext serviceContext =
 			ServiceContextTestUtil.getServiceContext(
@@ -242,6 +483,18 @@ public class CommerceTestUtil {
 			RandomTestUtil.randomLocaleStringMap(),
 			RandomTestUtil.randomLocaleStringMap(), null, "fixedPrice", 1, true,
 			ServiceContextTestUtil.getServiceContext(groupId));
+	}
+
+	public static CommerceShippingMethod addFixedRateCommerceShippingMethod(
+			long groupId, BigDecimal value)
+		throws Exception {
+
+		CommerceShippingMethod commerceShippingMethod =
+			addCommerceShippingMethod(groupId);
+
+		addCommerceShippingFixedOption(commerceShippingMethod, value);
+
+		return commerceShippingMethod;
 	}
 
 	public static CommerceAddress addUserCommerceAddress(
@@ -266,6 +519,23 @@ public class CommerceTestUtil {
 			RandomTestUtil.randomString(), false, false, serviceContext);
 	}
 
+	public static CommerceChannelRel addWarehouseCommerceChannelRel(
+			long warehouseId, long commerceChannelId)
+		throws Exception {
+
+		CommerceChannel commerceChannel =
+			CommerceChannelLocalServiceUtil.getCommerceChannel(
+				commerceChannelId);
+
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext(
+				commerceChannel.getGroupId());
+
+		return CommerceChannelRelLocalServiceUtil.addCommerceChannelRel(
+			CommerceInventoryWarehouse.class.getName(), warehouseId,
+			commerceChannelId, serviceContext);
+	}
+
 	public static CommerceOrder checkoutOrder(CommerceOrder commerceOrder)
 		throws Exception {
 
@@ -274,12 +544,57 @@ public class CommerceTestUtil {
 				commerceOrder.getGroupId());
 
 		CommerceContext commerceContext = new TestCommerceContext(
-			commerceOrder.getCommerceCurrency(), null,
+			commerceOrder.getCommerceCurrency(), null, null,
 			serviceContext.getScopeGroup(), null, commerceOrder);
 
 		return CommerceOrderLocalServiceUtil.checkoutCommerceOrder(
 			commerceOrder.getCommerceOrderId(), commerceContext,
 			serviceContext);
+	}
+
+	public static CommerceOrder createCommerceOrderForShipping(
+			long companyId, long userId, long currencyId, long siteGroupId,
+			BigDecimal value)
+		throws Exception {
+
+		CommerceOrder commerceOrder = addB2CCommerceOrder(
+			companyId, userId, currencyId, siteGroupId);
+
+		int orderStatusIndex = RandomTestUtil.randomInt(
+			0, CommerceShipmentConstants.ALLOWED_ORDER_STATUSES.length - 1);
+
+		int orderStatus =
+			CommerceShipmentConstants.ALLOWED_ORDER_STATUSES[orderStatusIndex];
+
+		commerceOrder.setOrderStatus(orderStatus);
+
+		CommerceAddress billingCommerceAddress = addUserCommerceAddress(
+			companyId, userId);
+		CommerceAddress shippingCommerceAddress = addUserCommerceAddress(
+			companyId, userId);
+
+		commerceOrder.setBillingAddressId(
+			billingCommerceAddress.getCommerceAddressId());
+		commerceOrder.setShippingAddressId(
+			shippingCommerceAddress.getCommerceAddressId());
+
+		CommerceShippingMethod commerceShippingMethod =
+			addFixedRateCommerceShippingMethod(
+				commerceOrder.getGroupId(), value);
+
+		commerceOrder.setCommerceShippingMethodId(
+			commerceShippingMethod.getCommerceShippingMethodId());
+
+		CommerceShippingFixedOption commerceShippingFixedOption =
+			addCommerceShippingFixedOption(commerceShippingMethod, value);
+
+		commerceOrder.setShippingOptionName(
+			commerceShippingFixedOption.getNameCurrentValue());
+
+		commerceOrder.setShippingAmount(
+			commerceShippingFixedOption.getAmount());
+
+		return CommerceOrderLocalServiceUtil.updateCommerceOrder(commerceOrder);
 	}
 
 	private static CommerceCountry _setUpCountry(ServiceContext serviceContext)

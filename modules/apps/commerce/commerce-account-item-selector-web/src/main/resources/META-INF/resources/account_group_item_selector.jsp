@@ -50,11 +50,10 @@ PortletURL portletURL = commerceAccountGroupItemSelectorViewDisplayContext.getPo
 		/>
 
 		<li>
-			<aui:form action="<%= String.valueOf(portletURL) %>" name="searchFm">
-				<liferay-ui:input-search
-					markupView="lexicon"
-				/>
-			</aui:form>
+			<liferay-commerce:search-input
+				actionURL="<%= portletURL %>"
+				formName="searchFm"
+			/>
 		</li>
 	</liferay-frontend:management-bar-filters>
 </liferay-frontend:management-bar>
@@ -94,6 +93,7 @@ PortletURL portletURL = commerceAccountGroupItemSelectorViewDisplayContext.getPo
 
 		<liferay-ui:search-iterator
 			markupView="lexicon"
+			searchContainer="<%= commerceAccountGroupSearchContainer %>"
 		/>
 	</liferay-ui:search-container>
 </div>

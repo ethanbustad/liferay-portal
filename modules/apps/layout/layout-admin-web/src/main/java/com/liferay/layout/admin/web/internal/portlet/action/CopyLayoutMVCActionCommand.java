@@ -14,6 +14,8 @@
 
 package com.liferay.layout.admin.web.internal.portlet.action;
 
+import com.liferay.asset.kernel.service.AssetCategoryLocalService;
+import com.liferay.asset.kernel.service.AssetTagLocalService;
 import com.liferay.fragment.model.FragmentEntryLink;
 import com.liferay.fragment.processor.PortletRegistry;
 import com.liferay.fragment.service.FragmentEntryLinkLocalService;
@@ -156,6 +158,8 @@ public class CopyLayoutMVCActionCommand extends BaseMVCActionCommand {
 				stagingGroupId, privateLayout, layout.getLayoutId(),
 				layout.getTypeSettingsProperties());
 
+			_copyAssetCategoryIdsAndAssetTagNames(copyLayout, layout);
+
 			List<FragmentEntryLink> fragmentEntryLinks =
 				_fragmentEntryLinkLocalService.getFragmentEntryLinks(
 					copyLayout.getGroupId(),
@@ -198,6 +202,21 @@ public class CopyLayoutMVCActionCommand extends BaseMVCActionCommand {
 			JSONPortletResponseUtil.writeJSON(
 				actionRequest, actionResponse, jsonObject);
 		}
+	}
+
+	private void _copyAssetCategoryIdsAndAssetTagNames(
+			Layout sourceLayout, Layout targetLayout)
+		throws PortalException {
+
+		long[] assetCategoryIds = _assetCategoryLocalService.getCategoryIds(
+			Layout.class.getName(), sourceLayout.getPlid());
+
+		String[] assetTagNames = _assetTagLocalService.getTagNames(
+			Layout.class.getName(), sourceLayout.getPlid());
+
+		_layoutLocalService.updateAsset(
+			targetLayout.getUserId(), targetLayout, assetCategoryIds,
+			assetTagNames);
 	}
 
 	private void _copyFragmentEntryLink(
@@ -250,6 +269,12 @@ public class CopyLayoutMVCActionCommand extends BaseMVCActionCommand {
 
 	@Reference
 	private ActionUtil _actionUtil;
+
+	@Reference
+	private AssetCategoryLocalService _assetCategoryLocalService;
+
+	@Reference
+	private AssetTagLocalService _assetTagLocalService;
 
 	@Reference
 	private FragmentEntryLinkLocalService _fragmentEntryLinkLocalService;

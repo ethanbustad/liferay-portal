@@ -214,15 +214,15 @@ public class CommerceOrderHttpHelperImpl implements CommerceOrderHttpHelper {
 			(CommerceContext)httpServletRequest.getAttribute(
 				CommerceWebKeys.COMMERCE_CONTEXT);
 
-		ThemeDisplay themeDisplay =
-			(ThemeDisplay)httpServletRequest.getAttribute(
-				WebKeys.THEME_DISPLAY);
-
 		CommerceAccount commerceAccount = commerceContext.getCommerceAccount();
 
 		if (commerceAccount == null) {
 			return null;
 		}
+
+		ThemeDisplay themeDisplay =
+			(ThemeDisplay)httpServletRequest.getAttribute(
+				WebKeys.THEME_DISPLAY);
 
 		CommerceOrder commerceOrder = _getCurrentCommerceOrder(
 			commerceAccount.getCommerceAccountId(), themeDisplay);
@@ -384,7 +384,7 @@ public class CommerceOrderHttpHelperImpl implements CommerceOrderHttpHelper {
 			return null;
 		}
 
-		if (commerceAccountId != CommerceAccountConstants.GUEST_ACCOUNT_ID) {
+		if (commerceAccountId != CommerceAccountConstants.ACCOUNT_ID_GUEST) {
 			String cookieName = _getCookieName(commerceChannel.getGroupId());
 
 			String commerceOrderUuid = CookieKeys.getCookie(
@@ -494,19 +494,19 @@ public class CommerceOrderHttpHelperImpl implements CommerceOrderHttpHelper {
 			CommerceOrder commerceOrder, ThemeDisplay themeDisplay)
 		throws PortalException {
 
-		VersionCommerceOrderValidatorImpl versionCommerceOrderValidator =
+		VersionCommerceOrderValidatorImpl versionCommerceOrderValidatorImpl =
 			new VersionCommerceOrderValidatorImpl();
 
-		versionCommerceOrderValidator.setCommerceOrderItemLocalService(
+		versionCommerceOrderValidatorImpl.setCommerceOrderItemLocalService(
 			_commerceOrderItemLocalService);
 
-		versionCommerceOrderValidator.setCPInstanceLocalService(
+		versionCommerceOrderValidatorImpl.setCPInstanceLocalService(
 			_cpInstanceLocalService);
 
 		for (CommerceOrderItem commerceOrderItem :
 				commerceOrder.getCommerceOrderItems()) {
 
-			versionCommerceOrderValidator.validate(
+			versionCommerceOrderValidatorImpl.validate(
 				themeDisplay.getLocale(), commerceOrderItem);
 		}
 	}

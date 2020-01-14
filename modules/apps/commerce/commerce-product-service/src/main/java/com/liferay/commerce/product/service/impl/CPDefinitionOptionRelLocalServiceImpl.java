@@ -14,6 +14,7 @@
 
 package com.liferay.commerce.product.service.impl;
 
+import com.liferay.commerce.product.exception.DuplicateCPDefinitionOptionRelKeyException;
 import com.liferay.commerce.product.model.CPDefinition;
 import com.liferay.commerce.product.model.CPDefinitionOptionRel;
 import com.liferay.commerce.product.model.CPDefinitionOptionValueRel;
@@ -114,7 +115,10 @@ public class CPDefinitionOptionRelLocalServiceImpl
 				"versionable#" + cpDefinitionId, Boolean.FALSE);
 		}
 
-		cpDefinitionOptionRel.setUuid(serviceContext.getUuid());
+		CPOption cpOption = cpOptionLocalService.getCPOption(cpOptionId);
+
+		validate(cpDefinitionId, cpOption.getKey());
+
 		cpDefinitionOptionRel.setGroupId(groupId);
 		cpDefinitionOptionRel.setCompanyId(user.getCompanyId());
 		cpDefinitionOptionRel.setUserId(user.getUserId());
@@ -128,6 +132,7 @@ public class CPDefinitionOptionRelLocalServiceImpl
 		cpDefinitionOptionRel.setFacetable(facetable);
 		cpDefinitionOptionRel.setRequired(required);
 		cpDefinitionOptionRel.setSkuContributor(skuContributor);
+		cpDefinitionOptionRel.setKey(cpOption.getKey());
 		cpDefinitionOptionRel.setExpandoBridgeAttributes(serviceContext);
 
 		cpDefinitionOptionRelPersistence.update(cpDefinitionOptionRel);
@@ -251,6 +256,13 @@ public class CPDefinitionOptionRelLocalServiceImpl
 
 		return cpDefinitionOptionRelPersistence.fetchByC_C(
 			cpDefinitionId, cpOptionId);
+	}
+
+	@Override
+	public CPDefinitionOptionRel fetchCPDefinitionOptionRelByKey(
+		long cpDefinitionId, String key) {
+
+		return cpDefinitionOptionRelPersistence.fetchByC_K(cpDefinitionId, key);
 	}
 
 	@Override
@@ -391,9 +403,9 @@ public class CPDefinitionOptionRelLocalServiceImpl
 
 		Map<String, Serializable> attributes = new HashMap<>();
 
+		attributes.put(Field.CONTENT, keywords);
 		attributes.put(Field.ENTRY_CLASS_PK, keywords);
 		attributes.put(Field.NAME, keywords);
-		attributes.put(Field.CONTENT, keywords);
 		attributes.put("CPDefinitionId", cpDefinitionId);
 		attributes.put("params", params);
 
@@ -422,10 +434,6 @@ public class CPDefinitionOptionRelLocalServiceImpl
 
 	protected void checkCPInstances(CPDefinitionOptionRel cpDefinitionOptionRel)
 		throws PortalException {
-
-		if (!cpDefinitionOptionRel.isSkuContributor()) {
-			return;
-		}
 
 		CPDefinition cpDefinition = cpDefinitionLocalService.getCPDefinition(
 			cpDefinitionOptionRel.getCPDefinitionId());
@@ -470,6 +478,10 @@ public class CPDefinitionOptionRelLocalServiceImpl
 			cpDefinitionLocalService.updateCPDefinitionIgnoreSKUCombinations(
 				cpDefinition.getCPDefinitionId(), true, new ServiceContext());
 		}
+		else {
+			cpDefinitionLocalService.updateCPDefinitionIgnoreSKUCombinations(
+				cpDefinition.getCPDefinitionId(), false, new ServiceContext());
+		}
 	}
 
 	protected void checkCPInstances(
@@ -477,22 +489,20 @@ public class CPDefinitionOptionRelLocalServiceImpl
 			ServiceContext serviceContext)
 		throws PortalException {
 
-		if (!skuContributor) {
-			return;
-		}
-
 		CPDefinition cpDefinition = cpDefinitionLocalService.getCPDefinition(
 			cpDefinitionId);
-
-		cpDefinitionLocalService.updateCPDefinitionIgnoreSKUCombinations(
-			cpDefinition.getCPDefinitionId(), false, serviceContext);
 
 		int cpDefinitionOptionRelsCount =
 			cpDefinitionOptionRelLocalService.getCPDefinitionOptionRelsCount(
 				cpDefinition.getCPDefinitionId(), true);
 
 		if (cpDefinitionOptionRelsCount == 0) {
-			return;
+			cpDefinitionLocalService.updateCPDefinitionIgnoreSKUCombinations(
+				cpDefinition.getCPDefinitionId(), true, serviceContext);
+		}
+		else {
+			cpDefinitionLocalService.updateCPDefinitionIgnoreSKUCombinations(
+				cpDefinition.getCPDefinitionId(), false, serviceContext);
 		}
 
 		List<CPInstance> cpInstances =
@@ -575,6 +585,17 @@ public class CPDefinitionOptionRelLocalServiceImpl
 
 		throw new SearchException(
 			"Unable to fix the search index after 10 attempts");
+	}
+
+	protected void validate(long cpDefinitionId, String key)
+		throws PortalException {
+
+		CPDefinitionOptionRel cpDefinitionOptionRel =
+			cpDefinitionOptionRelPersistence.fetchByC_K(cpDefinitionId, key);
+
+		if (cpDefinitionOptionRel != null) {
+			throw new DuplicateCPDefinitionOptionRelKeyException();
+		}
 	}
 
 	private static final String[] _SELECTED_FIELD_NAMES = {

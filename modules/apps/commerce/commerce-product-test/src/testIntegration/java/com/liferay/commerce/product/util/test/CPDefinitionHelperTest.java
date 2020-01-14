@@ -21,17 +21,22 @@ import com.liferay.commerce.product.catalog.CPQuery;
 import com.liferay.commerce.product.data.source.CPDataSourceResult;
 import com.liferay.commerce.product.model.CPDefinition;
 import com.liferay.commerce.product.model.CPInstance;
+import com.liferay.commerce.product.model.CommerceCatalog;
+import com.liferay.commerce.product.service.CommerceCatalogLocalService;
 import com.liferay.commerce.product.test.util.CPTestUtil;
 import com.liferay.commerce.product.util.CPDefinitionHelper;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
-import com.liferay.portal.kernel.test.util.GroupTestUtil;
+import com.liferay.portal.kernel.test.util.CompanyTestUtil;
+import com.liferay.portal.kernel.test.util.RandomTestUtil;
+import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
@@ -45,7 +50,6 @@ import org.frutilla.FrutillaRule;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.ClassRule;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -53,7 +57,6 @@ import org.junit.runner.RunWith;
 /**
  * @author Luca Pellizzon
  */
-@Ignore
 @RunWith(Arquillian.class)
 public class CPDefinitionHelperTest {
 
@@ -66,7 +69,12 @@ public class CPDefinitionHelperTest {
 
 	@Before
 	public void setUp() throws Exception {
-		_group = GroupTestUtil.addGroup();
+		_company = CompanyTestUtil.addCompany();
+
+		_commerceCatalog = _commerceCatalogLocalService.addCommerceCatalog(
+			RandomTestUtil.randomString(), RandomTestUtil.randomString(),
+			LocaleUtil.US.getDisplayLanguage(), null,
+			ServiceContextTestUtil.getServiceContext(_company.getGroupId()));
 	}
 
 	@Test
@@ -86,7 +94,7 @@ public class CPDefinitionHelperTest {
 		);
 
 		CPInstance[] cpInstances = _addCPInstances(
-			_group.getGroupId(), _CP_INSTANCES_COUNT);
+			_commerceCatalog.getGroupId(), _CP_INSTANCES_COUNT);
 
 		int counter = 0;
 		int position = 0;
@@ -106,18 +114,19 @@ public class CPDefinitionHelperTest {
 		}
 
 		AssetCategory assetCategory = CPTestUtil.addCategoryToCPDefinitions(
-			_group.getGroupId(), cpDefinitionIds);
+			_commerceCatalog.getGroupId(), cpDefinitionIds);
 
 		SearchContext searchContext = CPTestUtil.getSearchContext(
-			null, WorkflowConstants.STATUS_APPROVED, _group);
+			null, WorkflowConstants.STATUS_APPROVED,
+			_commerceCatalog.getGroup());
 
 		CPQuery cpQuery = new CPQuery();
 
 		cpQuery.setAllCategoryIds(new long[] {assetCategory.getCategoryId()});
 
 		CPDataSourceResult cpDataSourceResult = _cpDefinitionHelper.search(
-			_group.getGroupId(), searchContext, cpQuery, QueryUtil.ALL_POS,
-			QueryUtil.ALL_POS);
+			_commerceCatalog.getGroupId(), searchContext, cpQuery,
+			QueryUtil.ALL_POS, QueryUtil.ALL_POS);
 
 		List<CPCatalogEntry> cpCatalogEntries =
 			cpDataSourceResult.getCPCatalogEntries();
@@ -155,7 +164,7 @@ public class CPDefinitionHelperTest {
 		);
 
 		CPInstance[] cpInstances = _addCPInstances(
-			_group.getGroupId(), _CP_INSTANCES_COUNT);
+			_commerceCatalog.getGroupId(), _CP_INSTANCES_COUNT);
 
 		int random = (int)(Math.random() * (_CP_INSTANCES_COUNT - 1));
 
@@ -164,13 +173,14 @@ public class CPDefinitionHelperTest {
 		CPDefinition cpDefinition = randomCPInstance.getCPDefinition();
 
 		SearchContext searchContext = CPTestUtil.getSearchContext(
-			cpDefinition.getName(), WorkflowConstants.STATUS_APPROVED, _group);
+			cpDefinition.getName(), WorkflowConstants.STATUS_APPROVED,
+			_commerceCatalog.getGroup());
 
 		CPQuery cpQuery = new CPQuery();
 
 		CPDataSourceResult cpDataSourceResult = _cpDefinitionHelper.search(
-			_group.getGroupId(), searchContext, cpQuery, QueryUtil.ALL_POS,
-			QueryUtil.ALL_POS);
+			_commerceCatalog.getGroupId(), searchContext, cpQuery,
+			QueryUtil.ALL_POS, QueryUtil.ALL_POS);
 
 		List<CPCatalogEntry> cpCatalogEntries =
 			cpDataSourceResult.getCPCatalogEntries();
@@ -198,16 +208,17 @@ public class CPDefinitionHelperTest {
 		);
 
 		CPInstance[] cpInstances = _addCPInstances(
-			_group.getGroupId(), _CP_INSTANCES_COUNT);
+			_commerceCatalog.getGroupId(), _CP_INSTANCES_COUNT);
 
 		SearchContext searchContext = CPTestUtil.getSearchContext(
-			null, WorkflowConstants.STATUS_APPROVED, _group);
+			null, WorkflowConstants.STATUS_APPROVED,
+			_commerceCatalog.getGroup());
 
 		CPQuery cpQuery = new CPQuery();
 
 		CPDataSourceResult cpDataSourceResult = _cpDefinitionHelper.search(
-			_group.getGroupId(), searchContext, cpQuery, QueryUtil.ALL_POS,
-			QueryUtil.ALL_POS);
+			_commerceCatalog.getGroupId(), searchContext, cpQuery,
+			QueryUtil.ALL_POS, QueryUtil.ALL_POS);
 
 		List<CPCatalogEntry> cpCatalogEntries =
 			cpDataSourceResult.getCPCatalogEntries();
@@ -238,7 +249,7 @@ public class CPDefinitionHelperTest {
 		CPInstance[] cpInstances = new CPInstance[iterations];
 
 		for (int i = 0; i < iterations; i++) {
-			cpInstances[i] = CPTestUtil.addCPInstance(groupId);
+			cpInstances[i] = CPTestUtil.addCPInstanceFromCatalog(groupId);
 		}
 
 		return cpInstances;
@@ -246,10 +257,15 @@ public class CPDefinitionHelperTest {
 
 	private static final int _CP_INSTANCES_COUNT = 10;
 
+	private CommerceCatalog _commerceCatalog;
+
 	@Inject
-	private CPDefinitionHelper _cpDefinitionHelper;
+	private CommerceCatalogLocalService _commerceCatalogLocalService;
 
 	@DeleteAfterTestRun
-	private Group _group;
+	private Company _company;
+
+	@Inject
+	private CPDefinitionHelper _cpDefinitionHelper;
 
 }

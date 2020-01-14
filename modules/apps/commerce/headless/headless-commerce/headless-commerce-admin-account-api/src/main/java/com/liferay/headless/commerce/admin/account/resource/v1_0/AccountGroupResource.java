@@ -16,6 +16,8 @@ package com.liferay.headless.commerce.admin.account.resource.v1_0;
 
 import com.liferay.headless.commerce.admin.account.dto.v1_0.AccountGroup;
 import com.liferay.portal.kernel.model.Company;
+import com.liferay.portal.kernel.search.Sort;
+import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
 
@@ -34,13 +36,6 @@ import javax.ws.rs.core.Response;
 @Generated("")
 public interface AccountGroupResource {
 
-	public Response deleteAccountGroup(Long id) throws Exception;
-
-	public AccountGroup getAccountGroup(Long id) throws Exception;
-
-	public Response patchAccountGroup(Long id, AccountGroup accountGroup)
-		throws Exception;
-
 	public Response deleteAccountGroupByExternalReferenceCode(
 			String externalReferenceCode)
 		throws Exception;
@@ -53,7 +48,15 @@ public interface AccountGroupResource {
 			String externalReferenceCode, AccountGroup accountGroup)
 		throws Exception;
 
-	public Page<AccountGroup> getAccountGroupsPage(Pagination pagination)
+	public Response deleteAccountGroup(Long id) throws Exception;
+
+	public AccountGroup getAccountGroup(Long id) throws Exception;
+
+	public Response patchAccountGroup(Long id, AccountGroup accountGroup)
+		throws Exception;
+
+	public Page<AccountGroup> getAccountGroupsPage(
+			Filter filter, Pagination pagination, Sort[] sorts)
 		throws Exception;
 
 	public AccountGroup postAccountGroup(AccountGroup accountGroup)

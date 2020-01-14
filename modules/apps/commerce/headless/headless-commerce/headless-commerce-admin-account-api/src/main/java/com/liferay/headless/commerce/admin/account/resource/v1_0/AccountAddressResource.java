@@ -34,15 +34,19 @@ import javax.ws.rs.core.Response;
 @Generated("")
 public interface AccountAddressResource {
 
+	public Response deleteAccountAddressByExternalReferenceCode(
+			String externalReferenceCode)
+		throws Exception;
+
+	public AccountAddress getAccountAddressByExternalReferenceCode(
+			String externalReferenceCode)
+		throws Exception;
+
+	public Response patchAccountAddressByExternalReferenceCode(
+			String externalReferenceCode, AccountAddress accountAddress)
+		throws Exception;
+
 	public Response deleteAccountAddress(Long id) throws Exception;
-
-	public Page<AccountAddress> getAccountIdAccountAddressesPage(
-			Long id, Pagination pagination)
-		throws Exception;
-
-	public AccountAddress postAccountIdAccountAddress(
-			Long id, AccountAddress accountAddress)
-		throws Exception;
 
 	public Page<AccountAddress>
 			getAccountByExternalReferenceCodeAccountAddressesPage(
@@ -51,6 +55,14 @@ public interface AccountAddressResource {
 
 	public AccountAddress postAccountByExternalReferenceCodeAccountAddress(
 			String externalReferenceCode, AccountAddress accountAddress)
+		throws Exception;
+
+	public Page<AccountAddress> getAccountIdAccountAddressesPage(
+			Long id, Pagination pagination)
+		throws Exception;
+
+	public AccountAddress postAccountIdAccountAddress(
+			Long id, AccountAddress accountAddress)
 		throws Exception;
 
 	public void setContextCompany(Company contextCompany);

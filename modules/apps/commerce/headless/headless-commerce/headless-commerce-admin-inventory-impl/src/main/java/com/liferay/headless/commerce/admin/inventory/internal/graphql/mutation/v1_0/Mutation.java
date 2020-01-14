@@ -57,29 +57,6 @@ public class Mutation {
 	}
 
 	@GraphQLInvokeDetached
-	public Response deleteWarehousId(@GraphQLName("id") Long id)
-		throws Exception {
-
-		return _applyComponentServiceObjects(
-			_warehouseResourceComponentServiceObjects,
-			this::_populateResourceContext,
-			warehouseResource -> warehouseResource.deleteWarehousId(id));
-	}
-
-	@GraphQLInvokeDetached
-	public Response patchWarehousId(
-			@GraphQLName("id") Long id,
-			@GraphQLName("warehouse") Warehouse warehouse)
-		throws Exception {
-
-		return _applyComponentServiceObjects(
-			_warehouseResourceComponentServiceObjects,
-			this::_populateResourceContext,
-			warehouseResource -> warehouseResource.patchWarehousId(
-				id, warehouse));
-	}
-
-	@GraphQLInvokeDetached
 	public Response deleteWarehousByExternalReferenceCode(
 			@GraphQLName("externalReferenceCode") String externalReferenceCode)
 		throws Exception {
@@ -106,6 +83,29 @@ public class Mutation {
 					externalReferenceCode, warehouse));
 	}
 
+	@GraphQLInvokeDetached
+	public Response deleteWarehousId(@GraphQLName("id") Long id)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_warehouseResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			warehouseResource -> warehouseResource.deleteWarehousId(id));
+	}
+
+	@GraphQLInvokeDetached
+	public Response patchWarehousId(
+			@GraphQLName("id") Long id,
+			@GraphQLName("warehouse") Warehouse warehouse)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_warehouseResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			warehouseResource -> warehouseResource.patchWarehousId(
+				id, warehouse));
+	}
+
 	@GraphQLField
 	@GraphQLInvokeDetached
 	public Warehouse postWarehous(@GraphQLName("warehouse") Warehouse warehouse)
@@ -117,24 +117,22 @@ public class Mutation {
 			warehouseResource -> warehouseResource.postWarehous(warehouse));
 	}
 
-	@GraphQLField
 	@GraphQLInvokeDetached
-	public WarehouseItem postWarehousIdWarehouseItem(
-			@GraphQLName("id") Long id,
-			@GraphQLName("warehouseItem") WarehouseItem warehouseItem)
+	public Response deleteWarehouseItemByExternalReferenceCode(
+			@GraphQLName("externalReferenceCode") String externalReferenceCode)
 		throws Exception {
 
 		return _applyComponentServiceObjects(
 			_warehouseItemResourceComponentServiceObjects,
 			this::_populateResourceContext,
 			warehouseItemResource ->
-				warehouseItemResource.postWarehousIdWarehouseItem(
-					id, warehouseItem));
+				warehouseItemResource.
+					deleteWarehouseItemByExternalReferenceCode(
+						externalReferenceCode));
 	}
 
-	@GraphQLField
 	@GraphQLInvokeDetached
-	public WarehouseItem postWarehousByExternalReferenceCodeWarehouseItem(
+	public Response patchWarehouseItemByExternalReferenceCode(
 			@GraphQLName("externalReferenceCode") String externalReferenceCode,
 			@GraphQLName("warehouseItem") WarehouseItem warehouseItem)
 		throws Exception {
@@ -143,9 +141,23 @@ public class Mutation {
 			_warehouseItemResourceComponentServiceObjects,
 			this::_populateResourceContext,
 			warehouseItemResource ->
-				warehouseItemResource.
-					postWarehousByExternalReferenceCodeWarehouseItem(
-						externalReferenceCode, warehouseItem));
+				warehouseItemResource.patchWarehouseItemByExternalReferenceCode(
+					externalReferenceCode, warehouseItem));
+	}
+
+	@GraphQLField
+	@GraphQLInvokeDetached
+	public WarehouseItem postWarehouseItemByExternalReferenceCode(
+			@GraphQLName("externalReferenceCode") String externalReferenceCode,
+			@GraphQLName("warehouseItem") WarehouseItem warehouseItem)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_warehouseItemResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			warehouseItemResource ->
+				warehouseItemResource.postWarehouseItemByExternalReferenceCode(
+					externalReferenceCode, warehouseItem));
 	}
 
 	@GraphQLInvokeDetached
@@ -170,6 +182,37 @@ public class Mutation {
 			this::_populateResourceContext,
 			warehouseItemResource -> warehouseItemResource.patchWarehouseItem(
 				id, warehouseItem));
+	}
+
+	@GraphQLField
+	@GraphQLInvokeDetached
+	public WarehouseItem postWarehousByExternalReferenceCodeWarehouseItem(
+			@GraphQLName("externalReferenceCode") String externalReferenceCode,
+			@GraphQLName("warehouseItem") WarehouseItem warehouseItem)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_warehouseItemResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			warehouseItemResource ->
+				warehouseItemResource.
+					postWarehousByExternalReferenceCodeWarehouseItem(
+						externalReferenceCode, warehouseItem));
+	}
+
+	@GraphQLField
+	@GraphQLInvokeDetached
+	public WarehouseItem postWarehousIdWarehouseItem(
+			@GraphQLName("id") Long id,
+			@GraphQLName("warehouseItem") WarehouseItem warehouseItem)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_warehouseItemResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			warehouseItemResource ->
+				warehouseItemResource.postWarehousIdWarehouseItem(
+					id, warehouseItem));
 	}
 
 	private <T, R, E1 extends Throwable, E2 extends Throwable> R

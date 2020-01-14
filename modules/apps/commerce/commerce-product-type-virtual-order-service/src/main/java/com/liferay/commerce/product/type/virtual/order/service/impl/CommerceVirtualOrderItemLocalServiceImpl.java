@@ -42,6 +42,7 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.spring.extender.service.ServiceReference;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 
 import java.net.URL;
@@ -91,7 +92,6 @@ public class CommerceVirtualOrderItemLocalServiceImpl
 			commerceVirtualOrderItemPersistence.create(
 				commerceVirtualOrderItemId);
 
-		commerceVirtualOrderItem.setUuid(serviceContext.getUuid());
 		commerceVirtualOrderItem.setGroupId(groupId);
 		commerceVirtualOrderItem.setCompanyId(user.getCompanyId());
 		commerceVirtualOrderItem.setUserId(user.getUserId());
@@ -216,40 +216,41 @@ public class CommerceVirtualOrderItemLocalServiceImpl
 			commerceVirtualOrderItem.getCommerceOrderItem();
 
 		InputStream contentStream;
+		String extension = StringPool.BLANK;
 
 		if (commerceVirtualOrderItem.getFileEntryId() > 0) {
 			FileEntry fileEntry = commerceVirtualOrderItem.getFileEntry();
 
 			contentStream = fileEntry.getContentStream();
+
+			extension = fileEntry.getExtension();
 		}
 		else {
 			URL url = new URL(commerceVirtualOrderItem.getUrl());
 
 			contentStream = url.openStream();
+
+			String mimeType = URLConnection.guessContentTypeFromStream(
+				contentStream);
+
+			Set<String> extensions = MimeTypesUtil.getExtensions(mimeType);
+
+			if (!extensions.isEmpty()) {
+				Iterator<String> iterator = extensions.iterator();
+
+				extension = iterator.next();
+			}
 		}
 
 		File tempFile = FileUtil.createTempFile(contentStream);
-
-		String mimeType = URLConnection.guessContentTypeFromStream(
-			contentStream);
-
-		Set<String> extensions = MimeTypesUtil.getExtensions(mimeType);
-
-		String extension = StringPool.BLANK;
-
-		if (!extensions.isEmpty()) {
-			Iterator<String> iterator = extensions.iterator();
-
-			extension = iterator.next();
-		}
 
 		File file = new File(
 			tempFile.getParent(),
 			commerceOrderItem.getNameCurrentValue() + StringPool.PERIOD +
 				extension);
 
-		if (file.exists()) {
-			file.delete();
+		if (file.exists() && !file.delete()) {
+			throw new IOException();
 		}
 
 		if (!tempFile.renameTo(file)) {
@@ -364,19 +365,19 @@ public class CommerceVirtualOrderItemLocalServiceImpl
 			CommerceVirtualOrderItem commerceVirtualOrderItem)
 		throws PortalException {
 
+		long duration = commerceVirtualOrderItem.getDuration();
+
+		if (duration == 0) {
+			return new Date(Long.MIN_VALUE);
+		}
+
 		User defaultUser = userLocalService.getDefaultUser(
 			commerceVirtualOrderItem.getCompanyId());
 
 		Calendar calendar = CalendarFactoryUtil.getCalendar(
 			defaultUser.getTimeZone());
 
-		long duration = commerceVirtualOrderItem.getDuration();
-
-		if (duration > 0) {
-			duration = calendar.getTimeInMillis() + duration;
-
-			calendar.setTimeInMillis(duration);
-		}
+		calendar.setTimeInMillis(calendar.getTimeInMillis() + duration);
 
 		return calendar.getTime();
 	}

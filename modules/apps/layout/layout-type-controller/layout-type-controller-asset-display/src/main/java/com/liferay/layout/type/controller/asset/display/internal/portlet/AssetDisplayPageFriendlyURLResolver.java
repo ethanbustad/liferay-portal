@@ -31,6 +31,7 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.Portal;
 
@@ -83,7 +84,10 @@ public class AssetDisplayPageFriendlyURLResolver
 		Locale locale = _portal.getLocale(request);
 
 		_portal.addPageSubtitle(assetEntry.getTitle(locale), request);
-		_portal.addPageDescription(assetEntry.getDescription(locale), request);
+		_portal.addPageDescription(
+			HtmlUtil.unescape(
+				HtmlUtil.stripHtml(assetEntry.getDescription(locale))),
+			request);
 
 		Layout layout = getAssetDisplayLayout(groupId);
 

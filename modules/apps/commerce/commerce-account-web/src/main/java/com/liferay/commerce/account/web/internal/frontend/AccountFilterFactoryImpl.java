@@ -32,7 +32,8 @@ import org.osgi.service.component.annotations.Component;
 		"commerce.data.provider.key=" + CommerceAccountAddressClayTable.NAME,
 		"commerce.data.provider.key=" + CommerceAccountClayTable.NAME,
 		"commerce.data.provider.key=" + CommerceAccountOrganizationClayTable.NAME,
-		"commerce.data.provider.key=" + CommerceAccountUserClayTable.NAME
+		"commerce.data.provider.key=" + CommerceAccountUserClayTable.NAME,
+		"commerce.data.provider.key=" + CommerceAccountUserRolesClayTable.NAME
 	},
 	service = FilterFactory.class
 )
@@ -40,19 +41,19 @@ public class AccountFilterFactoryImpl implements FilterFactory {
 
 	@Override
 	public Filter create(HttpServletRequest httpServletRequest) {
-		AccountFilterImpl accountFilter = new AccountFilterImpl();
+		AccountFilterImpl accountFilterImpl = new AccountFilterImpl();
 
 		long accountId = ParamUtil.getLong(httpServletRequest, "accountId");
 		long userId = ParamUtil.getLong(httpServletRequest, "userId");
 
-		accountFilter.setAccountId(accountId);
-		accountFilter.setUserId(userId);
+		accountFilterImpl.setAccountId(accountId);
+		accountFilterImpl.setUserId(userId);
 
 		String keywords = ParamUtil.getString(httpServletRequest, "q");
 
-		accountFilter.setKeywords(keywords);
+		accountFilterImpl.setKeywords(keywords);
 
-		return accountFilter;
+		return accountFilterImpl;
 	}
 
 }

@@ -24,7 +24,6 @@ import com.liferay.commerce.product.util.CPSubscriptionTypeRegistry;
 import com.liferay.commerce.service.CommerceOrderItemLocalServiceUtil;
 import com.liferay.commerce.service.CommerceSubscriptionEntryLocalServiceUtil;
 import com.liferay.commerce.taglib.servlet.taglib.internal.servlet.ServletContextUtil;
-import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
@@ -32,6 +31,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.TextFormatter;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.taglib.util.IncludeTag;
 
@@ -203,7 +203,7 @@ public class SubscriptionInfoTag extends IncludeTag {
 		if (plural) {
 			return LanguageUtil.get(
 				request,
-				StringUtil.toLowerCase(period) + CharPool.LOWER_CASE_S);
+				StringUtil.toLowerCase(TextFormatter.formatPlural(period)));
 		}
 
 		return period;

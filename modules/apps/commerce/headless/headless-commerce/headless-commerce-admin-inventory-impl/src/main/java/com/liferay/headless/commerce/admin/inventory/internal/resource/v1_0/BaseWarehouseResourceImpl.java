@@ -18,6 +18,8 @@ import com.liferay.headless.commerce.admin.inventory.dto.v1_0.Warehouse;
 import com.liferay.headless.commerce.admin.inventory.resource.v1_0.WarehouseResource;
 import com.liferay.petra.function.UnsafeFunction;
 import com.liferay.portal.kernel.model.Company;
+import com.liferay.portal.kernel.search.Sort;
+import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.vulcan.accept.language.AcceptLanguage;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
@@ -56,51 +58,6 @@ import javax.ws.rs.core.UriInfo;
 @Generated("")
 @Path("/v1.0")
 public abstract class BaseWarehouseResourceImpl implements WarehouseResource {
-
-	@Override
-	@DELETE
-	@Parameters(value = {@Parameter(in = ParameterIn.PATH, name = "id")})
-	@Path("/warehouses/{id}")
-	@Produces({"application/json", "application/xml"})
-	@Tags(value = {@Tag(name = "Warehouse")})
-	public Response deleteWarehousId(
-			@NotNull @Parameter(hidden = true) @PathParam("id") Long id)
-		throws Exception {
-
-		Response.ResponseBuilder responseBuilder = Response.ok();
-
-		return responseBuilder.build();
-	}
-
-	@Override
-	@GET
-	@Parameters(value = {@Parameter(in = ParameterIn.PATH, name = "id")})
-	@Path("/warehouses/{id}")
-	@Produces({"application/json", "application/xml"})
-	@Tags(value = {@Tag(name = "Warehouse")})
-	public Warehouse getWarehousId(
-			@NotNull @Parameter(hidden = true) @PathParam("id") Long id)
-		throws Exception {
-
-		return new Warehouse();
-	}
-
-	@Override
-	@Consumes({"application/json", "application/xml"})
-	@PATCH
-	@Parameters(value = {@Parameter(in = ParameterIn.PATH, name = "id")})
-	@Path("/warehouses/{id}")
-	@Produces({"application/json", "application/xml"})
-	@Tags(value = {@Tag(name = "Warehouse")})
-	public Response patchWarehousId(
-			@NotNull @Parameter(hidden = true) @PathParam("id") Long id,
-			Warehouse warehouse)
-		throws Exception {
-
-		Response.ResponseBuilder responseBuilder = Response.ok();
-
-		return responseBuilder.build();
-	}
 
 	@Override
 	@DELETE
@@ -163,17 +120,66 @@ public abstract class BaseWarehouseResourceImpl implements WarehouseResource {
 	}
 
 	@Override
+	@DELETE
+	@Parameters(value = {@Parameter(in = ParameterIn.PATH, name = "id")})
+	@Path("/warehouses/{id}")
+	@Produces({"application/json", "application/xml"})
+	@Tags(value = {@Tag(name = "Warehouse")})
+	public Response deleteWarehousId(
+			@NotNull @Parameter(hidden = true) @PathParam("id") Long id)
+		throws Exception {
+
+		Response.ResponseBuilder responseBuilder = Response.ok();
+
+		return responseBuilder.build();
+	}
+
+	@Override
+	@GET
+	@Parameters(value = {@Parameter(in = ParameterIn.PATH, name = "id")})
+	@Path("/warehouses/{id}")
+	@Produces({"application/json", "application/xml"})
+	@Tags(value = {@Tag(name = "Warehouse")})
+	public Warehouse getWarehousId(
+			@NotNull @Parameter(hidden = true) @PathParam("id") Long id)
+		throws Exception {
+
+		return new Warehouse();
+	}
+
+	@Override
+	@Consumes({"application/json", "application/xml"})
+	@PATCH
+	@Parameters(value = {@Parameter(in = ParameterIn.PATH, name = "id")})
+	@Path("/warehouses/{id}")
+	@Produces({"application/json", "application/xml"})
+	@Tags(value = {@Tag(name = "Warehouse")})
+	public Response patchWarehousId(
+			@NotNull @Parameter(hidden = true) @PathParam("id") Long id,
+			Warehouse warehouse)
+		throws Exception {
+
+		Response.ResponseBuilder responseBuilder = Response.ok();
+
+		return responseBuilder.build();
+	}
+
+	@Override
 	@GET
 	@Parameters(
 		value = {
+			@Parameter(in = ParameterIn.QUERY, name = "filter"),
 			@Parameter(in = ParameterIn.QUERY, name = "page"),
-			@Parameter(in = ParameterIn.QUERY, name = "pageSize")
+			@Parameter(in = ParameterIn.QUERY, name = "pageSize"),
+			@Parameter(in = ParameterIn.QUERY, name = "sort")
 		}
 	)
-	@Path("/warehouses/")
+	@Path("/warehouses")
 	@Produces({"application/json", "application/xml"})
 	@Tags(value = {@Tag(name = "Warehouse")})
-	public Page<Warehouse> getWarehousesPage(@Context Pagination pagination)
+	public Page<Warehouse> getWarehousesPage(
+			@Context Filter filter, @Context Pagination pagination,
+			@Context Sort[] sorts)
 		throws Exception {
 
 		return Page.of(Collections.emptyList());
@@ -182,7 +188,7 @@ public abstract class BaseWarehouseResourceImpl implements WarehouseResource {
 	@Override
 	@Consumes({"application/json", "application/xml"})
 	@POST
-	@Path("/warehouses/")
+	@Path("/warehouses")
 	@Produces({"application/json", "application/xml"})
 	@Tags(value = {@Tag(name = "Warehouse")})
 	public Warehouse postWarehous(Warehouse warehouse) throws Exception {

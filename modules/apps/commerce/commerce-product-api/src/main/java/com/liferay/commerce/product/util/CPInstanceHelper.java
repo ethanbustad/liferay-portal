@@ -54,11 +54,11 @@ public interface CPInstanceHelper {
 		throws PortalException;
 
 	public Map<CPDefinitionOptionRel, List<CPDefinitionOptionValueRel>>
-			getCPDefinitionOptionRelsMap(String json)
+			getCPDefinitionOptionRelsMap(long cpDefinitionId, String json)
 		throws PortalException;
 
 	public List<CPDefinitionOptionValueRel> getCPDefinitionOptionValueRel(
-			long cpDefinitionId, String optionFieldName,
+			long cpDefinitionId, String optionKey,
 			Map<String, String> optionMap)
 		throws Exception;
 
@@ -76,7 +76,8 @@ public interface CPInstanceHelper {
 	public CPSku getDefaultCPSku(CPCatalogEntry cpCatalogEntry)
 		throws Exception;
 
-	public List<KeyValuePair> getKeyValuePairs(String json, Locale locale)
+	public List<KeyValuePair> getKeyValuePairs(
+			long cpDefinitionId, String json, Locale locale)
 		throws PortalException;
 
 	public DDMForm getPublicStoreDDMForm(

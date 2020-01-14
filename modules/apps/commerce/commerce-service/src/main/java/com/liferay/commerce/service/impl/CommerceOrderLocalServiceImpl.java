@@ -26,6 +26,7 @@ import com.liferay.commerce.discount.CommerceDiscountValue;
 import com.liferay.commerce.discount.exception.CommerceDiscountCouponCodeException;
 import com.liferay.commerce.discount.service.CommerceDiscountLocalService;
 import com.liferay.commerce.exception.CommerceOrderBillingAddressException;
+import com.liferay.commerce.exception.CommerceOrderDateException;
 import com.liferay.commerce.exception.CommerceOrderPurchaseOrderNumberException;
 import com.liferay.commerce.exception.CommerceOrderRequestedDeliveryDateException;
 import com.liferay.commerce.exception.CommerceOrderShippingAddressException;
@@ -34,6 +35,8 @@ import com.liferay.commerce.exception.CommerceOrderStatusException;
 import com.liferay.commerce.exception.CommercePaymentEngineException;
 import com.liferay.commerce.exception.GuestCartMaxAllowedException;
 import com.liferay.commerce.internal.order.comparator.CommerceOrderModifiedDateComparator;
+import com.liferay.commerce.inventory.model.CommerceInventoryBookedQuantity;
+import com.liferay.commerce.inventory.service.CommerceInventoryBookedQuantityLocalService;
 import com.liferay.commerce.model.CommerceAddress;
 import com.liferay.commerce.model.CommerceOrder;
 import com.liferay.commerce.model.CommerceOrderItem;
@@ -46,9 +49,10 @@ import com.liferay.commerce.search.facet.NegatableMultiValueFacet;
 import com.liferay.commerce.service.base.CommerceOrderLocalServiceBaseImpl;
 import com.liferay.commerce.util.CommerceShippingHelper;
 import com.liferay.petra.string.StringPool;
-import com.liferay.portal.kernel.dao.orm.QueryDefinition;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.messaging.Message;
 import com.liferay.portal.kernel.messaging.MessageBusUtil;
 import com.liferay.portal.kernel.model.Group;
@@ -67,7 +71,6 @@ import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.search.QueryConfig;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.SearchException;
-import com.liferay.portal.kernel.search.facet.MultiValueFacet;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.transaction.TransactionCommitCallbackUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
@@ -88,6 +91,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -190,7 +194,6 @@ public class CommerceOrderLocalServiceImpl
 		CommerceOrder commerceOrder = commerceOrderPersistence.create(
 			commerceOrderId);
 
-		commerceOrder.setUuid(serviceContext.getUuid());
 		commerceOrder.setGroupId(groupId);
 		commerceOrder.setCompanyId(user.getCompanyId());
 		commerceOrder.setUserId(userId);
@@ -208,6 +211,7 @@ public class CommerceOrderLocalServiceImpl
 		commerceOrder.setTotal(total);
 		commerceOrder.setPaymentStatus(paymentStatus);
 		commerceOrder.setOrderStatus(orderStatus);
+		commerceOrder.setManuallyAdjusted(false);
 		commerceOrder.setStatus(WorkflowConstants.STATUS_DRAFT);
 		commerceOrder.setStatusByUserId(user.getUserId());
 		commerceOrder.setStatusByUserName(user.getFullName());
@@ -346,6 +350,10 @@ public class CommerceOrderLocalServiceImpl
 		CommerceOrder commerceOrder = commerceOrderPersistence.findByPrimaryKey(
 			commerceOrderId);
 
+		// Book quantities
+
+		_bookQuantities(commerceOrder);
+
 		WorkflowInstanceLink workflowInstanceLink =
 			workflowInstanceLinkLocalService.fetchWorkflowInstanceLink(
 				commerceOrder.getCompanyId(), commerceOrder.getScopeGroupId(),
@@ -417,6 +425,8 @@ public class CommerceOrderLocalServiceImpl
 			commerceOrder.setBillingAddressId(billingAddressId);
 			commerceOrder.setShippingAddressId(shippingAddressId);
 		}
+
+		commerceOrder.setOrderDate(new Date());
 
 		return commerceOrderPersistence.update(commerceOrder);
 	}
@@ -548,7 +558,7 @@ public class CommerceOrderLocalServiceImpl
 		throws PortalException {
 
 		if (commerceOrderId <= 0) {
-			return AVAILABLE_ORDER_STATUSES;
+			return AVAILABLE_ORDER_STATUSES.clone();
 		}
 
 		CommerceOrder commerceOrder = commerceOrderPersistence.findByPrimaryKey(
@@ -558,7 +568,7 @@ public class CommerceOrderLocalServiceImpl
 			ArrayUtil.contains(
 				AVAILABLE_ORDER_STATUSES, commerceOrder.getOrderStatus())) {
 
-			return AVAILABLE_ORDER_STATUSES;
+			return AVAILABLE_ORDER_STATUSES.clone();
 		}
 
 		return new int[] {commerceOrder.getOrderStatus()};
@@ -600,17 +610,26 @@ public class CommerceOrderLocalServiceImpl
 	@Override
 	public List<CommerceOrder> getCommerceOrders(
 			long companyId, long groupId, long[] commerceAccountIds,
-			int[] orderStatuses, boolean excludeOrderStatus, int start, int end)
+			String keywords, int[] orderStatuses, boolean excludeOrderStatus,
+			int start, int end)
 		throws PortalException {
 
 		SearchContext searchContext = buildSearchContext(
-			companyId, groupId, commerceAccountIds, excludeOrderStatus,
-			orderStatuses, start, end);
+			companyId, groupId, commerceAccountIds, keywords,
+			excludeOrderStatus, orderStatuses, start, end);
 
 		BaseModelSearchResult<CommerceOrder> baseModelSearchResult =
 			commerceOrderLocalService.searchCommerceOrders(searchContext);
 
 		return baseModelSearchResult.getBaseModels();
+	}
+
+	@Override
+	public List<CommerceOrder> getCommerceOrders(
+		long groupId, String commercePaymentMethodKey) {
+
+		return commerceOrderPersistence.findByG_CP(
+			groupId, commercePaymentMethodKey);
 	}
 
 	@Override
@@ -651,12 +670,13 @@ public class CommerceOrderLocalServiceImpl
 	@Override
 	public long getCommerceOrdersCount(
 			long companyId, long groupId, long[] commerceAccountIds,
-			int[] orderStatuses, boolean excludeOrderStatus)
+			String keywords, int[] orderStatuses, boolean excludeOrderStatus)
 		throws PortalException {
 
 		SearchContext searchContext = buildSearchContext(
-			companyId, groupId, commerceAccountIds, excludeOrderStatus,
-			orderStatuses, QueryUtil.ALL_POS, QueryUtil.ALL_POS);
+			companyId, groupId, commerceAccountIds, keywords,
+			excludeOrderStatus, orderStatuses, QueryUtil.ALL_POS,
+			QueryUtil.ALL_POS);
 
 		return commerceOrderLocalService.searchCommerceOrdersCount(
 			searchContext);
@@ -679,18 +699,19 @@ public class CommerceOrderLocalServiceImpl
 		long groupId, long userId, long commerceAccountId, Integer orderStatus,
 		boolean excludeOrderStatus, String keywords, int start, int end) {
 
-		QueryDefinition<CommerceOrder> queryDefinition =
-			new QueryDefinition<>();
+		try {
+			Group group = groupLocalService.getGroup(groupId);
 
-		queryDefinition.setAttribute("commerceAccountId", commerceAccountId);
-		queryDefinition.setAttribute("excludeOrderStatus", excludeOrderStatus);
-		queryDefinition.setAttribute("groupId", groupId);
-		queryDefinition.setAttribute("keywords", keywords);
-		queryDefinition.setAttribute("orderStatus", orderStatus);
-		queryDefinition.setStart(start);
-		queryDefinition.setEnd(end);
+			return commerceOrderLocalService.getCommerceOrders(
+				group.getCompanyId(), groupId, new long[] {commerceAccountId},
+				keywords, new int[] {CommerceOrderConstants.ORDER_STATUS_OPEN},
+				false, start, end);
+		}
+		catch (PortalException pe) {
+			_log.error(pe, pe);
+		}
 
-		return commerceOrderFinder.findByG_U_C_O(userId, queryDefinition);
+		return Collections.emptyList();
 	}
 
 	/**
@@ -702,16 +723,19 @@ public class CommerceOrderLocalServiceImpl
 		long groupId, long userId, long commerceAccountId, Integer orderStatus,
 		boolean excludeOrderStatus, String keywords) {
 
-		QueryDefinition<CommerceOrder> queryDefinition =
-			new QueryDefinition<>();
+		try {
+			Group group = groupLocalService.getGroup(groupId);
 
-		queryDefinition.setAttribute("commerceAccountId", commerceAccountId);
-		queryDefinition.setAttribute("excludeOrderStatus", excludeOrderStatus);
-		queryDefinition.setAttribute("groupId", groupId);
-		queryDefinition.setAttribute("keywords", keywords);
-		queryDefinition.setAttribute("orderStatus", orderStatus);
+			return (int)commerceOrderLocalService.getCommerceOrdersCount(
+				group.getCompanyId(), groupId, new long[] {commerceAccountId},
+				keywords, new int[] {CommerceOrderConstants.ORDER_STATUS_OPEN},
+				false);
+		}
+		catch (PortalException pe) {
+			_log.error(pe, pe);
+		}
 
-		return commerceOrderFinder.countByG_U_C_O(userId, queryDefinition);
+		return 0;
 	}
 
 	@Override
@@ -772,6 +796,12 @@ public class CommerceOrderLocalServiceImpl
 
 		CommerceOrder commerceOrder = commerceOrderPersistence.findByPrimaryKey(
 			commerceOrderId);
+
+		if (commerceOrder.getOrderStatus() !=
+				CommerceOrderConstants.ORDER_STATUS_OPEN) {
+
+			return commerceOrder;
+		}
 
 		for (CommerceOrderItem commerceOrderItem :
 				commerceOrder.getCommerceOrderItems()) {
@@ -1218,6 +1248,29 @@ public class CommerceOrderLocalServiceImpl
 
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
+	public CommerceOrder updateOrderDate(
+			long commerceOrderId, int orderDateMonth, int orderDateDay,
+			int orderDateYear, int orderDateHour, int orderDateMinute,
+			ServiceContext serviceContext)
+		throws PortalException {
+
+		User user = userLocalService.getUser(serviceContext.getUserId());
+
+		CommerceOrder commerceOrder = commerceOrderPersistence.findByPrimaryKey(
+			commerceOrderId);
+
+		Date orderDate = PortalUtil.getDate(
+			orderDateMonth, orderDateDay, orderDateYear, orderDateHour,
+			orderDateMinute, user.getTimeZone(),
+			CommerceOrderDateException.class);
+
+		commerceOrder.setOrderDate(orderDate);
+
+		return commerceOrderPersistence.update(commerceOrder);
+	}
+
+	@Indexable(type = IndexableType.REINDEX)
+	@Override
 	public CommerceOrder updateOrderStatus(
 			long commerceOrderId, int orderStatus)
 		throws PortalException {
@@ -1308,6 +1361,20 @@ public class CommerceOrderLocalServiceImpl
 			commerceOrder.getPaymentStatus(), previousPaymentStatus);
 
 		return commerceOrder;
+	}
+
+	@Indexable(type = IndexableType.REINDEX)
+	@Override
+	public CommerceOrder updatePrintedNote(
+			long commerceOrderId, String printedNote)
+		throws PortalException {
+
+		CommerceOrder commerceOrder = commerceOrderPersistence.findByPrimaryKey(
+			commerceOrderId);
+
+		commerceOrder.setPrintedNote(printedNote);
+
+		return commerceOrderPersistence.update(commerceOrder);
 	}
 
 	@Indexable(type = IndexableType.REINDEX)
@@ -1489,26 +1556,25 @@ public class CommerceOrderLocalServiceImpl
 
 	protected SearchContext buildSearchContext(
 			long companyId, long commerceChannelGroupId,
-			long[] commerceAccountIds, boolean negated, int[] orderStatuses,
-			int start, int end)
+			long[] commerceAccountIds, String keywords, boolean negated,
+			int[] orderStatuses, int start, int end)
 		throws PortalException {
 
 		SearchContext searchContext = new SearchContext();
 
-		addFacetOrderStatus(negated, orderStatuses, searchContext);
+		if (orderStatuses != null) {
+			searchContext.setAttribute("negateOrderStatuses", negated);
+			searchContext.setAttribute("orderStatuses", orderStatuses);
+		}
 
 		if (commerceAccountIds != null) {
-			MultiValueFacet multiValueFacet = new MultiValueFacet(
-				searchContext);
-
-			multiValueFacet.setFieldName("commerceAccountId");
-			multiValueFacet.setValues(commerceAccountIds);
-
-			searchContext.addFacet(multiValueFacet);
+			searchContext.setAttribute(
+				"commerceAccountIds", commerceAccountIds);
 		}
 
 		searchContext.setCompanyId(companyId);
 		searchContext.setGroupIds(new long[] {commerceChannelGroupId});
+		searchContext.setKeywords(keywords);
 		searchContext.setStart(start);
 		searchContext.setEnd(end);
 
@@ -1567,11 +1633,9 @@ public class CommerceOrderLocalServiceImpl
 			return commerceAddress;
 		}
 
-		long companyId = serviceContext.getCompanyId();
-
 		List<CommerceAddress> commerceAddresses =
 			commerceAddressLocalService.getCommerceAddressesByCompanyId(
-				companyId, CommerceAccount.class.getName(),
+				serviceContext.getCompanyId(), CommerceAccount.class.getName(),
 				commerceOrder.getCommerceAccountId());
 
 		for (CommerceAddress newCommerceAddress : commerceAddresses) {
@@ -1589,7 +1653,11 @@ public class CommerceOrderLocalServiceImpl
 	protected boolean hasWorkflowDefinition(long groupId, long typePK)
 		throws PortalException {
 
-		Group group = groupLocalService.getGroup(groupId);
+		Group group = groupLocalService.fetchGroup(groupId);
+
+		if (group == null) {
+			return false;
+		}
 
 		return workflowDefinitionLinkLocalService.hasWorkflowDefinitionLink(
 			group.getCompanyId(), group.getGroupId(),
@@ -1778,6 +1846,61 @@ public class CommerceOrderLocalServiceImpl
 		CommerceOrderConstants.ORDER_STATUS_DISPUTED
 	};
 
+	private void _bookQuantities(CommerceOrder commerceOrder)
+		throws PortalException {
+
+		List<CommerceOrderItem> commerceOrderItems =
+			commerceOrder.getCommerceOrderItems();
+
+		for (CommerceOrderItem commerceOrderItem : commerceOrderItems) {
+			Map<String, String> context = new HashMap<>();
+
+			context.put(
+				"OrderId ",
+				String.valueOf(commerceOrderItem.getCommerceOrderId()));
+			context.put(
+				"OrderItemId ",
+				String.valueOf(commerceOrderItem.getCommerceOrderItemId()));
+
+			CommerceInventoryBookedQuantity commerceInventoryBookedQuantity =
+				_commerceInventoryBookedQuantityLocalService.
+					addCommerceBookedQuantity(
+						commerceOrderItem.getUserId(),
+						commerceOrderItem.getSku(),
+						commerceOrderItem.getQuantity(), null, context);
+
+			commerceOrderItemLocalService.updateCommerceOrderItem(
+				commerceOrderItem.getCommerceOrderItemId(),
+				commerceInventoryBookedQuantity.
+					getCommerceInventoryBookedQuantityId());
+		}
+
+		// Low stock action
+
+		for (CommerceOrderItem commerceOrderItem :
+				commerceOrder.getCommerceOrderItems()) {
+
+			TransactionCommitCallbackUtil.registerCallback(
+				new Callable<Void>() {
+
+					@Override
+					public Void call() throws Exception {
+						Message message = new Message();
+
+						message.put(
+							"cpInstanceId",
+							commerceOrderItem.getCPInstanceId());
+
+						MessageBusUtil.sendMessage(
+							CommerceDestinationNames.STOCK_QUANTITY, message);
+
+						return null;
+					}
+
+				});
+		}
+	}
+
 	private void _setCommerceOrderShippingDiscountValue(
 		CommerceOrder commerceOrder,
 		CommerceDiscountValue commerceDiscountValue) {
@@ -1916,6 +2039,9 @@ public class CommerceOrderLocalServiceImpl
 			discountPercentageLevel4);
 	}
 
+	private static final Log _log = LogFactoryUtil.getLog(
+		CommerceOrderLocalServiceImpl.class);
+
 	@ServiceReference(type = CommerceChannelLocalService.class)
 	private CommerceChannelLocalService _commerceChannelLocalService;
 
@@ -1924,6 +2050,10 @@ public class CommerceOrderLocalServiceImpl
 
 	@ServiceReference(type = CommerceDiscountLocalService.class)
 	private CommerceDiscountLocalService _commerceDiscountLocalService;
+
+	@ServiceReference(type = CommerceInventoryBookedQuantityLocalService.class)
+	private CommerceInventoryBookedQuantityLocalService
+		_commerceInventoryBookedQuantityLocalService;
 
 	@ServiceReference(type = CommerceOrderConfiguration.class)
 	private CommerceOrderConfiguration _commerceOrderConfiguration;

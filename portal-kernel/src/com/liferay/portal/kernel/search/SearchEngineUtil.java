@@ -24,7 +24,6 @@ import java.util.Map;
  * @author     Raymond Augé
  * @author     Michael C. Han
  * @deprecated As of Wilberforce (7.0.x), replaced by {@link
- *             IndexWriterHelperUtil, IndexSearcherHelperUtil,
  *             SearchEngineHelperUtil}
  */
 @Deprecated

@@ -25,8 +25,8 @@
 				CIWarehouseItem.commerceInventoryWarehouseId = CIWarehouse.CIWarehouseId
 			WHERE
 				(Group_.groupId = ?) AND
-				(CIWarehouseItem.sku = ?)
-				(CIWarehouse.active_ = 1)
+				(CIWarehouseItem.sku = ?) AND
+				(CIWarehouse.active_ = [$TRUE$])
 		]]>
 	</sql>
 	<sql id="com.liferay.commerce.inventory.service.persistence.CommerceInventoryWarehouseFinder.findByC_G_A">
@@ -59,9 +59,14 @@
 				SUM(CIWarehouseItem.quantity - CIWarehouseItem.reservedQuantity)  AS SUM_VALUE
 			FROM
 				CIWarehouseItem
+			INNER JOIN
+				CIWarehouse
+			ON
+				CIWarehouseItem.commerceInventoryWarehouseId = CIWarehouse.CIWarehouseId
 			WHERE
 				(CIWarehouseItem.companyId = ?) AND
-				(CIWarehouseItem.sku = ?)
+				(CIWarehouseItem.sku = ?) AND
+				(CIWarehouse.active_ = [$TRUE$])
 		]]>
 	</sql>
 	<sql id="com.liferay.commerce.inventory.service.persistence.CommerceInventoryWarehouseItemFinder.countStockQuantityByC_G_S">
@@ -82,10 +87,39 @@
 				Group_
 			ON
 				CommerceChannel.commerceChannelId = Group_.classPK
+			INNER JOIN
+				CIWarehouse
+			ON
+				CIWarehouseItem.commerceInventoryWarehouseId = CIWarehouse.CIWarehouseId
 			WHERE
 				(CIWarehouseItem.companyId = ?) AND
 				(Group_.groupId = ?) AND
-				(CIWarehouseItem.sku = ?)
+				(CIWarehouseItem.sku = ?) AND
+				(CIWarehouse.active_ = [$TRUE$])
+		]]>
+	</sql>
+	<sql id="com.liferay.commerce.inventory.service.persistence.CommerceInventoryWarehouseItemFinder.countUpdatedItemsByC_M">
+		<![CDATA[
+			SELECT
+				COUNT(DISTINCT CIWarehouseItem.CIWarehouseItemId) AS COUNT_VALUE
+			FROM
+				CIWarehouseItem
+			WHERE
+				(CIWarehouseItem.companyId = ?) AND
+				(CIWarehouseItem.modifiedDate BETWEEN ? AND ?)
+		]]>
+	</sql>
+	<sql id="com.liferay.commerce.inventory.service.persistence.CommerceInventoryWarehouseItemFinder.findUpdatedItemsByC_M">
+		<![CDATA[
+			SELECT
+				CIWarehouseItem.*
+			FROM
+				CIWarehouseItem
+			WHERE
+				(CIWarehouseItem.companyId = ?) AND
+				(CIWarehouseItem.modifiedDate BETWEEN ? AND ?)
+			ORDER BY
+				CIWarehouseItem.sku ASC
 		]]>
 	</sql>
 </custom-sql>

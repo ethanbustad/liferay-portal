@@ -97,19 +97,35 @@ public class Mutation {
 			userResourceComponentServiceObjects;
 	}
 
-	@GraphQLField
 	@GraphQLInvokeDetached
-	@GraphQLName("postAccountLogoIdMultipartBody")
-	public Response postAccountLogo(
-			@GraphQLName("id") Long id,
-			@GraphQLName("multipartBody") MultipartBody multipartBody)
+	public Response deleteAccountGroupByExternalReferenceCodeAccount(
+			@GraphQLName("accountExternalReferenceCode") String
+				accountExternalReferenceCode,
+			@GraphQLName("externalReferenceCode") String externalReferenceCode)
 		throws Exception {
 
 		return _applyComponentServiceObjects(
 			_accountResourceComponentServiceObjects,
 			this::_populateResourceContext,
-			accountResource -> accountResource.postAccountLogo(
-				id, multipartBody));
+			accountResource ->
+				accountResource.
+					deleteAccountGroupByExternalReferenceCodeAccount(
+						accountExternalReferenceCode, externalReferenceCode));
+	}
+
+	@GraphQLField
+	@GraphQLInvokeDetached
+	public Response postAccountGroupByExternalReferenceCodeAccount(
+			@GraphQLName("externalReferenceCode") String externalReferenceCode,
+			@GraphQLName("account") Account account)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_accountResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			accountResource ->
+				accountResource.postAccountGroupByExternalReferenceCodeAccount(
+					externalReferenceCode, account));
 	}
 
 	@GraphQLField
@@ -128,25 +144,6 @@ public class Mutation {
 			accountResource ->
 				accountResource.postAccountByExternalReferenceCodeLogo(
 					externalReferenceCode, multipartBody));
-	}
-
-	@GraphQLInvokeDetached
-	public Response deleteAccount(@GraphQLName("id") Long id) throws Exception {
-		return _applyComponentServiceObjects(
-			_accountResourceComponentServiceObjects,
-			this::_populateResourceContext,
-			accountResource -> accountResource.deleteAccount(id));
-	}
-
-	@GraphQLInvokeDetached
-	public Response patchAccount(
-			@GraphQLName("id") Long id, @GraphQLName("account") Account account)
-		throws Exception {
-
-		return _applyComponentServiceObjects(
-			_accountResourceComponentServiceObjects,
-			this::_populateResourceContext,
-			accountResource -> accountResource.patchAccount(id, account));
 	}
 
 	@GraphQLInvokeDetached
@@ -178,6 +175,40 @@ public class Mutation {
 
 	@GraphQLField
 	@GraphQLInvokeDetached
+	@GraphQLName("postAccountLogoIdMultipartBody")
+	public Response postAccountLogo(
+			@GraphQLName("id") Long id,
+			@GraphQLName("multipartBody") MultipartBody multipartBody)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_accountResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			accountResource -> accountResource.postAccountLogo(
+				id, multipartBody));
+	}
+
+	@GraphQLInvokeDetached
+	public Response deleteAccount(@GraphQLName("id") Long id) throws Exception {
+		return _applyComponentServiceObjects(
+			_accountResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			accountResource -> accountResource.deleteAccount(id));
+	}
+
+	@GraphQLInvokeDetached
+	public Response patchAccount(
+			@GraphQLName("id") Long id, @GraphQLName("account") Account account)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_accountResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			accountResource -> accountResource.patchAccount(id, account));
+	}
+
+	@GraphQLField
+	@GraphQLInvokeDetached
 	public Account postAccount(@GraphQLName("account") Account account)
 		throws Exception {
 
@@ -188,27 +219,74 @@ public class Mutation {
 	}
 
 	@GraphQLInvokeDetached
-	public Response deleteAccountGroup(@GraphQLName("id") Long id)
+	public Response deleteAccountAddressByExternalReferenceCode(
+			@GraphQLName("externalReferenceCode") String externalReferenceCode)
 		throws Exception {
 
 		return _applyComponentServiceObjects(
-			_accountGroupResourceComponentServiceObjects,
+			_accountAddressResourceComponentServiceObjects,
 			this::_populateResourceContext,
-			accountGroupResource -> accountGroupResource.deleteAccountGroup(
-				id));
+			accountAddressResource ->
+				accountAddressResource.
+					deleteAccountAddressByExternalReferenceCode(
+						externalReferenceCode));
 	}
 
 	@GraphQLInvokeDetached
-	public Response patchAccountGroup(
-			@GraphQLName("id") Long id,
-			@GraphQLName("accountGroup") AccountGroup accountGroup)
+	public Response patchAccountAddressByExternalReferenceCode(
+			@GraphQLName("externalReferenceCode") String externalReferenceCode,
+			@GraphQLName("accountAddress") AccountAddress accountAddress)
 		throws Exception {
 
 		return _applyComponentServiceObjects(
-			_accountGroupResourceComponentServiceObjects,
+			_accountAddressResourceComponentServiceObjects,
 			this::_populateResourceContext,
-			accountGroupResource -> accountGroupResource.patchAccountGroup(
-				id, accountGroup));
+			accountAddressResource ->
+				accountAddressResource.
+					patchAccountAddressByExternalReferenceCode(
+						externalReferenceCode, accountAddress));
+	}
+
+	@GraphQLInvokeDetached
+	public Response deleteAccountAddress(@GraphQLName("id") Long id)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_accountAddressResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			accountAddressResource ->
+				accountAddressResource.deleteAccountAddress(id));
+	}
+
+	@GraphQLField
+	@GraphQLInvokeDetached
+	public AccountAddress postAccountByExternalReferenceCodeAccountAddress(
+			@GraphQLName("externalReferenceCode") String externalReferenceCode,
+			@GraphQLName("accountAddress") AccountAddress accountAddress)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_accountAddressResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			accountAddressResource ->
+				accountAddressResource.
+					postAccountByExternalReferenceCodeAccountAddress(
+						externalReferenceCode, accountAddress));
+	}
+
+	@GraphQLField
+	@GraphQLInvokeDetached
+	public AccountAddress postAccountIdAccountAddress(
+			@GraphQLName("id") Long id,
+			@GraphQLName("accountAddress") AccountAddress accountAddress)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_accountAddressResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			accountAddressResource ->
+				accountAddressResource.postAccountIdAccountAddress(
+					id, accountAddress));
 	}
 
 	@GraphQLInvokeDetached
@@ -238,6 +316,30 @@ public class Mutation {
 					externalReferenceCode, accountGroup));
 	}
 
+	@GraphQLInvokeDetached
+	public Response deleteAccountGroup(@GraphQLName("id") Long id)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_accountGroupResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			accountGroupResource -> accountGroupResource.deleteAccountGroup(
+				id));
+	}
+
+	@GraphQLInvokeDetached
+	public Response patchAccountGroup(
+			@GraphQLName("id") Long id,
+			@GraphQLName("accountGroup") AccountGroup accountGroup)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_accountGroupResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			accountGroupResource -> accountGroupResource.patchAccountGroup(
+				id, accountGroup));
+	}
+
 	@GraphQLField
 	@GraphQLInvokeDetached
 	public AccountGroup postAccountGroup(
@@ -249,63 +351,6 @@ public class Mutation {
 			this::_populateResourceContext,
 			accountGroupResource -> accountGroupResource.postAccountGroup(
 				accountGroup));
-	}
-
-	@GraphQLField
-	@GraphQLInvokeDetached
-	public User postAccountByExternalReferenceCodeAccountMemberCreateUser(
-			@GraphQLName("externalReferenceCode") String externalReferenceCode,
-			@GraphQLName("user") User user)
-		throws Exception {
-
-		return _applyComponentServiceObjects(
-			_userResourceComponentServiceObjects,
-			this::_populateResourceContext,
-			userResource ->
-				userResource.
-					postAccountByExternalReferenceCodeAccountMemberCreateUser(
-						externalReferenceCode, user));
-	}
-
-	@GraphQLField
-	@GraphQLInvokeDetached
-	public AccountMember postAccountIdAccountMember(
-			@GraphQLName("id") Long id,
-			@GraphQLName("accountMember") AccountMember accountMember)
-		throws Exception {
-
-		return _applyComponentServiceObjects(
-			_accountMemberResourceComponentServiceObjects,
-			this::_populateResourceContext,
-			accountMemberResource ->
-				accountMemberResource.postAccountIdAccountMember(
-					id, accountMember));
-	}
-
-	@GraphQLInvokeDetached
-	public Response deleteAccountIdAccountMember(
-			@GraphQLName("id") Long id, @GraphQLName("userId") Long userId)
-		throws Exception {
-
-		return _applyComponentServiceObjects(
-			_accountMemberResourceComponentServiceObjects,
-			this::_populateResourceContext,
-			accountMemberResource ->
-				accountMemberResource.deleteAccountIdAccountMember(id, userId));
-	}
-
-	@GraphQLInvokeDetached
-	public Response patchAccountIdAccountMember(
-			@GraphQLName("id") Long id, @GraphQLName("userId") Long userId,
-			@GraphQLName("accountMember") AccountMember accountMember)
-		throws Exception {
-
-		return _applyComponentServiceObjects(
-			_accountMemberResourceComponentServiceObjects,
-			this::_populateResourceContext,
-			accountMemberResource ->
-				accountMemberResource.patchAccountIdAccountMember(
-					id, userId, accountMember));
 	}
 
 	@GraphQLInvokeDetached
@@ -355,34 +400,45 @@ public class Mutation {
 						externalReferenceCode, accountMember));
 	}
 
-	@GraphQLField
 	@GraphQLInvokeDetached
-	public AccountOrganization postAccountIdAccountOrganization(
-			@GraphQLName("id") Long id,
-			@GraphQLName("accountOrganization") AccountOrganization
-				accountOrganization)
+	public Response deleteAccountIdAccountMember(
+			@GraphQLName("id") Long id, @GraphQLName("userId") Long userId)
 		throws Exception {
 
 		return _applyComponentServiceObjects(
-			_accountOrganizationResourceComponentServiceObjects,
+			_accountMemberResourceComponentServiceObjects,
 			this::_populateResourceContext,
-			accountOrganizationResource ->
-				accountOrganizationResource.postAccountIdAccountOrganization(
-					id, accountOrganization));
+			accountMemberResource ->
+				accountMemberResource.deleteAccountIdAccountMember(id, userId));
 	}
 
 	@GraphQLInvokeDetached
-	public Response deleteAccountIdAccountOrganization(
-			@GraphQLName("id") Long id,
-			@GraphQLName("organizationId") Long organizationId)
+	public Response patchAccountIdAccountMember(
+			@GraphQLName("id") Long id, @GraphQLName("userId") Long userId,
+			@GraphQLName("accountMember") AccountMember accountMember)
 		throws Exception {
 
 		return _applyComponentServiceObjects(
-			_accountOrganizationResourceComponentServiceObjects,
+			_accountMemberResourceComponentServiceObjects,
 			this::_populateResourceContext,
-			accountOrganizationResource ->
-				accountOrganizationResource.deleteAccountIdAccountOrganization(
-					id, organizationId));
+			accountMemberResource ->
+				accountMemberResource.patchAccountIdAccountMember(
+					id, userId, accountMember));
+	}
+
+	@GraphQLField
+	@GraphQLInvokeDetached
+	public AccountMember postAccountIdAccountMember(
+			@GraphQLName("id") Long id,
+			@GraphQLName("accountMember") AccountMember accountMember)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_accountMemberResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			accountMemberResource ->
+				accountMemberResource.postAccountIdAccountMember(
+					id, accountMember));
 	}
 
 	@GraphQLInvokeDetached
@@ -420,45 +476,49 @@ public class Mutation {
 	}
 
 	@GraphQLInvokeDetached
-	public Response deleteAccountAddress(@GraphQLName("id") Long id)
-		throws Exception {
-
-		return _applyComponentServiceObjects(
-			_accountAddressResourceComponentServiceObjects,
-			this::_populateResourceContext,
-			accountAddressResource ->
-				accountAddressResource.deleteAccountAddress(id));
-	}
-
-	@GraphQLField
-	@GraphQLInvokeDetached
-	public AccountAddress postAccountIdAccountAddress(
+	public Response deleteAccountIdAccountOrganization(
 			@GraphQLName("id") Long id,
-			@GraphQLName("accountAddress") AccountAddress accountAddress)
+			@GraphQLName("organizationId") Long organizationId)
 		throws Exception {
 
 		return _applyComponentServiceObjects(
-			_accountAddressResourceComponentServiceObjects,
+			_accountOrganizationResourceComponentServiceObjects,
 			this::_populateResourceContext,
-			accountAddressResource ->
-				accountAddressResource.postAccountIdAccountAddress(
-					id, accountAddress));
+			accountOrganizationResource ->
+				accountOrganizationResource.deleteAccountIdAccountOrganization(
+					id, organizationId));
 	}
 
 	@GraphQLField
 	@GraphQLInvokeDetached
-	public AccountAddress postAccountByExternalReferenceCodeAccountAddress(
-			@GraphQLName("externalReferenceCode") String externalReferenceCode,
-			@GraphQLName("accountAddress") AccountAddress accountAddress)
+	public AccountOrganization postAccountIdAccountOrganization(
+			@GraphQLName("id") Long id,
+			@GraphQLName("accountOrganization") AccountOrganization
+				accountOrganization)
 		throws Exception {
 
 		return _applyComponentServiceObjects(
-			_accountAddressResourceComponentServiceObjects,
+			_accountOrganizationResourceComponentServiceObjects,
 			this::_populateResourceContext,
-			accountAddressResource ->
-				accountAddressResource.
-					postAccountByExternalReferenceCodeAccountAddress(
-						externalReferenceCode, accountAddress));
+			accountOrganizationResource ->
+				accountOrganizationResource.postAccountIdAccountOrganization(
+					id, accountOrganization));
+	}
+
+	@GraphQLField
+	@GraphQLInvokeDetached
+	public User postAccountByExternalReferenceCodeAccountMemberCreateUser(
+			@GraphQLName("externalReferenceCode") String externalReferenceCode,
+			@GraphQLName("user") User user)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_userResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			userResource ->
+				userResource.
+					postAccountByExternalReferenceCodeAccountMemberCreateUser(
+						externalReferenceCode, user));
 	}
 
 	private <T, R, E1 extends Throwable, E2 extends Throwable> R

@@ -34,6 +34,7 @@ create table CPDefinitionInventory (
 );
 
 create table CommerceAddress (
+	externalReferenceCode VARCHAR(75) null,
 	commerceAddressId LONG not null primary key,
 	groupId LONG,
 	companyId LONG,
@@ -149,9 +150,11 @@ create table CommerceOrder (
 	totalDiscountPercentageLevel4 DECIMAL(30, 16) null,
 	advanceStatus VARCHAR(75) null,
 	paymentStatus INTEGER,
+	orderDate DATE null,
 	orderStatus INTEGER,
-	printedNote VARCHAR(75) null,
+	printedNote STRING null,
 	requestedDeliveryDate DATE null,
+	manuallyAdjusted BOOLEAN,
 	status INTEGER,
 	statusByUserId LONG,
 	statusByUserName VARCHAR(75) null,
@@ -186,9 +189,10 @@ create table CommerceOrderItem (
 	subscription BOOLEAN,
 	deliveryGroup VARCHAR(75) null,
 	shippingAddressId LONG,
-	printedNote VARCHAR(75) null,
+	printedNote STRING null,
 	requestedDeliveryDate DATE null,
-	bookedQuantityId LONG
+	bookedQuantityId LONG,
+	manuallyAdjusted BOOLEAN
 );
 
 create table CommerceOrderNote (
@@ -249,9 +253,9 @@ create table CommerceShipment (
 	shippingOptionName VARCHAR(75) null,
 	carrier VARCHAR(75) null,
 	trackingNumber VARCHAR(75) null,
-	status INTEGER,
 	shippingDate DATE null,
-	expectedDate DATE null
+	expectedDate DATE null,
+	status INTEGER
 );
 
 create table CommerceShipmentItem (

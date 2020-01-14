@@ -16,6 +16,8 @@ package com.liferay.headless.commerce.admin.catalog.resource.v1_0;
 
 import com.liferay.headless.commerce.admin.catalog.dto.v1_0.Catalog;
 import com.liferay.portal.kernel.model.Company;
+import com.liferay.portal.kernel.search.Sort;
+import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
 
@@ -34,12 +36,6 @@ import javax.ws.rs.core.Response;
 @Generated("")
 public interface CatalogResource {
 
-	public Response deleteCatalog(Long id) throws Exception;
-
-	public Catalog getCatalog(Long id) throws Exception;
-
-	public Response patchCatalog(Long id, Catalog catalog) throws Exception;
-
 	public Response deleteCatalogByExternalReferenceCode(
 			String externalReferenceCode)
 		throws Exception;
@@ -52,7 +48,14 @@ public interface CatalogResource {
 			String externalReferenceCode, Catalog catalog)
 		throws Exception;
 
-	public Page<Catalog> getCatalogsPage(Pagination pagination)
+	public Response deleteCatalog(Long id) throws Exception;
+
+	public Catalog getCatalog(Long id) throws Exception;
+
+	public Response patchCatalog(Long id, Catalog catalog) throws Exception;
+
+	public Page<Catalog> getCatalogsPage(
+			Filter filter, Pagination pagination, Sort[] sorts)
 		throws Exception;
 
 	public Catalog postCatalog(Catalog catalog) throws Exception;

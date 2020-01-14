@@ -97,7 +97,7 @@ public class UpgradeExecutor {
 			bundleSymbolicName,
 			new UpgradeInfosRunnable(
 				bundleSymbolicName, upgradeInfos,
-				() -> _swappedLogExecutor.getOutputStream()));
+				_swappedLogExecutor::getOutputStream));
 
 		release = _releaseLocalService.fetchRelease(bundleSymbolicName);
 

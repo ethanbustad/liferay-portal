@@ -61,51 +61,6 @@ public abstract class BaseOrderResourceImpl implements OrderResource {
 
 	@Override
 	@DELETE
-	@Parameters(value = {@Parameter(in = ParameterIn.PATH, name = "id")})
-	@Path("/orders/{id}")
-	@Produces({"application/json", "application/xml"})
-	@Tags(value = {@Tag(name = "Order")})
-	public Response deleteOrder(
-			@NotNull @Parameter(hidden = true) @PathParam("id") Long id)
-		throws Exception {
-
-		Response.ResponseBuilder responseBuilder = Response.ok();
-
-		return responseBuilder.build();
-	}
-
-	@Override
-	@GET
-	@Parameters(value = {@Parameter(in = ParameterIn.PATH, name = "id")})
-	@Path("/orders/{id}")
-	@Produces({"application/json", "application/xml"})
-	@Tags(value = {@Tag(name = "Order")})
-	public Order getOrder(
-			@NotNull @Parameter(hidden = true) @PathParam("id") Long id)
-		throws Exception {
-
-		return new Order();
-	}
-
-	@Override
-	@Consumes({"application/json", "application/xml"})
-	@PATCH
-	@Parameters(value = {@Parameter(in = ParameterIn.PATH, name = "id")})
-	@Path("/orders/{id}")
-	@Produces({"application/json", "application/xml"})
-	@Tags(value = {@Tag(name = "Order")})
-	public Response patchOrder(
-			@NotNull @Parameter(hidden = true) @PathParam("id") Long id,
-			Order order)
-		throws Exception {
-
-		Response.ResponseBuilder responseBuilder = Response.ok();
-
-		return responseBuilder.build();
-	}
-
-	@Override
-	@DELETE
 	@Parameters(
 		value = {
 			@Parameter(in = ParameterIn.PATH, name = "externalReferenceCode")
@@ -165,6 +120,51 @@ public abstract class BaseOrderResourceImpl implements OrderResource {
 	}
 
 	@Override
+	@DELETE
+	@Parameters(value = {@Parameter(in = ParameterIn.PATH, name = "id")})
+	@Path("/orders/{id}")
+	@Produces({"application/json", "application/xml"})
+	@Tags(value = {@Tag(name = "Order")})
+	public Response deleteOrder(
+			@NotNull @Parameter(hidden = true) @PathParam("id") Long id)
+		throws Exception {
+
+		Response.ResponseBuilder responseBuilder = Response.ok();
+
+		return responseBuilder.build();
+	}
+
+	@Override
+	@GET
+	@Parameters(value = {@Parameter(in = ParameterIn.PATH, name = "id")})
+	@Path("/orders/{id}")
+	@Produces({"application/json", "application/xml"})
+	@Tags(value = {@Tag(name = "Order")})
+	public Order getOrder(
+			@NotNull @Parameter(hidden = true) @PathParam("id") Long id)
+		throws Exception {
+
+		return new Order();
+	}
+
+	@Override
+	@Consumes({"application/json", "application/xml"})
+	@PATCH
+	@Parameters(value = {@Parameter(in = ParameterIn.PATH, name = "id")})
+	@Path("/orders/{id}")
+	@Produces({"application/json", "application/xml"})
+	@Tags(value = {@Tag(name = "Order")})
+	public Response patchOrder(
+			@NotNull @Parameter(hidden = true) @PathParam("id") Long id,
+			Order order)
+		throws Exception {
+
+		Response.ResponseBuilder responseBuilder = Response.ok();
+
+		return responseBuilder.build();
+	}
+
+	@Override
 	@GET
 	@Parameters(
 		value = {
@@ -174,7 +174,7 @@ public abstract class BaseOrderResourceImpl implements OrderResource {
 			@Parameter(in = ParameterIn.QUERY, name = "sort")
 		}
 	)
-	@Path("/orders/")
+	@Path("/orders")
 	@Produces({"application/json", "application/xml"})
 	@Tags(value = {@Tag(name = "Order")})
 	public Page<Order> getOrdersPage(
@@ -188,7 +188,7 @@ public abstract class BaseOrderResourceImpl implements OrderResource {
 	@Override
 	@Consumes({"application/json", "application/xml"})
 	@POST
-	@Path("/orders/")
+	@Path("/orders")
 	@Produces({"application/json", "application/xml"})
 	@Tags(value = {@Tag(name = "Order")})
 	public Order postOrder(Order order) throws Exception {

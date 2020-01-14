@@ -49,6 +49,7 @@ import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.util.CalendarFactoryUtil;
 import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
 
 import java.io.Serializable;
 
@@ -93,6 +94,14 @@ public class CPTestUtil {
 		return assetCategory;
 	}
 
+	public static CPDefinition addCPDefinition(long groupId)
+		throws PortalException {
+
+		return _addCPDefinition(
+			groupId, SimpleCPTypeConstants.NAME, true, true,
+			ServiceContextTestUtil.getServiceContext(groupId));
+	}
+
 	public static CPDefinition addCPDefinition(
 			long groupId, boolean ignoreSKUCombinations,
 			boolean hasDefaultInstance, int workflowAction)
@@ -118,6 +127,16 @@ public class CPTestUtil {
 			ServiceContextTestUtil.getServiceContext(groupId));
 	}
 
+	public static CPDefinition addCPDefinitionFromCatalog(
+			long groupId, String productTypeName, boolean ignoreSKUCombinations,
+			boolean hasDefaultInstance)
+		throws PortalException {
+
+		return _addCPDefinition(
+			groupId, productTypeName, ignoreSKUCombinations, hasDefaultInstance,
+			ServiceContextTestUtil.getServiceContext(groupId));
+	}
+
 	public static CPDefinitionOptionRel addCPDefinitionOptionRel(
 			long groupId, long cpDefinitionId, long cpOptionId)
 		throws PortalException {
@@ -125,6 +144,15 @@ public class CPTestUtil {
 		return CPDefinitionOptionRelLocalServiceUtil.addCPDefinitionOptionRel(
 			cpDefinitionId, cpOptionId, true,
 			ServiceContextTestUtil.getServiceContext(groupId));
+	}
+
+	public static CPInstance addCPInstance() throws PortalException {
+		CPDefinition cpDefinition = _addCPDefinition(
+			SimpleCPTypeConstants.NAME, true, true,
+			ServiceContextTestUtil.getServiceContext());
+
+		return CPInstanceLocalServiceUtil.getCPInstance(
+			cpDefinition.getCPDefinitionId(), CPInstanceConstants.DEFAULT_SKU);
 	}
 
 	public static CPInstance addCPInstance(long groupId)
@@ -136,6 +164,87 @@ public class CPTestUtil {
 
 		return CPInstanceLocalServiceUtil.getCPInstance(
 			cpDefinition.getCPDefinitionId(), CPInstanceConstants.DEFAULT_SKU);
+	}
+
+	public static CPInstance addCPInstanceFromCatalog(long groupId)
+		throws PortalException {
+
+		CPDefinition cpDefinition = _addCPDefinition(
+			groupId, SimpleCPTypeConstants.NAME, true, true,
+			ServiceContextTestUtil.getServiceContext(groupId));
+
+		return CPInstanceLocalServiceUtil.getCPInstance(
+			cpDefinition.getCPDefinitionId(), CPInstanceConstants.DEFAULT_SKU);
+	}
+
+	public static CPInstance addCPInstanceWithRandomSku(long groupId)
+		throws PortalException {
+
+		String sku = RandomTestUtil.randomString();
+
+		CPDefinition cpDefinition = _addCPDefinitionWithSku(
+			SimpleCPTypeConstants.NAME, true,
+			ServiceContextTestUtil.getServiceContext(groupId), sku);
+
+		return CPInstanceLocalServiceUtil.getCPInstance(
+			cpDefinition.getCPDefinitionId(), sku);
+	}
+
+	public static CPInstance addCPInstanceWithSku() throws PortalException {
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext();
+
+		User user = UserLocalServiceUtil.getUser(serviceContext.getUserId());
+
+		CPDefinition cpDefinition = _addCPDefinition(
+			SimpleCPTypeConstants.NAME, true, true, serviceContext);
+
+		long now = System.currentTimeMillis();
+
+		Date displayDate = new Date(now - Time.HOUR);
+		Date expirationDate = new Date(now + Time.DAY);
+
+		Calendar displayCalendar = CalendarFactoryUtil.getCalendar(
+			user.getTimeZone());
+
+		displayCalendar.setTime(displayDate);
+
+		int displayDateMonth = displayCalendar.get(Calendar.MONTH);
+		int displayDateDay = displayCalendar.get(Calendar.DATE);
+		int displayDateYear = displayCalendar.get(Calendar.YEAR);
+		int displayDateHour = displayCalendar.get(Calendar.HOUR);
+		int displayDateMinute = displayCalendar.get(Calendar.MINUTE);
+
+		if (displayCalendar.get(Calendar.AM_PM) == Calendar.PM) {
+			displayDateHour += 12;
+		}
+
+		Calendar expirationCalendar = CalendarFactoryUtil.getCalendar(
+			user.getTimeZone());
+
+		expirationCalendar.setTime(expirationDate);
+
+		int expirationDateMonth = expirationCalendar.get(Calendar.MONTH);
+		int expirationDateDay = expirationCalendar.get(Calendar.DATE);
+		int expirationDateYear = expirationCalendar.get(Calendar.YEAR);
+		int expirationDateHour = expirationCalendar.get(Calendar.HOUR);
+		int expirationDateMinute = expirationCalendar.get(Calendar.MINUTE);
+
+		if (expirationCalendar.get(Calendar.AM_PM) == Calendar.PM) {
+			expirationDateHour += 12;
+		}
+
+		CPInstance cpInstance = CPInstanceLocalServiceUtil.addCPInstance(
+			cpDefinition.getCPDefinitionId(), cpDefinition.getGroupId(),
+			RandomTestUtil.randomString(), RandomTestUtil.randomString(),
+			RandomTestUtil.randomString(), true, null, true, displayDateMonth,
+			displayDateDay, displayDateYear, displayDateHour, displayDateMinute,
+			expirationDateMonth, expirationDateDay, expirationDateYear,
+			expirationDateHour, expirationDateMinute, true, serviceContext);
+
+		cpInstance.setStatus(WorkflowConstants.STATUS_APPROVED);
+
+		return CPInstanceLocalServiceUtil.updateCPInstance(cpInstance);
 	}
 
 	public static CPOption addCPOption(long groupId, boolean skuContributor)
@@ -215,8 +324,126 @@ public class CPTestUtil {
 	}
 
 	private static CPDefinition _addCPDefinition(
+			long groupId, String productTypeName, boolean ignoreSKUCombinations,
+			boolean hasDefaultInstance, ServiceContext serviceContext)
+		throws PortalException {
+
+		String defaultSku = null;
+
+		if (hasDefaultInstance) {
+			defaultSku = CPInstanceConstants.DEFAULT_SKU;
+		}
+
+		return _addCPDefinitionWithSku(
+			groupId, productTypeName, ignoreSKUCombinations, serviceContext,
+			defaultSku);
+	}
+
+	private static CPDefinition _addCPDefinition(
 			String productTypeName, boolean ignoreSKUCombinations,
 			boolean hasDefaultInstance, ServiceContext serviceContext)
+		throws PortalException {
+
+		User user = UserLocalServiceUtil.getUser(serviceContext.getUserId());
+
+		List<CommerceCatalog> commerceCatalogs =
+			CommerceCatalogLocalServiceUtil.getCommerceCatalogs(
+				user.getCompanyId(), true);
+
+		CommerceCatalog commerceCatalog = commerceCatalogs.get(0);
+
+		return _addCPDefinition(
+			commerceCatalog.getGroupId(), productTypeName,
+			ignoreSKUCombinations, hasDefaultInstance,
+			ServiceContextTestUtil.getServiceContext(
+				commerceCatalog.getGroupId()));
+	}
+
+	private static CPDefinition _addCPDefinitionWithSku(
+			long groupId, String productTypeName, boolean ignoreSKUCombinations,
+			ServiceContext serviceContext, String sku)
+		throws PortalException {
+
+		User user = UserLocalServiceUtil.getUser(serviceContext.getUserId());
+
+		long now = System.currentTimeMillis();
+
+		Map<Locale, String> titleMap = RandomTestUtil.randomLocaleStringMap();
+		Map<Locale, String> shortDescriptionMap =
+			RandomTestUtil.randomLocaleStringMap();
+		Map<Locale, String> descriptionMap =
+			RandomTestUtil.randomLocaleStringMap();
+		Map<Locale, String> metaTitleMap =
+			RandomTestUtil.randomLocaleStringMap();
+		Map<Locale, String> metaKeywordsMap =
+			RandomTestUtil.randomLocaleStringMap();
+		Map<Locale, String> metaDescriptionMap =
+			RandomTestUtil.randomLocaleStringMap();
+		Map<Locale, String> urlTitleMap =
+			RandomTestUtil.randomLocaleStringMap();
+		boolean shippable = RandomTestUtil.randomBoolean();
+		boolean freeShipping = RandomTestUtil.randomBoolean();
+		boolean shipSeparately = RandomTestUtil.randomBoolean();
+		double shippingExtraPrice = RandomTestUtil.randomDouble();
+		double width = RandomTestUtil.randomDouble();
+		double height = RandomTestUtil.randomDouble();
+		double depth = RandomTestUtil.randomDouble();
+		double weight = RandomTestUtil.randomDouble();
+		long cpTaxCategoryId = 0;
+		boolean taxExempt = RandomTestUtil.randomBoolean();
+		boolean telcoOrElectronics = RandomTestUtil.randomBoolean();
+		String ddmStructureKey = null;
+		boolean published = true;
+
+		Date displayDate = new Date(now - Time.HOUR);
+		Date expirationDate = new Date(now + Time.DAY);
+
+		Calendar displayCal = CalendarFactoryUtil.getCalendar(
+			user.getTimeZone());
+
+		displayCal.setTime(displayDate);
+
+		int displayDateMonth = displayCal.get(Calendar.MONTH);
+		int displayDateDay = displayCal.get(Calendar.DATE);
+		int displayDateYear = displayCal.get(Calendar.YEAR);
+		int displayDateHour = displayCal.get(Calendar.HOUR);
+		int displayDateMinute = displayCal.get(Calendar.MINUTE);
+
+		if (displayCal.get(Calendar.AM_PM) == Calendar.PM) {
+			displayDateHour += 12;
+		}
+
+		Calendar expirationCal = CalendarFactoryUtil.getCalendar(
+			user.getTimeZone());
+
+		expirationCal.setTime(expirationDate);
+
+		int expirationDateMonth = expirationCal.get(Calendar.MONTH);
+		int expirationDateDay = expirationCal.get(Calendar.DATE);
+		int expirationDateYear = expirationCal.get(Calendar.YEAR);
+		int expirationDateHour = expirationCal.get(Calendar.HOUR);
+		int expirationDateMinute = expirationCal.get(Calendar.MINUTE);
+
+		if (expirationCal.get(Calendar.AM_PM) == Calendar.PM) {
+			expirationDateHour += 12;
+		}
+
+		return CPDefinitionLocalServiceUtil.addCPDefinition(
+			groupId, user.getUserId(), titleMap, shortDescriptionMap,
+			descriptionMap, urlTitleMap, metaTitleMap, metaKeywordsMap,
+			metaDescriptionMap, productTypeName, ignoreSKUCombinations,
+			shippable, freeShipping, shipSeparately, shippingExtraPrice, width,
+			height, depth, weight, cpTaxCategoryId, taxExempt,
+			telcoOrElectronics, ddmStructureKey, published, displayDateMonth,
+			displayDateDay, displayDateYear, displayDateHour, displayDateMinute,
+			expirationDateMonth, expirationDateDay, expirationDateYear,
+			expirationDateHour, expirationDateMinute, false, sku, false, 0,
+			null, null, 0L, null, serviceContext);
+	}
+
+	private static CPDefinition _addCPDefinitionWithSku(
+			String productTypeName, boolean ignoreSKUCombinations,
+			ServiceContext serviceContext, String sku)
 		throws PortalException {
 
 		User user = UserLocalServiceUtil.getUser(serviceContext.getUserId());
@@ -289,12 +516,6 @@ public class CPTestUtil {
 			expirationDateHour += 12;
 		}
 
-		String defaultSku = null;
-
-		if (hasDefaultInstance) {
-			defaultSku = CPInstanceConstants.DEFAULT_SKU;
-		}
-
 		return CPDefinitionLocalServiceUtil.addCPDefinition(
 			commerceCatalog.getGroupId(), user.getUserId(), titleMap,
 			shortDescriptionMap, descriptionMap, urlTitleMap, metaTitleMap,
@@ -305,7 +526,7 @@ public class CPTestUtil {
 			displayDateMonth, displayDateDay, displayDateYear, displayDateHour,
 			displayDateMinute, expirationDateMonth, expirationDateDay,
 			expirationDateYear, expirationDateHour, expirationDateMinute, false,
-			defaultSku, false, 0, null, null, 0L, null, serviceContext);
+			sku, false, 0, null, null, 0L, null, serviceContext);
 	}
 
 }

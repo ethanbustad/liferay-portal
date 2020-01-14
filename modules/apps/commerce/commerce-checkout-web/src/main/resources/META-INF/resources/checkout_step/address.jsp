@@ -62,7 +62,7 @@ long commerceRegionId = BeanParamUtil.getLong(currentCommerceAddress, request, "
 		%>
 
 		<c:if test="<%= (currentCommerceAddress != null) && !addressWasFound %>">
-			<aui:option label='<%= currentCommerceAddress.getName() + " - " + LanguageUtil.get(request, "copied-from-previous-order") %>' selected="<%= true %>" value="<%= currentCommerceAddress.getCommerceAddressId() %>" />
+			<aui:option label="<%= currentCommerceAddress.getName() %>" selected="<%= true %>" value="<%= currentCommerceAddress.getCommerceAddressId() %>" />
 		</c:if>
 	</aui:select>
 
@@ -91,7 +91,9 @@ long commerceRegionId = BeanParamUtil.getLong(currentCommerceAddress, request, "
 	<div class="form-group-autofit">
 		<aui:input disabled="<%= commerceAddressId > 0 %>" label="" name="street1" placeholder="address" wrapperCssClass="form-group-item" />
 
-		<aui:select disabled="<%= commerceAddressId > 0 %>" label="" name="commerceCountryId" placeholder="country" title="country" wrapperCssClass="form-group-item" />
+		<aui:select disabled="<%= commerceAddressId > 0 %>" label="" name="commerceCountryId" placeholder="country" title="country" wrapperCssClass="form-group-item">
+			<aui:validator errorMessage='<%= LanguageUtil.get(request, "please-enter-a-valid-country") %>' name="min">1</aui:validator>
+		</aui:select>
 	</div>
 
 	<div class="add-street-link form-group-autofit">
@@ -147,7 +149,7 @@ long commerceRegionId = BeanParamUtil.getLong(currentCommerceAddress, request, "
 
 			A.all('.address-fields select').set('selectedIndex', 0);
 			A.all('.address-fields input').val('');
-			A.one('#<portlet:namespace />use-as-billing').attr('checked', true);
+			A.one('#<portlet:namespace />use-as-billing').attr('checked', <%= baseAddressCheckoutStepDisplayContext.isShippingUsedAsBilling() %>);
 		},
 		['aui-base']
 	);

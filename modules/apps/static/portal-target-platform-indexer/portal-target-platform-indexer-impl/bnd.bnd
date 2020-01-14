@@ -1,6 +1,6 @@
 Bundle-Name: Liferay Portal Target Platform Indexer Implementation
 Bundle-SymbolicName: com.liferay.portal.target.platform.indexer.impl
-Bundle-Version: 1.0.17
+Bundle-Version: 1.0.18
 Import-Package:\
 	!aQute.configurable,\
 	\

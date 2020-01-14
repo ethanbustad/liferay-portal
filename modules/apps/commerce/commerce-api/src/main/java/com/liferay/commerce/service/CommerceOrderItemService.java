@@ -78,6 +78,9 @@ public interface CommerceOrderItemService extends BaseService {
 			long commerceOrderItemId, CommerceContext commerceContext)
 		throws PortalException;
 
+	public void deleteCommerceOrderItems(long commerceOrderId)
+		throws PortalException;
+
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public CommerceOrderItem fetchByExternalReferenceCode(
 			long companyId, String externalReferenceCode)
@@ -163,6 +166,18 @@ public interface CommerceOrderItemService extends BaseService {
 			BigDecimal discountPercentageLevel2,
 			BigDecimal discountPercentageLevel3,
 			BigDecimal discountPercentageLevel4)
+		throws PortalException;
+
+	/**
+	 * @deprecated
+	 */
+	@Deprecated
+	public CommerceOrderItem updateCommerceOrderItemUnitPrice(
+			long commerceOrderItemId, BigDecimal unitPrice)
+		throws PortalException;
+
+	public CommerceOrderItem updateCommerceOrderItemUnitPrice(
+			long commerceOrderItemId, BigDecimal unitPrice, int quantity)
 		throws PortalException;
 
 	public CommerceOrderItem upsertCommerceOrderItem(

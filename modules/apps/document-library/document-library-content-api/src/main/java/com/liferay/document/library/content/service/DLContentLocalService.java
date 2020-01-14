@@ -270,6 +270,9 @@ public interface DLContentLocalService
 	public boolean hasContent(
 		long companyId, long repositoryId, String path, String version);
 
+	@Transactional(readOnly = true)
+	public InputStream openDataInputStream(long contentId);
+
 	/**
 	 * Updates the document library content in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	 *

@@ -104,6 +104,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
+import java.net.IDN;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -575,6 +577,11 @@ public class CompanyLocalServiceImpl extends CompanyLocalServiceBaseImpl {
 		VirtualHost virtualHost = virtualHostPersistence.fetchByHostname(
 			virtualHostname);
 
+		if ((virtualHost == null) && virtualHostname.startsWith("xn--")) {
+			virtualHost = virtualHostPersistence.fetchByHostname(
+				IDN.toUnicode(virtualHostname));
+		}
+
 		if ((virtualHost == null) || (virtualHost.getLayoutSetId() != 0)) {
 			return null;
 		}
@@ -670,6 +677,11 @@ public class CompanyLocalServiceImpl extends CompanyLocalServiceBaseImpl {
 
 			VirtualHost virtualHost = virtualHostPersistence.findByHostname(
 				virtualHostname);
+
+			if ((virtualHost == null) && virtualHostname.startsWith("xn--")) {
+				virtualHost = virtualHostPersistence.findByHostname(
+					IDN.toUnicode(virtualHostname));
+			}
 
 			if (virtualHost.getLayoutSetId() != 0) {
 				throw new CompanyVirtualHostException(

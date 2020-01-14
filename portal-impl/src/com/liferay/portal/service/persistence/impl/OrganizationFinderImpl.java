@@ -109,7 +109,7 @@ public class OrganizationFinderImpl
 	/**
 	 * @deprecated As of Judson (7.1.x), replaced by {@link
 	 *             #countO_ByKeywords(long, long, String, String, String, Long,
-	 *             Long, LinkedHashMap<String, Object>)}
+	 *             Long, LinkedHashMap)}
 	 */
 	@Deprecated
 	@Override
@@ -136,8 +136,8 @@ public class OrganizationFinderImpl
 	/**
 	 * @deprecated As of Judson (7.1.x), replaced by {@link
 	 *             #countO_ByC_PO_N_T_S_C_Z_R_C(long, long, String, String,
-	 *             String, String, String, String, Long, Long,
-	 *             LinkedHashMap<String, Object>, boolean)}
+	 *             String, String, String, String, Long, Long, LinkedHashMap,
+	 *             boolean)}
 	 */
 	@Deprecated
 	@Override
@@ -157,7 +157,7 @@ public class OrganizationFinderImpl
 	 * @deprecated As of Judson (7.1.x), replaced by {@link
 	 *             #countO_ByC_PO_N_T_S_C_Z_R_C(long, long, String, String[],
 	 *             String, String[], String[], String[], Long, Long,
-	 *             LinkedHashMap<String, Object>, boolean)}
+	 *             LinkedHashMap, boolean)}
 	 */
 	@Deprecated
 	@Override
@@ -449,8 +449,7 @@ public class OrganizationFinderImpl
 	/**
 	 * @deprecated As of Judson (7.1.x), replaced by {@link
 	 *             #findO_ByKeywords(long, long, String, String, String, Long,
-	 *             Long, LinkedHashMap<String, Object>, int, int,
-	 *             OrderByComparator<Organization>)}
+	 *             Long, LinkedHashMap, int, int, OrderByComparator)}
 	 */
 	@Deprecated
 	@Override
@@ -491,9 +490,8 @@ public class OrganizationFinderImpl
 	/**
 	 * @deprecated As of Judson (7.1.x), replaced by {@link
 	 *             #findO_ByC_PO_N_T_S_C_Z_R_C(long, long, String, String,
-	 *             String, String, String, String, Long, Long,
-	 *             LinkedHashMap<String, Object>, boolean, int, int,
-	 *             OrderByComparator<Organization>)}
+	 *             String, String, String, String, Long, Long, LinkedHashMap,
+	 *             boolean, int, int, OrderByComparator)}
 	 */
 	@Deprecated
 	@Override
@@ -514,8 +512,7 @@ public class OrganizationFinderImpl
 	 * @deprecated As of Judson (7.1.x), replaced by {@link
 	 *             #findO_ByC_PO_N_T_S_C_Z_R_C(long, long, String, String[],
 	 *             String, String[], String[], String[], Long, Long,
-	 *             LinkedHashMap<String, Object>, boolean, int, int
-	 *             OrderByComparator<Organization>)}
+	 *             LinkedHashMap, boolean, int, int, OrderByComparator)}
 	 */
 	@Deprecated
 	@Override

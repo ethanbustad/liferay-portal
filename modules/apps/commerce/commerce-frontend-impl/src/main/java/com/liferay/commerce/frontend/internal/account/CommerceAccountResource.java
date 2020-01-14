@@ -249,7 +249,10 @@ public class CommerceAccountResource {
 
 		try {
 			_commerceAccountHelper.setCurrentCommerceAccount(
-				httpServletRequest, groupId, accountId);
+				httpServletRequest,
+				_commerceChannelLocalService.
+					getCommerceChannelGroupIdBySiteGroupId(groupId),
+				accountId);
 		}
 		catch (Exception e) {
 			_log.error(e, e);
@@ -275,8 +278,8 @@ public class CommerceAccountResource {
 
 		List<CommerceAccount> userCommerceAccounts =
 			_commerceAccountService.getUserCommerceAccounts(
-				userId, parentAccountId, commerceSiteType, keywords, start,
-				end);
+				userId, parentAccountId, commerceSiteType, keywords, true,
+				start, end);
 
 		for (CommerceAccount commerceAccount : userCommerceAccounts) {
 			accounts.add(
@@ -312,7 +315,7 @@ public class CommerceAccountResource {
 	}
 
 	protected List<Order> getOrders(
-			long groupId, long accountId, int page, int pageSize,
+			long groupId, long commerceAccountId, int page, int pageSize,
 			HttpServletRequest httpServletRequest)
 		throws PortalException {
 
@@ -327,8 +330,8 @@ public class CommerceAccountResource {
 
 		List<CommerceOrder> userCommerceOrders =
 			_commerceOrderService.getPendingCommerceOrders(
-				commerceChannelGroupId, accountId, StringPool.BLANK, start,
-				end);
+				commerceChannelGroupId, commerceAccountId, StringPool.BLANK,
+				start, end);
 
 		for (CommerceOrder commerceOrder : userCommerceOrders) {
 			Date modifiedDate = commerceOrder.getModifiedDate();

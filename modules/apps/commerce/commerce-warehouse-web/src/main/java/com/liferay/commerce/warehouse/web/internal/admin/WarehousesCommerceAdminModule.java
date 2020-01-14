@@ -81,7 +81,7 @@ public class WarehousesCommerceAdminModule implements CommerceAdminModule {
 
 		portletURL.setParameter("commerceAdminModuleKey", KEY);
 		portletURL.setParameter(
-			"commerceCountryId",
+			"countryTwoLettersISOCode",
 			String.valueOf(
 				commerceInventoryWarehousesDisplayContext.
 					getCommerceCountryTwoLettersIsoCode()));
@@ -103,13 +103,9 @@ public class WarehousesCommerceAdminModule implements CommerceAdminModule {
 
 	@Override
 	public void render(
-			RenderRequest renderRequest, RenderResponse renderResponse)
+			HttpServletRequest httpServletRequest,
+			HttpServletResponse httpServletResponse)
 		throws IOException {
-
-		HttpServletRequest httpServletRequest = _portal.getHttpServletRequest(
-			renderRequest);
-		HttpServletResponse httpServletResponse =
-			_portal.getHttpServletResponse(renderResponse);
 
 		setCommerceInventoryWarehousesDisplayContext(httpServletRequest);
 

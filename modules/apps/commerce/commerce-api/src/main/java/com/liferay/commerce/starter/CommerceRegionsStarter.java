@@ -16,14 +16,19 @@ package com.liferay.commerce.starter;
 
 import aQute.bnd.annotation.ProviderType;
 
-import com.liferay.portal.kernel.service.ServiceContext;
+import java.util.Locale;
 
 /**
  * @author Marco Leo
+ * @author Alessio Antonio Rendina
  */
 @ProviderType
 public interface CommerceRegionsStarter {
 
-	public void start(ServiceContext serviceContext) throws Exception;
+	public String getKey();
+
+	public String getLabel(Locale locale);
+
+	public void start(long userId) throws Exception;
 
 }

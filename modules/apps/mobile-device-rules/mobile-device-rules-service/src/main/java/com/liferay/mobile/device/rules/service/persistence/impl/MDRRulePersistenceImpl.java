@@ -2068,6 +2068,18 @@ public class MDRRulePersistenceImpl
 		}
 	}
 
+	public void clearCache(Set<Serializable> primaryKeys) {
+		finderCache.clearCache(FINDER_CLASS_NAME_ENTITY);
+		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
+		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
+
+		for (Serializable primaryKey : primaryKeys) {
+			entityCache.removeResult(
+				MDRRuleModelImpl.ENTITY_CACHE_ENABLED, MDRRuleImpl.class,
+				primaryKey);
+		}
+	}
+
 	protected void cacheUniqueFindersCache(MDRRuleModelImpl mdrRuleModelImpl) {
 		Object[] args = new Object[] {
 			mdrRuleModelImpl.getUuid(), mdrRuleModelImpl.getGroupId()

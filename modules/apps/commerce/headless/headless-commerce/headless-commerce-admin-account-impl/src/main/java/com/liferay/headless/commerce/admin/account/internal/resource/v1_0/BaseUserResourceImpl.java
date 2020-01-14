@@ -59,7 +59,7 @@ public abstract class BaseUserResourceImpl implements UserResource {
 		}
 	)
 	@Path(
-		"/accounts/by-externalReferenceCode/{externalReferenceCode}/accountMembers/createUser/"
+		"/accounts/by-externalReferenceCode/{externalReferenceCode}/accountMembers/createUser"
 	)
 	@Produces({"application/json", "application/xml"})
 	@Tags(value = {@Tag(name = "User")})

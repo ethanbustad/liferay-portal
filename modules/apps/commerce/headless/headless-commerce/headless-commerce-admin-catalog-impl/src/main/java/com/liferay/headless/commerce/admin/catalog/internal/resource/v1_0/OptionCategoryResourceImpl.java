@@ -14,29 +14,31 @@
 
 package com.liferay.headless.commerce.admin.catalog.internal.resource.v1_0;
 
-import com.liferay.commerce.product.exception.NoSuchCPOptionCategoryException;
 import com.liferay.commerce.product.model.CPOptionCategory;
 import com.liferay.commerce.product.service.CPOptionCategoryService;
 import com.liferay.headless.commerce.admin.catalog.dto.v1_0.OptionCategory;
+import com.liferay.headless.commerce.admin.catalog.internal.odata.entity.v1_0.OptionCategoryEntityModel;
 import com.liferay.headless.commerce.admin.catalog.resource.v1_0.OptionCategoryResource;
 import com.liferay.headless.commerce.core.dto.v1_0.converter.DTOConverter;
 import com.liferay.headless.commerce.core.dto.v1_0.converter.DTOConverterRegistry;
 import com.liferay.headless.commerce.core.dto.v1_0.converter.DefaultDTOConverterContext;
 import com.liferay.headless.commerce.core.util.LanguageUtils;
 import com.liferay.headless.commerce.core.util.ServiceContextHelper;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.search.BaseModelSearchResult;
+import com.liferay.portal.kernel.search.Field;
+import com.liferay.portal.kernel.search.Sort;
+import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.odata.entity.EntityModel;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.liferay.portal.vulcan.resource.EntityModelResource;
+import com.liferay.portal.vulcan.util.SearchUtil;
 
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
 import org.osgi.service.component.annotations.Component;
@@ -52,7 +54,8 @@ import org.osgi.service.component.annotations.ServiceScope;
 	properties = "OSGI-INF/liferay/rest/v1_0/option-category.properties",
 	scope = ServiceScope.PROTOTYPE, service = OptionCategoryResource.class
 )
-public class OptionCategoryResourceImpl extends BaseOptionCategoryResourceImpl {
+public class OptionCategoryResourceImpl
+	extends BaseOptionCategoryResourceImpl implements EntityModelResource {
 
 	@Override
 	public Response deleteOptionCategory(Long id) throws Exception {
@@ -64,19 +67,28 @@ public class OptionCategoryResourceImpl extends BaseOptionCategoryResourceImpl {
 	}
 
 	@Override
-	public Page<OptionCategory> getOptionCategoriesPage(Pagination pagination)
+	public EntityModel getEntityModel(MultivaluedMap multivaluedMap)
 		throws Exception {
 
-		BaseModelSearchResult<CPOptionCategory>
-			cpOptionCategoryBaseModelSearchResult =
-				_cpOptionCategoryService.searchCPOptionCategories(
-					_user.getCompanyId(), null, pagination.getStartPosition(),
-					pagination.getEndPosition(), null);
+		return _entityModel;
+	}
 
-		return Page.of(
-			_toOptionCategories(
-				cpOptionCategoryBaseModelSearchResult.getBaseModels()),
-			pagination, cpOptionCategoryBaseModelSearchResult.getLength());
+	@Override
+	public Page<OptionCategory> getOptionCategoriesPage(
+			Filter filter, Pagination pagination, Sort[] sorts)
+		throws Exception {
+
+		return SearchUtil.search(
+			booleanQuery -> booleanQuery.getPreBooleanFilter(), filter,
+			CPOptionCategory.class, StringPool.BLANK, pagination,
+			queryConfig -> queryConfig.setSelectedFieldNames(
+				Field.ENTRY_CLASS_PK),
+			searchContext -> searchContext.setCompanyId(
+				contextCompany.getCompanyId()),
+			document -> _toOptionCategory(
+				_cpOptionCategoryService.getCPOptionCategory(
+					GetterUtil.getLong(document.get(Field.ENTRY_CLASS_PK)))),
+			sorts);
 	}
 
 	@Override
@@ -106,28 +118,53 @@ public class OptionCategoryResourceImpl extends BaseOptionCategoryResourceImpl {
 	public OptionCategory postOptionCategory(OptionCategory optionCategory)
 		throws Exception {
 
-		return _upsertOptionCategory(optionCategory);
+		DTOConverter optionCategoryDTOConverter =
+			_dtoConverterRegistry.getDTOConverter(
+				CPOptionCategory.class.getName());
+
+		CPOptionCategory cpOptionCategory = null;
+
+		if (optionCategory.getId() != null) {
+			cpOptionCategory = _cpOptionCategoryService.fetchCPOptionCategory(
+				optionCategory.getId());
+		}
+
+		if (cpOptionCategory == null) {
+			cpOptionCategory = _addOptionCategory(optionCategory);
+		}
+		else {
+			cpOptionCategory = _updateOptionCategory(
+				optionCategory.getId(), optionCategory);
+		}
+
+		return (OptionCategory)optionCategoryDTOConverter.toDTO(
+			new DefaultDTOConverterContext(
+				contextAcceptLanguage.getPreferredLocale(),
+				cpOptionCategory.getCPOptionCategoryId()));
 	}
 
-	private List<OptionCategory> _toOptionCategories(
-			List<CPOptionCategory> cpOptionCategories)
+	private CPOptionCategory _addOptionCategory(OptionCategory optionCategory)
 		throws Exception {
 
-		List<OptionCategory> optionCategories = new ArrayList<>();
+		return _cpOptionCategoryService.addCPOptionCategory(
+			LanguageUtils.getLocalizedMap(optionCategory.getTitle()),
+			LanguageUtils.getLocalizedMap(optionCategory.getDescription()),
+			GetterUtil.get(optionCategory.getPriority(), 0D),
+			optionCategory.getKey(),
+			_serviceContextHelper.getServiceContext(_user));
+	}
+
+	private OptionCategory _toOptionCategory(CPOptionCategory cpOptionCategory)
+		throws Exception {
 
 		DTOConverter optionCategoryDTOConverter =
 			_dtoConverterRegistry.getDTOConverter(
 				CPOptionCategory.class.getName());
 
-		for (CPOptionCategory cpOptionCategory : cpOptionCategories) {
-			optionCategories.add(
-				(OptionCategory)optionCategoryDTOConverter.toDTO(
-					new DefaultDTOConverterContext(
-						contextAcceptLanguage.getPreferredLocale(),
-						cpOptionCategory.getCPOptionCategoryId())));
-		}
-
-		return optionCategories;
+		return (OptionCategory)optionCategoryDTOConverter.toDTO(
+			new DefaultDTOConverterContext(
+				contextAcceptLanguage.getPreferredLocale(),
+				cpOptionCategory.getCPOptionCategoryId()));
 	}
 
 	private CPOptionCategory _updateOptionCategory(
@@ -146,46 +183,8 @@ public class OptionCategoryResourceImpl extends BaseOptionCategoryResourceImpl {
 			optionCategory.getKey());
 	}
 
-	private OptionCategory _upsertOptionCategory(OptionCategory optionCategory)
-		throws Exception {
-
-		DTOConverter optionCategoryDTOConverter =
-			_dtoConverterRegistry.getDTOConverter(
-				CPOptionCategory.class.getName());
-
-		try {
-			CPOptionCategory cpOptionCategory = _updateOptionCategory(
-				optionCategory.getId(), optionCategory);
-
-			return (OptionCategory)optionCategoryDTOConverter.toDTO(
-				new DefaultDTOConverterContext(
-					contextAcceptLanguage.getPreferredLocale(),
-					cpOptionCategory.getCPOptionCategoryId()));
-		}
-		catch (NoSuchCPOptionCategoryException nscpoce) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(
-					"Unable to find optionCategory with ID: " +
-						optionCategory.getId());
-			}
-		}
-
-		CPOptionCategory cpOptionCategory =
-			_cpOptionCategoryService.addCPOptionCategory(
-				LanguageUtils.getLocalizedMap(optionCategory.getTitle()),
-				LanguageUtils.getLocalizedMap(optionCategory.getDescription()),
-				GetterUtil.get(optionCategory.getPriority(), 0D),
-				optionCategory.getKey(),
-				_serviceContextHelper.getServiceContext(_user));
-
-		return (OptionCategory)optionCategoryDTOConverter.toDTO(
-			new DefaultDTOConverterContext(
-				contextAcceptLanguage.getPreferredLocale(),
-				cpOptionCategory.getCPOptionCategoryId()));
-	}
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		OptionCategoryResourceImpl.class);
+	private static final EntityModel _entityModel =
+		new OptionCategoryEntityModel();
 
 	@Reference
 	private CPOptionCategoryService _cpOptionCategoryService;

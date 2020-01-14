@@ -17,6 +17,7 @@ package com.liferay.commerce.product.internal.util;
 import com.liferay.commerce.product.catalog.CPCatalogEntry;
 import com.liferay.commerce.product.catalog.CPQuery;
 import com.liferay.commerce.product.constants.CPConstants;
+import com.liferay.commerce.product.constants.CPField;
 import com.liferay.commerce.product.constants.CPPortletKeys;
 import com.liferay.commerce.product.data.source.CPDataSourceResult;
 import com.liferay.commerce.product.internal.catalog.DatabaseCPCatalogEntryImpl;
@@ -27,7 +28,6 @@ import com.liferay.commerce.product.model.CPFriendlyURLEntry;
 import com.liferay.commerce.product.model.CProduct;
 import com.liferay.commerce.product.model.CommerceChannel;
 import com.liferay.commerce.product.permission.CommerceProductViewPermission;
-import com.liferay.commerce.product.search.CPDefinitionIndexer;
 import com.liferay.commerce.product.service.CPDefinitionLocalService;
 import com.liferay.commerce.product.service.CPFriendlyURLEntryLocalService;
 import com.liferay.commerce.product.service.CPInstanceLocalService;
@@ -158,11 +158,10 @@ public class CPDefinitionHelperImpl implements CPDefinitionHelper {
 		CPDefinitionSearcher cpDefinitionSearcher = new CPDefinitionSearcher(
 			cpQuery);
 
+		searchContext.setAttribute(CPField.PUBLISHED, Boolean.TRUE);
 		searchContext.setAttribute(
 			"commerceChannelGroupId", _checkChannelGroupId(groupId));
 		searchContext.setAttribute("secure", Boolean.TRUE);
-		searchContext.setAttribute(
-			CPDefinitionIndexer.FIELD_PUBLISHED, Boolean.TRUE);
 
 		searchContext.setEnd(end);
 
@@ -264,10 +263,6 @@ public class CPDefinitionHelperImpl implements CPDefinitionHelper {
 		if (sortField.equals("modifiedDate")) {
 			sortField = Field.MODIFIED_DATE;
 		}
-		else if (sortField.equals("name")) {
-			sortField = Field.getSortableFieldName(
-				"localized_name_".concat(LocaleUtil.toLanguageId(locale)));
-		}
 
 		return sortField;
 	}
@@ -299,7 +294,9 @@ public class CPDefinitionHelperImpl implements CPDefinitionHelper {
 
 			sortType = Sort.LONG_TYPE;
 		}
-		else if (fieldType.equals(Field.PRIORITY)) {
+		else if (fieldType.equals(Field.PRIORITY) ||
+				 fieldType.equals("basePrice")) {
+
 			sortType = Sort.DOUBLE_TYPE;
 		}
 

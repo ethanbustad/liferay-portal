@@ -22,7 +22,8 @@ public class OrderItem {
 	public OrderItem(
 		long orderItemId, long orderId, String sku, String name, String price,
 		String promoPrice, String discount, int quantity, String total,
-		String thumbnail, String viewShipmentsURL, int shippedQuantity) {
+		String thumbnail, String viewShipmentsURL, int shippedQuantity,
+		String[] errorMessages, String formattedSubscriptionPeriod) {
 
 		_orderItemId = orderItemId;
 		_orderId = orderId;
@@ -36,10 +37,20 @@ public class OrderItem {
 		_thumbnail = thumbnail;
 		_viewShipmentsURL = viewShipmentsURL;
 		_shippedQuantity = shippedQuantity;
+		_errorMessages = errorMessages;
+		_formattedSubscriptionPeriod = formattedSubscriptionPeriod;
 	}
 
 	public String getDiscount() {
 		return _discount;
+	}
+
+	public String[] getErrorMessages() {
+		return _errorMessages;
+	}
+
+	public String getFormattedSubscriptionPeriod() {
+		return _formattedSubscriptionPeriod;
 	}
 
 	public String getName() {
@@ -87,6 +98,8 @@ public class OrderItem {
 	}
 
 	private final String _discount;
+	private final String[] _errorMessages;
+	private final String _formattedSubscriptionPeriod;
 	private final String _name;
 	private final long _orderId;
 	private final long _orderItemId;

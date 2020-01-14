@@ -49,6 +49,7 @@ request.setAttribute("view.jsp-filterPerAccount", false);
 		<aui:input name="emailAddresses" type="hidden" />
 		<aui:input name="name" type="hidden" />
 		<aui:input name="userIds" type="hidden" />
+		<aui:input name="commerceAccountId" type="hidden" />
 	</aui:form>
 
 	<commerce-ui:add-account-modal
@@ -63,6 +64,28 @@ request.setAttribute("view.jsp-filterPerAccount", false);
 				const addAccountModal = Liferay.component('addAccountModal');
 
 				addAccountModal.open();
+			}
+		);
+
+		Liferay.provide(
+			window,
+			'setCurrentAccount',
+			function(id) {
+				document.querySelector('#<portlet:namespace /><%= Constants.CMD %>').value = 'setCurrentAccount';
+				document.querySelector('#<portlet:namespace />commerceAccountId').value = id;
+
+				submitForm(document.<portlet:namespace />commerceAccountFm);
+			}
+		);
+
+		Liferay.provide(
+			window,
+			'toggleActiveCommerceAccount',
+			function(id) {
+				document.querySelector('#<portlet:namespace /><%= Constants.CMD %>').value = 'setActive';
+				document.querySelector('#<portlet:namespace />commerceAccountId').value = id;
+
+				submitForm(document.<portlet:namespace />commerceAccountFm);
 			}
 		);
 

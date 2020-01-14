@@ -29,7 +29,8 @@
 }
 
 .multi-step-item.active .multi-step-icon,
-body .multi-step-item.active .multi-step-divider, body .multi-step-item.success-page.complete .multi-step-divider {
+body .multi-step-item.active .multi-step-divider,
+body .multi-step-item.success-page.complete .multi-step-divider {
   background-color: $color-theme;
 }
 
@@ -45,4 +46,13 @@ body .multi-step-item.active .multi-step-divider, body .multi-step-item.success-
 
 .dropdown-menu {
   z-index: 1200;
+}
+
+.add-to-cart-icon {
+  font-size: 20px;
+}
+
+.control-menu .btn.btn-monospaced {
+  height: 2rem !important;
+  width: 2rem !important;
 }

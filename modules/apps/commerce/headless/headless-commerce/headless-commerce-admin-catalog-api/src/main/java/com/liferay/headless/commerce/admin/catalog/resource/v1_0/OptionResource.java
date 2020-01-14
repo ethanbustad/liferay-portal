@@ -16,6 +16,8 @@ package com.liferay.headless.commerce.admin.catalog.resource.v1_0;
 
 import com.liferay.headless.commerce.admin.catalog.dto.v1_0.Option;
 import com.liferay.portal.kernel.model.Company;
+import com.liferay.portal.kernel.search.Sort;
+import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
 
@@ -34,11 +36,11 @@ import javax.ws.rs.core.Response;
 @Generated("")
 public interface OptionResource {
 
-	public Response deleteOption(Long id) throws Exception;
+	public Page<Option> getOptionsPage(
+			Filter filter, Pagination pagination, Sort[] sorts)
+		throws Exception;
 
-	public Option getOption(Long id) throws Exception;
-
-	public Response patchOption(Long id, Option option) throws Exception;
+	public Option postOption(Option option) throws Exception;
 
 	public Response deleteOptionByExternalReferenceCode(
 			String externalReferenceCode)
@@ -51,9 +53,11 @@ public interface OptionResource {
 			String externalReferenceCode, Option option)
 		throws Exception;
 
-	public Page<Option> getOptionsPage(Pagination pagination) throws Exception;
+	public Response deleteOption(Long id) throws Exception;
 
-	public Option postOption(Option option) throws Exception;
+	public Option getOption(Long id) throws Exception;
+
+	public Response patchOption(Long id, Option option) throws Exception;
 
 	public void setContextCompany(Company contextCompany);
 

@@ -1956,6 +1956,18 @@ public class RecentLayoutSetBranchPersistenceImpl
 		}
 	}
 
+	public void clearCache(Set<Serializable> primaryKeys) {
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
+
+		for (Serializable primaryKey : primaryKeys) {
+			EntityCacheUtil.removeResult(
+				RecentLayoutSetBranchModelImpl.ENTITY_CACHE_ENABLED,
+				RecentLayoutSetBranchImpl.class, primaryKey);
+		}
+	}
+
 	protected void cacheUniqueFindersCache(
 		RecentLayoutSetBranchModelImpl recentLayoutSetBranchModelImpl) {
 

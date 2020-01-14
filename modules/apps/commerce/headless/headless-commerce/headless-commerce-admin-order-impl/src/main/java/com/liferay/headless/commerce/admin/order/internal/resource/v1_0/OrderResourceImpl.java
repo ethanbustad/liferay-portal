@@ -42,6 +42,7 @@ import com.liferay.headless.commerce.admin.order.resource.v1_0.OrderResource;
 import com.liferay.headless.commerce.core.dto.v1_0.converter.DTOConverter;
 import com.liferay.headless.commerce.core.dto.v1_0.converter.DTOConverterRegistry;
 import com.liferay.headless.commerce.core.dto.v1_0.converter.DefaultDTOConverterContext;
+import com.liferay.headless.commerce.core.util.DateConfig;
 import com.liferay.headless.commerce.core.util.ExpandoUtil;
 import com.liferay.headless.commerce.core.util.ServiceContextHelper;
 import com.liferay.petra.string.StringPool;
@@ -51,6 +52,7 @@ import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.util.CalendarFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.odata.entity.EntityModel;
@@ -61,6 +63,7 @@ import com.liferay.portal.vulcan.util.SearchUtil;
 
 import java.math.BigDecimal;
 
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -87,7 +90,7 @@ public class OrderResourceImpl
 	public Response deleteOrder(Long id) throws Exception {
 		_commerceOrderService.deleteCommerceOrder(id);
 
-		Response.ResponseBuilder responseBuilder = Response.ok();
+		Response.ResponseBuilder responseBuilder = Response.noContent();
 
 		return responseBuilder.build();
 	}
@@ -110,7 +113,7 @@ public class OrderResourceImpl
 		_commerceOrderService.deleteCommerceOrder(
 			commerceOrder.getCommerceOrderId());
 
-		Response.ResponseBuilder responseBuilder = Response.ok();
+		Response.ResponseBuilder responseBuilder = Response.noContent();
 
 		return responseBuilder.build();
 	}
@@ -185,7 +188,7 @@ public class OrderResourceImpl
 	public Response patchOrder(Long id, Order order) throws Exception {
 		_updateOrder(_commerceOrderService.getCommerceOrder(id), order);
 
-		Response.ResponseBuilder responseBuilder = Response.ok();
+		Response.ResponseBuilder responseBuilder = Response.noContent();
 
 		return responseBuilder.build();
 	}
@@ -207,7 +210,7 @@ public class OrderResourceImpl
 
 		_updateOrder(commerceOrder, order);
 
-		Response.ResponseBuilder responseBuilder = Response.ok();
+		Response.ResponseBuilder responseBuilder = Response.noContent();
 
 		return responseBuilder.build();
 	}
@@ -257,6 +260,9 @@ public class OrderResourceImpl
 		OrderItem[] orderItems = order.getItems();
 
 		if (orderItems != null) {
+			_commerceOrderItemService.deleteCommerceOrderItems(
+				commerceOrder.getCommerceOrderId());
+
 			for (OrderItem orderItem : orderItems) {
 				OrderItemUtil.upsertCommerceOrderItem(
 					_cpInstanceService, _commerceOrderItemService, orderItem,
@@ -343,7 +349,10 @@ public class OrderResourceImpl
 				commerceOrder.getExternalReferenceCode()),
 			_commerceContextFactory.create(
 				contextCompany.getCompanyId(), commerceChannel.getSiteGroupId(),
-				_user.getUserId(), 0L, order.getAccountId()));
+				_user.getUserId(), 0L,
+				GetterUtil.get(
+					order.getAccountId(),
+					commerceOrder.getCommerceAccountId())));
 
 		// Expando
 
@@ -361,6 +370,11 @@ public class OrderResourceImpl
 			order, commerceOrder,
 			_serviceContextHelper.getServiceContext(
 				commerceOrder.getGroupId()));
+
+		if (commerceOrder.getOrderStatus() != order.getOrderStatus()) {
+			commerceOrder = _commerceOrderService.updateOrderStatus(
+				commerceOrder.getCommerceOrderId(), order.getOrderStatus());
+		}
 
 		return commerceOrder;
 	}
@@ -422,6 +436,27 @@ public class OrderResourceImpl
 				contextCompany.getCompanyId(), commerceChannel.getSiteGroupId(),
 				_user.getUserId(), 0L, commerceAccount.getCommerceAccountId()),
 			serviceContext);
+
+		// Order date
+
+		if (order.getOrderDate() != null) {
+			Calendar orderDateCalendar = CalendarFactoryUtil.getCalendar(
+				serviceContext.getTimeZone());
+
+			orderDateCalendar.setTime(order.getOrderDate());
+
+			DateConfig orderDate = new DateConfig(orderDateCalendar);
+
+			_commerceOrderService.updateOrderDate(
+				commerceOrder.getCommerceOrderId(), orderDate.getMonth(),
+				orderDate.getDay(), orderDate.getYear(), orderDate.getHour(),
+				orderDate.getMinute(), serviceContext);
+		}
+
+		// Printed note
+
+		_commerceOrderService.updatePrintedNote(
+			commerceOrder.getCommerceOrderId(), order.getPrintedNote());
 
 		// Expando
 

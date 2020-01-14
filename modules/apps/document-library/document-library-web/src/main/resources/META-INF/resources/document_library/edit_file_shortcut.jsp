@@ -212,7 +212,9 @@ if (portletTitleBasedNavigation) {
 	}
 
 	function <portlet:namespace />createSelectFileEntryURL(url) {
-		url += '&<portlet:namespace />groupId=' + document.<portlet:namespace />fm.<portlet:namespace />toGroupId.value;
+		var toGroupIdElement = document.<portlet:namespace />fm.<portlet:namespace />toGroupId;
+
+		url += '&<portlet:namespace />groupId=' + toGroupIdElement.value;
 
 		var scopeGroupId = <%= themeDisplay.getScopeGroupId() %>;
 

@@ -79,7 +79,10 @@ public interface CPAttachmentFileEntryLocalService
 	public CPAttachmentFileEntry addCPAttachmentFileEntry(
 		CPAttachmentFileEntry cpAttachmentFileEntry);
 
-	@Indexable(type = IndexableType.REINDEX)
+	/**
+	 * @deprecated As of Mueller (7.2.x), pass userId and groupId directly
+	 */
+	@Deprecated
 	public CPAttachmentFileEntry addCPAttachmentFileEntry(
 			long classNameId, long classPK, long fileEntryId,
 			int displayDateMonth, int displayDateDay, int displayDateYear,
@@ -88,6 +91,19 @@ public interface CPAttachmentFileEntryLocalService
 			int expirationDateHour, int expirationDateMinute,
 			boolean neverExpire, Map<Locale, String> titleMap, String json,
 			double priority, int type, ServiceContext serviceContext)
+		throws PortalException;
+
+	@Indexable(type = IndexableType.REINDEX)
+	public CPAttachmentFileEntry addCPAttachmentFileEntry(
+			long userId, long groupId, long classNameId, long classPK,
+			long fileEntryId, int displayDateMonth, int displayDateDay,
+			int displayDateYear, int displayDateHour, int displayDateMinute,
+			int expirationDateMonth, int expirationDateDay,
+			int expirationDateYear, int expirationDateHour,
+			int expirationDateMinute, boolean neverExpire,
+			Map<Locale, String> titleMap, String json, double priority,
+			int type, String externalReferenceCode,
+			ServiceContext serviceContext)
 		throws PortalException;
 
 	public void checkCPAttachmentFileEntries() throws PortalException;
@@ -157,7 +173,7 @@ public interface CPAttachmentFileEntryLocalService
 	 * Performs a dynamic query on the database and returns a range of the matching rows.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPAttachmentFileEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPAttachmentFileEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param dynamicQuery the dynamic query
@@ -173,7 +189,7 @@ public interface CPAttachmentFileEntryLocalService
 	 * Performs a dynamic query on the database and returns an ordered range of the matching rows.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPAttachmentFileEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPAttachmentFileEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param dynamicQuery the dynamic query
@@ -249,7 +265,7 @@ public interface CPAttachmentFileEntryLocalService
 	 * Returns a range of all the cp attachment file entries.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPAttachmentFileEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>com.liferay.commerce.product.model.impl.CPAttachmentFileEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param start the lower bound of the range of cp attachment file entries
@@ -378,14 +394,65 @@ public interface CPAttachmentFileEntryLocalService
 		throws PortalException;
 
 	@Indexable(type = IndexableType.REINDEX)
+	public CPAttachmentFileEntry updateCPAttachmentFileEntry(
+			long userId, long cpAttachmentFileEntryId, long fileEntryId,
+			int displayDateMonth, int displayDateDay, int displayDateYear,
+			int displayDateHour, int displayDateMinute, int expirationDateMonth,
+			int expirationDateDay, int expirationDateYear,
+			int expirationDateHour, int expirationDateMinute,
+			boolean neverExpire, Map<Locale, String> titleMap, String json,
+			double priority, int type, ServiceContext serviceContext)
+		throws PortalException;
+
+	@Indexable(type = IndexableType.REINDEX)
 	public CPAttachmentFileEntry updateStatus(
 			long userId, long cpAttachmentFileEntryId, int status,
 			ServiceContext serviceContext,
 			Map<String, Serializable> workflowContext)
 		throws PortalException;
 
+	/**
+	 * @param classNameId
+	 * @param classPK
+	 * @param fileEntryId
+	 * @param displayDateMonth
+	 * @param displayDateDay
+	 * @param displayDateYear
+	 * @param displayDateHour
+	 * @param displayDateMinute
+	 * @param expirationDateMonth
+	 * @param expirationDateDay
+	 * @param expirationDateYear
+	 * @param expirationDateHour
+	 * @param expirationDateMinute
+	 * @param neverExpire
+	 * @param titleMap
+	 * @param json
+	 * @param priority
+	 * @param type
+	 * @param externalReferenceCode
+	 * @param serviceContext
+	 * @throws PortalException
+	 * @deprecated As of Athanasius (7.3.x), use {@link
+	 #upsertCPAttachmentFileEntry(long, long, long, long, int,
+	 int, int, int, int, int, int, int, int, int, boolean, Map,
+	 String, double, int, String, ServiceContext)}
+	 */
+	@Deprecated
 	public CPAttachmentFileEntry upsertCPAttachmentFileEntry(
-			long classNameId, long classPK, long fileEntryId,
+			long groupId, long classNameId, long classPK, long fileEntryId,
+			int displayDateMonth, int displayDateDay, int displayDateYear,
+			int displayDateHour, int displayDateMinute, int expirationDateMonth,
+			int expirationDateDay, int expirationDateYear,
+			int expirationDateHour, int expirationDateMinute,
+			boolean neverExpire, Map<Locale, String> titleMap, String json,
+			double priority, int type, String externalReferenceCode,
+			ServiceContext serviceContext)
+		throws PortalException;
+
+	public CPAttachmentFileEntry upsertCPAttachmentFileEntry(
+			long groupId, long classNameId, long classPK,
+			long cpAttachmentFileEntryId, long fileEntryId,
 			int displayDateMonth, int displayDateDay, int displayDateYear,
 			int displayDateHour, int displayDateMinute, int expirationDateMonth,
 			int expirationDateDay, int expirationDateYear,

@@ -22,9 +22,9 @@ String eventName = ParamUtil.getString(request, "eventName", liferayPortletRespo
 
 User selUser = PortalUtil.getSelectedUser(request);
 
-SelectOrganizationManagementToolbarDisplayContext SelectOrganizationManagementToolbarDisplayContext = new SelectOrganizationManagementToolbarDisplayContext(request, renderRequest, renderResponse);
+SelectOrganizationManagementToolbarDisplayContext selectOrganizationManagementToolbarDisplayContext = new SelectOrganizationManagementToolbarDisplayContext(request, renderRequest, renderResponse);
 
-PortletURL portletURL = SelectOrganizationManagementToolbarDisplayContext.getPortletURL();
+PortletURL portletURL = selectOrganizationManagementToolbarDisplayContext.getPortletURL();
 
 LinkedHashMap<String, Object> organizationParams = new LinkedHashMap<String, Object>();
 
@@ -32,7 +32,7 @@ if (filterManageableOrganizations) {
 	organizationParams.put("organizationsTree", user.getOrganizations());
 }
 
-SearchContainer searchContainer = SelectOrganizationManagementToolbarDisplayContext.getSearchContainer(organizationParams);
+SearchContainer searchContainer = selectOrganizationManagementToolbarDisplayContext.getSearchContainer(organizationParams);
 
 renderResponse.setTitle(LanguageUtil.get(request, "organizations"));
 %>
@@ -42,13 +42,13 @@ renderResponse.setTitle(LanguageUtil.get(request, "organizations"));
 />
 
 <clay:management-toolbar
-	clearResultsURL="<%= SelectOrganizationManagementToolbarDisplayContext.getClearResultsURL() %>"
+	clearResultsURL="<%= selectOrganizationManagementToolbarDisplayContext.getClearResultsURL() %>"
 	itemsTotal="<%= searchContainer.getTotal() %>"
-	searchActionURL="<%= SelectOrganizationManagementToolbarDisplayContext.getSearchActionURL() %>"
+	searchActionURL="<%= selectOrganizationManagementToolbarDisplayContext.getSearchActionURL() %>"
 	searchFormName="searchFm"
 	selectable="<%= false %>"
 	showSearch="<%= true %>"
-	viewTypeItems="<%= SelectOrganizationManagementToolbarDisplayContext.getViewTypeItems() %>"
+	viewTypeItems="<%= selectOrganizationManagementToolbarDisplayContext.getViewTypeItems() %>"
 />
 
 <aui:form action="<%= portletURL.toString() %>" cssClass="container-fluid-1280" method="post" name="selectOrganizationFm">

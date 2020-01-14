@@ -942,7 +942,7 @@ public class PortletImportControllerImpl implements PortletImportController {
 
 	/**
 	 * @deprecated As of Judson (7.1.x), replaced by {@link
-	 *             deletePortletData(PortletDataContext portletDataContext,
+	 *             #deletePortletData(PortletDataContext portletDataContext,
 	 *             javax.portlet.PortletPreferences portletPreferences)}
 	 */
 	@Deprecated

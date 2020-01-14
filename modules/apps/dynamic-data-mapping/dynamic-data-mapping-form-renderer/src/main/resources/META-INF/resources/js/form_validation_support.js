@@ -57,6 +57,27 @@ AUI.add(
 			validate: function(callback) {
 				var instance = this;
 
+				var fields = instance.get('fields');
+
+				var hasEmptyRequiredField = false;
+
+				fields.forEach(
+					function(field) {
+						if (field.get('required') && (!field.get('value') || field.get('value').length == 0)) {
+							field.set('errorMessage', Liferay.Language.get('this-field-is-required'));
+							field.set('valid', false);
+
+							field.showErrorMessage();
+							
+							hasEmptyRequiredField = true;
+						}
+					});
+
+				if (hasEmptyRequiredField) {
+					callback.call(instance, true, null);
+					return;
+				}
+
 				if (instance.get('readOnly')) {
 					callback.call(instance, false, null);
 				}

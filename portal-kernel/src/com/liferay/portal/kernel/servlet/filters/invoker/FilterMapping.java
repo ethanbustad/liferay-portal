@@ -38,8 +38,7 @@ public class FilterMapping {
 
 	/**
 	 * @deprecated As of Judson (7.1.x), replaced by {@link
-	 *             #FilterMapping(String, Filter, FilterConfig, List<String>,
-	 *             Set<Dispatcher>)}
+	 *             #FilterMapping(String, Filter, FilterConfig, List, Set)}
 	 */
 	@Deprecated
 	public FilterMapping(

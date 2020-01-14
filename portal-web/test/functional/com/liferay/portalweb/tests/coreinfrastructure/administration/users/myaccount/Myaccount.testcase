@@ -162,6 +162,24 @@ definition {
 			orgType = "Organization");
 	}
 
+	@description = "This is a use case for LPS-101973."
+	@priority = "4"
+	test UpdateUserInUserPersonalSite {
+		UserBar.gotoProfile();
+
+		Portlet.addPG(portletName = "Profile");
+
+		AssertElementPresent(
+			key_portletName = "Profile",
+			locator1 = "Home#PORTLET");
+
+		User.editDetailsViaProfile(userFirstNameEdit = "userfnEdit");
+
+		SearchPortlets.viewUserResultDetails(
+			pageName = "Welcome",
+			userName = "userfnEdit Test");
+	}
+
 	@priority = "4"
 	test ViewMyAccount {
 		Navigator.openURL();

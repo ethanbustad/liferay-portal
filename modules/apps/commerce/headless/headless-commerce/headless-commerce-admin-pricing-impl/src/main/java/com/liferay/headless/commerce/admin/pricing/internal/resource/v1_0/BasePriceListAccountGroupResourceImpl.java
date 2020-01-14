@@ -82,7 +82,7 @@ public abstract class BasePriceListAccountGroupResourceImpl
 		}
 	)
 	@Path(
-		"/priceLists/by-externalReferenceCode/{externalReferenceCode}/priceListAccountGroup/"
+		"/priceLists/by-externalReferenceCode/{externalReferenceCode}/priceListAccountGroup"
 	)
 	@Produces({"application/json", "application/xml"})
 	@Tags(value = {@Tag(name = "PriceListAccountGroup")})
@@ -106,7 +106,7 @@ public abstract class BasePriceListAccountGroupResourceImpl
 		}
 	)
 	@Path(
-		"/priceLists/by-externalReferenceCode/{externalReferenceCode}/priceListAccountGroup/"
+		"/priceLists/by-externalReferenceCode/{externalReferenceCode}/priceListAccountGroup"
 	)
 	@Produces({"application/json", "application/xml"})
 	@Tags(value = {@Tag(name = "PriceListAccountGroup")})
@@ -130,7 +130,7 @@ public abstract class BasePriceListAccountGroupResourceImpl
 			@Parameter(in = ParameterIn.QUERY, name = "pageSize")
 		}
 	)
-	@Path("/priceLists/{id}/priceListAccountGroups/")
+	@Path("/priceLists/{id}/priceListAccountGroups")
 	@Produces({"application/json", "application/xml"})
 	@Tags(value = {@Tag(name = "PriceListAccountGroup")})
 	public Page<PriceListAccountGroup> getPriceListIdPriceListAccountGroupsPage(
@@ -145,7 +145,7 @@ public abstract class BasePriceListAccountGroupResourceImpl
 	@Consumes({"application/json", "application/xml"})
 	@POST
 	@Parameters(value = {@Parameter(in = ParameterIn.PATH, name = "id")})
-	@Path("/priceLists/{id}/priceListAccountGroups/")
+	@Path("/priceLists/{id}/priceListAccountGroups")
 	@Produces({"application/json", "application/xml"})
 	@Tags(value = {@Tag(name = "PriceListAccountGroup")})
 	public PriceListAccountGroup postPriceListIdPriceListAccountGroup(

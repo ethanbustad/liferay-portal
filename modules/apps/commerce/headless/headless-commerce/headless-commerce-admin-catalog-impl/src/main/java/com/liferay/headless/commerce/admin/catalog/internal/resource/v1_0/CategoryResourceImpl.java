@@ -21,6 +21,7 @@ import com.liferay.commerce.product.exception.NoSuchCPDefinitionException;
 import com.liferay.commerce.product.model.CPDefinition;
 import com.liferay.commerce.product.service.CPDefinitionService;
 import com.liferay.headless.commerce.admin.catalog.dto.v1_0.Category;
+import com.liferay.headless.commerce.admin.catalog.dto.v1_0.Product;
 import com.liferay.headless.commerce.admin.catalog.resource.v1_0.CategoryResource;
 import com.liferay.headless.commerce.core.dto.v1_0.converter.DTOConverter;
 import com.liferay.headless.commerce.core.dto.v1_0.converter.DTOConverterRegistry;
@@ -30,6 +31,8 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.service.ClassNameLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.vulcan.fields.NestedField;
+import com.liferay.portal.vulcan.fields.NestedFieldId;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
 
@@ -82,9 +85,10 @@ public class CategoryResourceImpl extends BaseCategoryResourceImpl {
 			_toProductCategories(assetCategories), pagination, totalItems);
 	}
 
+	@NestedField(parentClass = Product.class, value = "categories")
 	@Override
 	public Page<Category> getProductIdCategoriesPage(
-			Long id, Pagination pagination)
+			@NestedFieldId(value = "productId") Long id, Pagination pagination)
 		throws Exception {
 
 		CPDefinition cpDefinition =

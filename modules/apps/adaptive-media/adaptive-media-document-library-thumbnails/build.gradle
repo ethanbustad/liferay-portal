@@ -1,14 +1,14 @@
 dependencies {
 	compileOnly group: "biz.aQute.bnd", name: "biz.aQute.bnd.annotation", version: "4.2.0"
 	compileOnly group: "biz.aQute.bnd", name: "biz.aQute.bndlib", version: "3.1.0"
-	compileOnly group: "com.liferay", name: "com.liferay.adaptive.media.api", version: "3.0.0"
-	compileOnly group: "com.liferay", name: "com.liferay.adaptive.media.image.api", version: "2.0.0"
-	compileOnly group: "com.liferay", name: "com.liferay.document.library.api", version: "4.2.0"
-	compileOnly group: "com.liferay", name: "com.liferay.petra.string", version: "2.0.0"
-	compileOnly group: "com.liferay", name: "com.liferay.portal.configuration.metatype.api", version: "1.0.0"
-	compileOnly group: "com.liferay", name: "com.liferay.portal.upgrade.api", version: "2.0.0"
-	compileOnly group: "com.liferay.portal", name: "com.liferay.portal.impl", version: "3.0.0"
-	compileOnly group: "com.liferay.portal", name: "com.liferay.portal.kernel", version: "3.80.0"
+	compileOnly group: "com.liferay.portal", name: "com.liferay.portal.impl", version: "default"
+	compileOnly group: "com.liferay.portal", name: "com.liferay.portal.kernel", version: "default"
+	compileOnly project(":apps:adaptive-media:adaptive-media-api")
+	compileOnly project(":apps:adaptive-media:adaptive-media-image-api")
+	compileOnly project(":apps:document-library:document-library-api")
+	compileOnly project(":apps:portal:portal-upgrade-api")
+	compileOnly project(":apps:static:portal-configuration:portal-configuration-metatype-api")
+	compileOnly project(":core:petra:petra-string")
 
 	testCompile group: "com.liferay.portal", name: "com.liferay.util.java", version: "default"
 	testCompile group: "easyconf", name: "easyconf", version: "0.9.5"

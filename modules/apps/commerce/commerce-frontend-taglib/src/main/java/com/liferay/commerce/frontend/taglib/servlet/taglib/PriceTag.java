@@ -14,12 +14,13 @@
 
 package com.liferay.commerce.frontend.taglib.servlet.taglib;
 
+import com.liferay.commerce.configuration.CommercePriceConfiguration;
+import com.liferay.commerce.constants.CommerceConstants;
 import com.liferay.commerce.constants.CommerceWebKeys;
 import com.liferay.commerce.context.CommerceContext;
 import com.liferay.commerce.frontend.model.PriceModel;
 import com.liferay.commerce.frontend.model.ProductSettingsModel;
-import com.liferay.commerce.frontend.taglib.internal.js.loader.modules.extender.npm.NPMResolverProvider;
-import com.liferay.commerce.frontend.taglib.internal.util.ProductHelperProvider;
+import com.liferay.commerce.frontend.taglib.internal.servlet.ServletContextUtil;
 import com.liferay.commerce.frontend.util.ProductHelper;
 import com.liferay.frontend.js.loader.modules.extender.npm.NPMResolver;
 import com.liferay.frontend.taglib.soy.servlet.taglib.ComponentRendererTag;
@@ -27,6 +28,8 @@ import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
+import com.liferay.portal.kernel.settings.SystemSettingsLocator;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.WebKeys;
 
@@ -64,6 +67,16 @@ public class PriceTag extends ComponentRendererTag {
 				cpInstanceId, quantity, commerceContext,
 				themeDisplay.getLocale());
 
+			CommercePriceConfiguration commercePriceConfiguration =
+				_configurationProvider.getConfiguration(
+					CommercePriceConfiguration.class,
+					new SystemSettingsLocator(
+						CommerceConstants.PRICE_SERVICE_NAME));
+
+			putValue(
+				"displayDiscountLevels",
+				commercePriceConfiguration.displayDiscountLevels());
+
 			putValue("prices", priceModel);
 
 			setTemplateNamespace("Price.render");
@@ -81,7 +94,7 @@ public class PriceTag extends ComponentRendererTag {
 
 	@Override
 	public String getModule() {
-		NPMResolver npmResolver = NPMResolverProvider.getNPMResolver();
+		NPMResolver npmResolver = ServletContextUtil.getNPMResolver();
 
 		if (npmResolver == null) {
 			return StringPool.BLANK;
@@ -113,7 +126,8 @@ public class PriceTag extends ComponentRendererTag {
 	public void setPageContext(PageContext pageContext) {
 		super.setPageContext(pageContext);
 
-		_productHelper = ProductHelperProvider.getProductHelper();
+		_productHelper = ServletContextUtil.getProductHelper();
+		_configurationProvider = ServletContextUtil.getConfigurationProvider();
 	}
 
 	public void setQuantity(String quantity) {
@@ -122,6 +136,7 @@ public class PriceTag extends ComponentRendererTag {
 
 	private static final Log _log = LogFactoryUtil.getLog(PriceTag.class);
 
+	private ConfigurationProvider _configurationProvider;
 	private ProductHelper _productHelper;
 
 }

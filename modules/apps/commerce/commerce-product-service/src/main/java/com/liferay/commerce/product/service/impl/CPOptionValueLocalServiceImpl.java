@@ -95,7 +95,6 @@ public class CPOptionValueLocalServiceImpl
 		CPOptionValue cpOptionValue = cpOptionValuePersistence.create(
 			cpOptionValueId);
 
-		cpOptionValue.setUuid(serviceContext.getUuid());
 		cpOptionValue.setCompanyId(user.getCompanyId());
 		cpOptionValue.setUserId(user.getUserId());
 		cpOptionValue.setUserName(user.getFullName());
@@ -286,10 +285,10 @@ public class CPOptionValueLocalServiceImpl
 
 		Map<String, Serializable> attributes = new HashMap<>();
 
+		attributes.put(_FIELD_KEY, keywords);
+		attributes.put(Field.CONTENT, keywords);
 		attributes.put(Field.ENTRY_CLASS_PK, keywords);
 		attributes.put(Field.NAME, keywords);
-		attributes.put(Field.CONTENT, keywords);
-		attributes.put(_FIELD_KEY, keywords);
 		attributes.put("CPOptionId", cpOptionId);
 		attributes.put("params", params);
 

@@ -229,19 +229,6 @@ public class CommerceOrderServiceUtil {
 
 	public static java.util.List<com.liferay.commerce.model.CommerceOrder>
 			getPendingCommerceOrders(
-				long companyId, long groupId, int start, int end)
-		throws com.liferay.portal.kernel.exception.PortalException {
-
-		return getService().getPendingCommerceOrders(
-			companyId, groupId, start, end);
-	}
-
-	/**
-	 * @deprecated As of Mueller (7.2.x)
-	 */
-	@Deprecated
-	public static java.util.List<com.liferay.commerce.model.CommerceOrder>
-			getPendingCommerceOrders(
 				long groupId, long commerceAccountId, String keywords,
 				int start, int end)
 		throws com.liferay.portal.kernel.exception.PortalException {
@@ -257,10 +244,6 @@ public class CommerceOrderServiceUtil {
 		return getService().getPendingCommerceOrdersCount(companyId, groupId);
 	}
 
-	/**
-	 * @deprecated As of Mueller (7.2.x)
-	 */
-	@Deprecated
 	public static int getPendingCommerceOrdersCount(
 			long groupId, long commerceAccountId, String keywords)
 		throws com.liferay.portal.kernel.exception.PortalException {
@@ -278,10 +261,6 @@ public class CommerceOrderServiceUtil {
 			companyId, groupId, start, end);
 	}
 
-	/**
-	 * @deprecated As of Mueller (7.2.x)
-	 */
-	@Deprecated
 	public static java.util.List<com.liferay.commerce.model.CommerceOrder>
 			getPlacedCommerceOrders(
 				long groupId, long commerceAccountId, String keywords,
@@ -299,16 +278,48 @@ public class CommerceOrderServiceUtil {
 		return getService().getPlacedCommerceOrdersCount(companyId, groupId);
 	}
 
-	/**
-	 * @deprecated As of Mueller (7.2.x)
-	 */
-	@Deprecated
 	public static int getPlacedCommerceOrdersCount(
 			long groupId, long commerceAccountId, String keywords)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return getService().getPlacedCommerceOrdersCount(
 			groupId, commerceAccountId, keywords);
+	}
+
+	public static java.util.List<com.liferay.commerce.model.CommerceOrder>
+			getUserPendingCommerceOrders(
+				long companyId, long groupId, String keywords, int start,
+				int end)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return getService().getUserPendingCommerceOrders(
+			companyId, groupId, keywords, start, end);
+	}
+
+	public static long getUserPendingCommerceOrdersCount(
+			long companyId, long groupId, String keywords)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return getService().getUserPendingCommerceOrdersCount(
+			companyId, groupId, keywords);
+	}
+
+	public static java.util.List<com.liferay.commerce.model.CommerceOrder>
+			getUserPlacedCommerceOrders(
+				long companyId, long groupId, String keywords, int start,
+				int end)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return getService().getUserPlacedCommerceOrders(
+			companyId, groupId, keywords, start, end);
+	}
+
+	public static long getUserPlacedCommerceOrdersCount(
+			long companyId, long groupId, String keywords)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return getService().getUserPlacedCommerceOrdersCount(
+			companyId, groupId, keywords);
 	}
 
 	public static void mergeGuestCommerceOrder(
@@ -451,6 +462,17 @@ public class CommerceOrderServiceUtil {
 			serviceContext);
 	}
 
+	public static com.liferay.commerce.model.CommerceOrder updateOrderDate(
+			long commerceOrderId, int orderDateMonth, int orderDateDay,
+			int orderDateYear, int orderDateHour, int orderDateMinute,
+			com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return getService().updateOrderDate(
+			commerceOrderId, orderDateMonth, orderDateDay, orderDateYear,
+			orderDateHour, orderDateMinute, serviceContext);
+	}
+
 	public static com.liferay.commerce.model.CommerceOrder updateOrderStatus(
 			long commerceOrderId, int orderStatus)
 		throws com.liferay.portal.kernel.exception.PortalException {
@@ -472,6 +494,13 @@ public class CommerceOrderServiceUtil {
 
 		return getService().updatePaymentStatusAndTransactionId(
 			commerceOrderId, paymentStatus, transactionId);
+	}
+
+	public static com.liferay.commerce.model.CommerceOrder updatePrintedNote(
+			long commerceOrderId, String printedNote)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return getService().updatePrintedNote(commerceOrderId, printedNote);
 	}
 
 	public static com.liferay.commerce.model.CommerceOrder

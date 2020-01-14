@@ -15,9 +15,9 @@
 package com.liferay.commerce.frontend.taglib.servlet.taglib;
 
 import com.liferay.commerce.frontend.ClayTable;
-import com.liferay.commerce.frontend.ClayTableContextContributor;
 import com.liferay.commerce.frontend.ClayTableContextContributorRegistry;
 import com.liferay.commerce.frontend.ClayTableDataJSONBuilder;
+import com.liferay.commerce.frontend.ClayTableHttpContextContributor;
 import com.liferay.commerce.frontend.ClayTableRegistry;
 import com.liferay.commerce.frontend.ClayTableSerializer;
 import com.liferay.commerce.frontend.CommerceDataProviderRegistry;
@@ -26,7 +26,6 @@ import com.liferay.commerce.frontend.Filter;
 import com.liferay.commerce.frontend.FilterFactory;
 import com.liferay.commerce.frontend.FilterFactoryRegistry;
 import com.liferay.commerce.frontend.PaginationImpl;
-import com.liferay.commerce.frontend.taglib.internal.js.loader.modules.extender.npm.NPMResolverProvider;
 import com.liferay.commerce.frontend.taglib.internal.model.ClayPaginationEntry;
 import com.liferay.commerce.frontend.taglib.internal.servlet.ServletContextUtil;
 import com.liferay.frontend.js.loader.modules.extender.npm.NPMResolver;
@@ -42,6 +41,7 @@ import com.liferay.portal.kernel.theme.PortletDisplay;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HttpUtil;
+import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.util.PropsValues;
@@ -116,7 +116,7 @@ public class CommerceTableTag extends ComponentRendererTag {
 
 	@Override
 	public String getModule() {
-		NPMResolver npmResolver = NPMResolverProvider.getNPMResolver();
+		NPMResolver npmResolver = ServletContextUtil.getNPMResolver();
 
 		if (npmResolver == null) {
 			return StringPool.BLANK;
@@ -216,14 +216,30 @@ public class CommerceTableTag extends ComponentRendererTag {
 	private void _setItems(String dataProviderKey) throws Exception {
 		Map<String, Object> context = getContext();
 
+		String tableName = GetterUtil.getString(context.get("tableName"));
+
+		String requestTableName = ParamUtil.getString(request, "tableName");
+
+		if (tableName.equals(requestTableName)) {
+			int pageNumber = ParamUtil.getInteger(request, "pageNumber");
+
+			if (pageNumber > 0) {
+				setPageNumber(pageNumber);
+			}
+
+			int itemsPerPage = ParamUtil.getInteger(request, "itemsPerPage");
+
+			if (itemsPerPage > 0) {
+				setItemPerPage(itemsPerPage);
+			}
+		}
+
 		int pageNumber = GetterUtil.getInteger(context.get("pageNumber"));
 
 		putValue("currentPage", pageNumber);
 
 		ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
 			WebKeys.THEME_DISPLAY);
-
-		String tableName = GetterUtil.getString(context.get("tableName"));
 
 		CommerceDataSetDataProvider commerceDataSetDataProvider =
 			_commerceDataProviderRegistry.getCommerceDataProvider(
@@ -268,6 +284,24 @@ public class CommerceTableTag extends ComponentRendererTag {
 	private void _setPagination() {
 		Map<String, Object> context = getContext();
 
+		String tableName = GetterUtil.getString(context.get("tableName"));
+
+		String requestTableName = ParamUtil.getString(request, "tableName");
+
+		if (tableName.equals(requestTableName)) {
+			int pageNumber = ParamUtil.getInteger(request, "pageNumber");
+
+			if (pageNumber > 0) {
+				setPageNumber(pageNumber);
+			}
+
+			int itemsPerPage = ParamUtil.getInteger(request, "itemsPerPage");
+
+			if (itemsPerPage > 0) {
+				setItemPerPage(itemsPerPage);
+			}
+		}
+
 		PortletURL portletURL = (PortletURL)context.get("portletURL");
 		String namespace = GetterUtil.getString(context.get("namespace"));
 		String deltaParam = GetterUtil.getString(
@@ -296,10 +330,13 @@ public class CommerceTableTag extends ComponentRendererTag {
 	}
 
 	private void _setTableContext(String tableName) {
+		ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
+			WebKeys.THEME_DISPLAY);
+
 		ClayTable clayTable = _clayTableRegistry.getClayTable(tableName);
 
 		Map<String, Object> clayTableContext = _clayTableSerializer.serialize(
-			clayTable);
+			clayTable, themeDisplay.getLocale());
 
 		for (Map.Entry<String, Object> entry : clayTableContext.entrySet()) {
 			putValue(entry.getKey(), entry.getValue());
@@ -309,11 +346,11 @@ public class CommerceTableTag extends ComponentRendererTag {
 
 		Set<String> dependencies = new HashSet<>();
 
-		List<ClayTableContextContributor> clayTablePostProcessors =
+		List<ClayTableHttpContextContributor> clayTablePostProcessors =
 			_clayTableContextContributorRegistry.
 				getClayTableContextContributors(tableName);
 
-		for (ClayTableContextContributor clayTableContextContributor :
+		for (ClayTableHttpContextContributor clayTableContextContributor :
 				clayTablePostProcessors) {
 
 			clayTableContextContributor.contribute(

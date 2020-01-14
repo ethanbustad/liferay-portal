@@ -29,7 +29,6 @@ import com.liferay.commerce.frontend.ClayTableSchemaBuilderFactory;
 import com.liferay.commerce.frontend.CommerceDataSetDataProvider;
 import com.liferay.commerce.frontend.Filter;
 import com.liferay.commerce.frontend.Pagination;
-import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
@@ -40,20 +39,18 @@ import com.liferay.portal.kernel.portlet.PortletProvider;
 import com.liferay.portal.kernel.portlet.PortletProviderUtil;
 import com.liferay.portal.kernel.portlet.PortletQName;
 import com.liferay.portal.kernel.search.Sort;
-import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
 import com.liferay.portal.kernel.service.UserGroupRoleLocalService;
-import com.liferay.portal.kernel.service.permission.RolePermissionUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.HtmlUtil;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.WebKeys;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 
 import javax.portlet.PortletURL;
 
@@ -106,30 +103,22 @@ public class CommerceAccountUserClayTable
 				member.getMemberId(), httpServletRequest);
 
 			ClayTableAction viewClayTableAction = new ClayTableAction(
-				viewURL, StringPool.BLANK,
-				LanguageUtil.get(httpServletRequest, "view"), false, false);
+				StringPool.BLANK, viewURL, StringPool.BLANK,
+				LanguageUtil.get(httpServletRequest, "view"), null, false,
+				false);
 
 			clayTableActions.add(viewClayTableAction);
 
 			if (permissionChecker.isCompanyAdmin() ||
 				(member.getMemberId() != themeDisplay.getUserId())) {
 
-				StringBundler sb = new StringBundler(7);
+				ClayTableAction removeClayTableAction = new ClayTableAction(
+					StringPool.BLANK, StringPool.POUND, StringPool.BLANK,
+					LanguageUtil.get(httpServletRequest, "remove"),
+					"removeCommerceAccountUser('" + member.getMemberId() + "')",
+					false, false);
 
-				sb.append("javascript:deleteCommerceAccountUser");
-				sb.append(StringPool.OPEN_PARENTHESIS);
-				sb.append(StringPool.APOSTROPHE);
-				sb.append(member.getMemberId());
-				sb.append(StringPool.APOSTROPHE);
-				sb.append(StringPool.CLOSE_PARENTHESIS);
-				sb.append(StringPool.SEMICOLON);
-
-				ClayTableAction deleteClayTableAction = new ClayTableAction(
-					sb.toString(), StringPool.BLANK,
-					LanguageUtil.get(httpServletRequest, "delete"), false,
-					false);
-
-				clayTableActions.add(deleteClayTableAction);
+				clayTableActions.add(removeClayTableAction);
 			}
 		}
 
@@ -140,10 +129,10 @@ public class CommerceAccountUserClayTable
 	public int countItems(HttpServletRequest httpServletRequest, Filter filter)
 		throws PortalException {
 
-		AccountFilterImpl accountFilter = (AccountFilterImpl)filter;
+		AccountFilterImpl accountFilterImpl = (AccountFilterImpl)filter;
 
 		return _commerceAccountUserRelService.getCommerceAccountUserRelsCount(
-			accountFilter.getAccountId());
+			accountFilterImpl.getAccountId());
 	}
 
 	@Override
@@ -171,17 +160,13 @@ public class CommerceAccountUserClayTable
 			Pagination pagination, Sort sort)
 		throws PortalException {
 
-		ThemeDisplay themeDisplay =
-			(ThemeDisplay)httpServletRequest.getAttribute(
-				WebKeys.THEME_DISPLAY);
-
-		AccountFilterImpl accountFilter = (AccountFilterImpl)filter;
+		AccountFilterImpl accountFilterImpl = (AccountFilterImpl)filter;
 
 		List<Member> members = new ArrayList<>();
 
 		List<CommerceAccountUserRel> commerceAccountUserRels =
 			_commerceAccountUserRelService.getCommerceAccountUserRels(
-				accountFilter.getAccountId(), pagination.getStartPosition(),
+				accountFilterImpl.getAccountId(), pagination.getStartPosition(),
 				pagination.getEndPosition());
 
 		for (CommerceAccountUserRel commerceAccountUserRel :
@@ -191,15 +176,14 @@ public class CommerceAccountUserClayTable
 
 			CommerceAccount commerceAccount =
 				_commerceAccountService.getCommerceAccount(
-					accountFilter.getAccountId());
+					accountFilterImpl.getAccountId());
 
 			members.add(
 				new Member(
-					user.getUserId(), accountFilter.getAccountId(),
+					user.getUserId(), accountFilterImpl.getAccountId(),
 					HtmlUtil.escape(user.getFullName()), user.getEmailAddress(),
 					getUserRoles(
-						user, commerceAccount.getCommerceAccountGroupId(),
-						themeDisplay.getPermissionChecker()),
+						user, commerceAccount.getCommerceAccountGroupId()),
 					_getAccountUserViewDetailURL(
 						user.getUserId(), httpServletRequest)));
 		}
@@ -212,8 +196,7 @@ public class CommerceAccountUserClayTable
 		return true;
 	}
 
-	protected String[] getUserRoles(
-			User user, long groupId, PermissionChecker permissionChecker)
+	protected String getUserRoles(User user, long groupId)
 		throws PortalException {
 
 		List<Role> roles = new ArrayList<>();
@@ -223,21 +206,11 @@ public class CommerceAccountUserClayTable
 				user.getUserId(), groupId);
 
 		for (UserGroupRole userGroupRole : userGroupRoles) {
-			if (RolePermissionUtil.contains(
-					permissionChecker, userGroupRole.getRoleId(),
-					ActionKeys.VIEW)) {
-
-				roles.add(userGroupRole.getRole());
-			}
+			roles.add(userGroupRole.getRole());
 		}
 
-		Stream<Role> stream = roles.stream();
-
-		return stream.map(
-			Role::getName
-		).toArray(
-			String[]::new
-		);
+		return ListUtil.toString(
+			roles, Role.NAME_ACCESSOR, StringPool.COMMA_AND_SPACE);
 	}
 
 	private String _getAccountUserViewDetailURL(

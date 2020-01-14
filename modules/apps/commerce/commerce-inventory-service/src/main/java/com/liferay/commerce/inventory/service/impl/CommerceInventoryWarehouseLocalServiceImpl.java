@@ -16,6 +16,7 @@ package com.liferay.commerce.inventory.service.impl;
 
 import com.liferay.commerce.inventory.exception.CommerceInventoryWarehouseActiveException;
 import com.liferay.commerce.inventory.exception.CommerceInventoryWarehouseNameException;
+import com.liferay.commerce.inventory.exception.DuplicateCommerceInventoryWarehouseException;
 import com.liferay.commerce.inventory.internal.search.CommerceInventoryWarehouseIndexer;
 import com.liferay.commerce.inventory.model.CommerceInventoryWarehouse;
 import com.liferay.commerce.inventory.service.base.CommerceInventoryWarehouseLocalServiceBaseImpl;
@@ -71,6 +72,16 @@ public class CommerceInventoryWarehouseLocalServiceImpl
 
 		if (Validator.isBlank(externalReferenceCode)) {
 			externalReferenceCode = null;
+		}
+		else {
+			CommerceInventoryWarehouse commerceInventoryWarehouse =
+				fetchCommerceInventoryWarehouseByReferenceCode(
+					user.getCompanyId(), externalReferenceCode);
+
+			if (commerceInventoryWarehouse != null) {
+				throw new DuplicateCommerceInventoryWarehouseException(
+					"Duplicated externalReferenceCode");
+			}
 		}
 
 		validate(name, active, latitude, longitude);
@@ -345,13 +356,13 @@ public class CommerceInventoryWarehouseLocalServiceImpl
 
 		Map<String, Serializable> attributes = new HashMap<>();
 
-		attributes.put(Field.ENTRY_CLASS_PK, keywords);
-		attributes.put(Field.NAME, keywords);
-		attributes.put(Field.DESCRIPTION, keywords);
 		attributes.put(CommerceInventoryWarehouseIndexer.FIELD_CITY, keywords);
 		attributes.put(
 			CommerceInventoryWarehouseIndexer.FIELD_STREET_1, keywords);
 		attributes.put(CommerceInventoryWarehouseIndexer.FIELD_ZIP, keywords);
+		attributes.put(Field.DESCRIPTION, keywords);
+		attributes.put(Field.ENTRY_CLASS_PK, keywords);
+		attributes.put(Field.NAME, keywords);
 		attributes.put("params", params);
 
 		if (active != null) {

@@ -14,6 +14,7 @@
 
 package com.liferay.commerce.service.impl;
 
+import com.liferay.commerce.constants.CommerceDestinationNames;
 import com.liferay.commerce.constants.CommerceSubscriptionEntryConstants;
 import com.liferay.commerce.constants.CommerceSubscriptionNotificationConstants;
 import com.liferay.commerce.exception.CommerceSubscriptionCPInstanceIdException;
@@ -36,6 +37,8 @@ import com.liferay.commerce.product.util.CPSubscriptionType;
 import com.liferay.commerce.product.util.CPSubscriptionTypeRegistry;
 import com.liferay.commerce.service.base.CommerceSubscriptionEntryLocalServiceBaseImpl;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.messaging.Message;
+import com.liferay.portal.kernel.messaging.MessageBusUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.search.BaseModelSearchResult;
 import com.liferay.portal.kernel.search.Document;
@@ -50,6 +53,7 @@ import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.SearchException;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.transaction.TransactionCommitCallbackUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.PortalUtil;
@@ -66,12 +70,72 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 /**
  * @author Alessio Antonio Rendina
  */
 public class CommerceSubscriptionEntryLocalServiceImpl
 	extends CommerceSubscriptionEntryLocalServiceBaseImpl {
+
+	@Indexable(type = IndexableType.REINDEX)
+	@Override
+	public CommerceSubscriptionEntry addCommerceSubscriptionEntry(
+			long userId, long groupId, long commerceOrderItemId,
+			int subscriptionLength, String subscriptionType,
+			long maxSubscriptionCycles,
+			UnicodeProperties subscriptionTypeSettingsProperties)
+		throws PortalException {
+
+		User user = userLocalService.getUser(userId);
+
+		CPSubscriptionType cpSubscriptionType =
+			_cpSubscriptionTypeRegistry.getCPSubscriptionType(subscriptionType);
+
+		validateCPSubscriptionType(cpSubscriptionType);
+
+		long commerceSubscriptionEntryId = counterLocalService.increment();
+
+		CommerceSubscriptionEntry commerceSubscriptionEntry =
+			commerceSubscriptionEntryPersistence.create(
+				commerceSubscriptionEntryId);
+
+		commerceSubscriptionEntry.setUuid(PortalUUIDUtil.generate());
+		commerceSubscriptionEntry.setGroupId(groupId);
+		commerceSubscriptionEntry.setCompanyId(user.getCompanyId());
+		commerceSubscriptionEntry.setUserId(user.getUserId());
+		commerceSubscriptionEntry.setUserName(user.getFullName());
+
+		commerceSubscriptionEntry.setCommerceOrderItemId(commerceOrderItemId);
+		commerceSubscriptionEntry.setSubscriptionLength(subscriptionLength);
+		commerceSubscriptionEntry.setSubscriptionType(subscriptionType);
+		commerceSubscriptionEntry.setCurrentCycle(1);
+		commerceSubscriptionEntry.setMaxSubscriptionCycles(
+			maxSubscriptionCycles);
+		commerceSubscriptionEntry.setSubscriptionTypeSettingsProperties(
+			subscriptionTypeSettingsProperties);
+		commerceSubscriptionEntry.setSubscriptionStatus(
+			CommerceSubscriptionEntryConstants.SUBSCRIPTION_STATUS_ACTIVE);
+		commerceSubscriptionEntry.setLastIterationDate(new Date());
+
+		Date subscriptionNextIterationDate =
+			cpSubscriptionType.getSubscriptionNextIterationDate(
+				user.getTimeZone(), subscriptionLength,
+				subscriptionTypeSettingsProperties, null);
+
+		commerceSubscriptionEntry.setNextIterationDate(
+			subscriptionNextIterationDate);
+
+		Date subscriptionStartDate =
+			cpSubscriptionType.getSubscriptionStartDate(
+				user.getTimeZone(), subscriptionTypeSettingsProperties);
+
+		commerceSubscriptionEntry.setStartDate(subscriptionStartDate);
+
+		commerceSubscriptionEntryPersistence.update(commerceSubscriptionEntry);
+
+		return commerceSubscriptionEntry;
+	}
 
 	/**
 	 * @deprecated As of Mueller (7.2.x), pass userId and groupId
@@ -95,7 +159,11 @@ public class CommerceSubscriptionEntryLocalServiceImpl
 			commerceOrderItemId);
 	}
 
-	@Indexable(type = IndexableType.REINDEX)
+	/**
+	 * @deprecated As of Mueller (7.2.x), pass subscription info instead of
+	 * cpInstanceUuid and cProductId
+	 */
+	@Deprecated
 	@Override
 	public CommerceSubscriptionEntry addCommerceSubscriptionEntry(
 			long userId, long groupId, String cpInstanceUuid, long cProductId,
@@ -167,9 +235,8 @@ public class CommerceSubscriptionEntryLocalServiceImpl
 
 		commerceSubscriptionEntry.setStartDate(subscriptionStartDate);
 
-		commerceSubscriptionEntryPersistence.update(commerceSubscriptionEntry);
-
-		return commerceSubscriptionEntry;
+		return commerceSubscriptionEntryPersistence.update(
+			commerceSubscriptionEntry);
 	}
 
 	/**
@@ -188,11 +255,37 @@ public class CommerceSubscriptionEntryLocalServiceImpl
 	}
 
 	@Override
+	public void deleteCommerceSubscriptionEntries(long groupId) {
+		List<CommerceSubscriptionEntry> commerceSubscriptionEntries =
+			commerceSubscriptionEntryPersistence.findByGroupId(groupId);
+
+		for (CommerceSubscriptionEntry commerceSubscriptionEntry :
+				commerceSubscriptionEntries) {
+
+			commerceSubscriptionEntryLocalService.
+				deleteCommerceSubscriptionEntry(commerceSubscriptionEntry);
+		}
+	}
+
+	/**
+	 * @deprecated As of Mueller (7.2.x), fetch by commerceOrderItemId instead
+	 */
+	@Deprecated
+	@Override
 	public CommerceSubscriptionEntry fetchCommerceSubscriptionEntries(
 		String cpInstanceUuid, long cProductId, long commerceOrderItemId) {
 
 		return commerceSubscriptionEntryPersistence.fetchByC_C_C(
 			cpInstanceUuid, cProductId, commerceOrderItemId);
+	}
+
+	@Override
+	public CommerceSubscriptionEntry
+		fetchCommerceSubscriptionEntryByCommerceOrderItemId(
+			long commerceOrderItemId) {
+
+		return commerceSubscriptionEntryPersistence.fetchByCommerceOrderItemId(
+			commerceOrderItemId);
 	}
 
 	@Override
@@ -295,7 +388,7 @@ public class CommerceSubscriptionEntryLocalServiceImpl
 			CommerceOrder commerceOrder = commerceOrderItem.getCommerceOrder();
 
 			_commerceNotificationHelper.sendNotifications(
-				commerceOrder.getGroupId(),
+				commerceOrder.getGroupId(), commerceOrder.getUserId(),
 				CommerceSubscriptionNotificationConstants.SUBSCRIPTION_RENEWED,
 				updatedSubscriptionEntry);
 		}
@@ -439,6 +532,11 @@ public class CommerceSubscriptionEntryLocalServiceImpl
 
 		commerceSubscriptionEntry.setSubscriptionStatus(subscriptionStatus);
 
+		// Messaging
+
+		sendSubscriptionStatusMessage(
+			commerceSubscriptionEntryId, subscriptionStatus);
+
 		return commerceSubscriptionEntryPersistence.update(
 			commerceSubscriptionEntry);
 	}
@@ -452,10 +550,10 @@ public class CommerceSubscriptionEntryLocalServiceImpl
 
 		Map<String, Serializable> attributes = new HashMap<>();
 
-		attributes.put(Field.ENTRY_CLASS_PK, keywords);
 		attributes.put(
 			CommerceSubscriptionEntryIndexer.FIELD_CP_INSTANCE_ID, keywords);
 		attributes.put(CommerceSubscriptionEntryIndexer.FIELD_SKU, keywords);
+		attributes.put(Field.ENTRY_CLASS_PK, keywords);
 
 		if (maxSubscriptionCycles != null) {
 			attributes.put(
@@ -559,6 +657,30 @@ public class CommerceSubscriptionEntryLocalServiceImpl
 
 		throw new SearchException(
 			"Unable to fix the search index after 10 attempts");
+	}
+
+	protected void sendSubscriptionStatusMessage(
+		long commerceSubscriptionEntryId, int subscriptionStatus) {
+
+		TransactionCommitCallbackUtil.registerCallback(
+			new Callable<Void>() {
+
+				@Override
+				public Void call() throws Exception {
+					Message message = new Message();
+
+					message.put(
+						"commerceSubscriptionEntryId",
+						commerceSubscriptionEntryId);
+					message.put("subscriptionStatus", subscriptionStatus);
+
+					MessageBusUtil.sendMessage(
+						CommerceDestinationNames.SUBSCRIPTION_STATUS, message);
+
+					return null;
+				}
+
+			});
 	}
 
 	protected void validateCPSubscriptionType(

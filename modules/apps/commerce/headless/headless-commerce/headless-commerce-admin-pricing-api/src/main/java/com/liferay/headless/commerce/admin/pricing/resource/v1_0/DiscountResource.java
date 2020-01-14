@@ -34,11 +34,6 @@ import javax.ws.rs.core.Response;
 @Generated("")
 public interface DiscountResource {
 
-	public Page<Discount> getDiscountsPage(Pagination pagination)
-		throws Exception;
-
-	public Discount postDiscount(Discount discount) throws Exception;
-
 	public Response deleteDiscountByExternalReferenceCode(
 			String externalReferenceCode)
 		throws Exception;
@@ -56,6 +51,11 @@ public interface DiscountResource {
 	public Discount getDiscount(Long id) throws Exception;
 
 	public Response patchDiscount(Long id, Discount discount) throws Exception;
+
+	public Page<Discount> getDiscountsPage(Pagination pagination)
+		throws Exception;
+
+	public Discount postDiscount(Discount discount) throws Exception;
 
 	public void setContextCompany(Company contextCompany);
 

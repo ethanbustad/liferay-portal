@@ -21,11 +21,16 @@ import com.liferay.commerce.constants.CommerceConstants;
 import com.liferay.commerce.payment.method.CommercePaymentMethodRegistry;
 import com.liferay.commerce.payment.service.CommercePaymentMethodGroupRelService;
 import com.liferay.commerce.payment.web.internal.display.context.CommercePaymentMethodGroupRelsDisplayContext;
+import com.liferay.commerce.product.service.CPDefinitionLocalService;
+import com.liferay.commerce.product.service.CommerceChannelLocalService;
+import com.liferay.commerce.service.CommerceOrderLocalService;
+import com.liferay.commerce.service.CommerceSubscriptionEntryLocalService;
 import com.liferay.frontend.taglib.servlet.taglib.util.JSPRenderer;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.security.permission.resource.PortletResourcePermission;
+import com.liferay.portal.kernel.util.JavaConstants;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.kernel.util.WebKeys;
@@ -40,6 +45,8 @@ import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -50,7 +57,10 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(
 	immediate = true,
-	property = "commerce.admin.module.key=" + PaymentMethodsCommerceAdminModule.KEY,
+	property = {
+		"com.liferay.portlet.header-portlet-css=/css/main.css",
+		"commerce.admin.module.key=" + PaymentMethodsCommerceAdminModule.KEY
+	},
 	service = CommerceAdminModule.class
 )
 public class PaymentMethodsCommerceAdminModule implements CommerceAdminModule {
@@ -86,15 +96,27 @@ public class PaymentMethodsCommerceAdminModule implements CommerceAdminModule {
 
 	@Override
 	public void render(
-			RenderRequest renderRequest, RenderResponse renderResponse)
+			HttpServletRequest httpServletRequest,
+			HttpServletResponse httpServletResponse)
 		throws IOException {
+
+		RenderRequest renderRequest =
+			(RenderRequest)httpServletRequest.getAttribute(
+				JavaConstants.JAVAX_PORTLET_REQUEST);
+
+		RenderResponse renderResponse =
+			(RenderResponse)httpServletRequest.getAttribute(
+				JavaConstants.JAVAX_PORTLET_RESPONSE);
 
 		CommercePaymentMethodGroupRelsDisplayContext
 			commercePaymentMethodGroupRelsDisplayContext =
 				new CommercePaymentMethodGroupRelsDisplayContext(
+					_commerceChannelLocalService, _commerceOrderLocalService,
 					_commercePaymentMethodRegistry,
 					_commercePaymentMethodGroupRelService,
-					_portletResourcePermission, renderRequest, renderResponse);
+					_commerceSubscriptionEntryLocalService,
+					_cpDefinitionLocalService, _portletResourcePermission,
+					renderRequest, renderResponse);
 
 		renderRequest.setAttribute(
 			WebKeys.PORTLET_DISPLAY_CONTEXT,
@@ -102,8 +124,14 @@ public class PaymentMethodsCommerceAdminModule implements CommerceAdminModule {
 
 		_jspRenderer.renderJSP(
 			_servletContext, _portal.getHttpServletRequest(renderRequest),
-			_portal.getHttpServletResponse(renderResponse), "/view.jsp");
+			httpServletResponse, "/view.jsp");
 	}
+
+	@Reference
+	private CommerceChannelLocalService _commerceChannelLocalService;
+
+	@Reference
+	private CommerceOrderLocalService _commerceOrderLocalService;
 
 	@Reference
 	private CommercePaymentMethodGroupRelService
@@ -111,6 +139,13 @@ public class PaymentMethodsCommerceAdminModule implements CommerceAdminModule {
 
 	@Reference
 	private CommercePaymentMethodRegistry _commercePaymentMethodRegistry;
+
+	@Reference
+	private CommerceSubscriptionEntryLocalService
+		_commerceSubscriptionEntryLocalService;
+
+	@Reference
+	private CPDefinitionLocalService _cpDefinitionLocalService;
 
 	@Reference
 	private JSPRenderer _jspRenderer;

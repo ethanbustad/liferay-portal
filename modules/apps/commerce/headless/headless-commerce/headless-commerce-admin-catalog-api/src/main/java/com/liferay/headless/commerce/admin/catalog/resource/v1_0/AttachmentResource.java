@@ -15,13 +15,13 @@
 package com.liferay.headless.commerce.admin.catalog.resource.v1_0;
 
 import com.liferay.headless.commerce.admin.catalog.dto.v1_0.Attachment;
+import com.liferay.headless.commerce.admin.catalog.dto.v1_0.AttachmentBase64;
+import com.liferay.headless.commerce.admin.catalog.dto.v1_0.AttachmentUrl;
 import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
 
 import javax.annotation.Generated;
-
-import javax.ws.rs.core.Response;
 
 /**
  * To access this resource, run:
@@ -34,23 +34,36 @@ import javax.ws.rs.core.Response;
 @Generated("")
 public interface AttachmentResource {
 
-	public Response deleteAttachment(Long id) throws Exception;
-
-	public Attachment getAttachment(Long id) throws Exception;
-
-	public Response patchAttachment(Long id, Attachment attachment)
+	public Page<Attachment> getProductByExternalReferenceCodeAttachmentsPage(
+			String externalReferenceCode, Pagination pagination)
 		throws Exception;
 
-	public Response deleteAttachmentByExternalReferenceCode(
-			String externalReferenceCode)
-		throws Exception;
-
-	public Attachment getAttachmentByExternalReferenceCode(
-			String externalReferenceCode)
-		throws Exception;
-
-	public Response patchAttachmentByExternalReferenceCode(
+	public Attachment postProductByExternalReferenceCodeAttachment(
 			String externalReferenceCode, Attachment attachment)
+		throws Exception;
+
+	public Attachment postProductByExternalReferenceCodeAttachmentByBase64(
+			String externalReferenceCode, AttachmentBase64 attachmentBase64)
+		throws Exception;
+
+	public Attachment postProductByExternalReferenceCodeAttachmentByUrl(
+			String externalReferenceCode, AttachmentUrl attachmentUrl)
+		throws Exception;
+
+	public Page<Attachment> getProductByExternalReferenceCodeImagesPage(
+			String externalReferenceCode, Pagination pagination)
+		throws Exception;
+
+	public Attachment postProductByExternalReferenceCodeImage(
+			String externalReferenceCode, Attachment attachment)
+		throws Exception;
+
+	public Attachment postProductByExternalReferenceCodeImageByBase64(
+			String externalReferenceCode, AttachmentBase64 attachmentBase64)
+		throws Exception;
+
+	public Attachment postProductByExternalReferenceCodeImageByUrl(
+			String externalReferenceCode, AttachmentUrl attachmentUrl)
 		throws Exception;
 
 	public Page<Attachment> getProductIdAttachmentsPage(
@@ -60,12 +73,12 @@ public interface AttachmentResource {
 	public Attachment postProductIdAttachment(Long id, Attachment attachment)
 		throws Exception;
 
-	public Page<Attachment> getProductByExternalReferenceCodeAttachmentsPage(
-			String externalReferenceCode, Pagination pagination)
+	public Attachment postProductIdAttachmentByBase64(
+			Long id, AttachmentBase64 attachmentBase64)
 		throws Exception;
 
-	public Attachment postProductByExternalReferenceCodeAttachment(
-			String externalReferenceCode, Attachment attachment)
+	public Attachment postProductIdAttachmentByUrl(
+			Long id, AttachmentUrl attachmentUrl)
 		throws Exception;
 
 	public Page<Attachment> getProductIdImagesPage(
@@ -75,12 +88,12 @@ public interface AttachmentResource {
 	public Attachment postProductIdImage(Long id, Attachment attachment)
 		throws Exception;
 
-	public Page<Attachment> getProductByExternalReferenceCodeImagesPage(
-			String externalReferenceCode, Pagination pagination)
+	public Attachment postProductIdImageByBase64(
+			Long id, AttachmentBase64 attachmentBase64)
 		throws Exception;
 
-	public Attachment postProductByExternalReferenceCodeImage(
-			String externalReferenceCode, Attachment attachment)
+	public Attachment postProductIdImageByUrl(
+			Long id, AttachmentUrl attachmentUrl)
 		throws Exception;
 
 	public void setContextCompany(Company contextCompany);

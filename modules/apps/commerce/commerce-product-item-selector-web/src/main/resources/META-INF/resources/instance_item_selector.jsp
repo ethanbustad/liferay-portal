@@ -54,11 +54,10 @@ PortletURL portletURL = cpInstanceItemSelectorViewDisplayContext.getPortletURL()
 		/>
 
 		<li>
-			<aui:form action="<%= String.valueOf(portletURL) %>" name="searchFm">
-				<liferay-ui:input-search
-					markupView="lexicon"
-				/>
-			</aui:form>
+			<liferay-commerce:search-input
+				actionURL="<%= portletURL %>"
+				formName="searchFm"
+			/>
 		</li>
 	</liferay-frontend:management-bar-filters>
 </liferay-frontend:management-bar>
@@ -103,10 +102,6 @@ PortletURL portletURL = cpInstanceItemSelectorViewDisplayContext.getPortletURL()
 		<liferay-ui:search-iterator
 			displayStyle="<%= displayStyle %>"
 			markupView="lexicon"
-			searchContainer="<%= cpInstanceSearchContainer %>"
-		/>
-
-		<liferay-ui:search-paginator
 			searchContainer="<%= cpInstanceSearchContainer %>"
 		/>
 	</liferay-ui:search-container>

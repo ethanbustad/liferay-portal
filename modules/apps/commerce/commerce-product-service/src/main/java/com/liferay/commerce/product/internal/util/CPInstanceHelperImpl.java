@@ -19,6 +19,7 @@ import com.liferay.commerce.account.util.CommerceAccountHelper;
 import com.liferay.commerce.media.CommerceMediaResolver;
 import com.liferay.commerce.product.catalog.CPCatalogEntry;
 import com.liferay.commerce.product.catalog.CPSku;
+import com.liferay.commerce.product.constants.CPField;
 import com.liferay.commerce.product.internal.catalog.CPSkuImpl;
 import com.liferay.commerce.product.model.CPAttachmentFileEntry;
 import com.liferay.commerce.product.model.CPAttachmentFileEntryConstants;
@@ -26,13 +27,12 @@ import com.liferay.commerce.product.model.CPDefinition;
 import com.liferay.commerce.product.model.CPDefinitionOptionRel;
 import com.liferay.commerce.product.model.CPDefinitionOptionValueRel;
 import com.liferay.commerce.product.model.CPInstance;
-import com.liferay.commerce.product.search.CPAttachmentFileEntryIndexer;
-import com.liferay.commerce.product.search.CPInstanceIndexer;
 import com.liferay.commerce.product.service.CPAttachmentFileEntryLocalService;
 import com.liferay.commerce.product.service.CPDefinitionLocalService;
 import com.liferay.commerce.product.service.CPDefinitionOptionRelLocalService;
 import com.liferay.commerce.product.service.CPDefinitionOptionValueRelLocalService;
 import com.liferay.commerce.product.service.CPInstanceLocalService;
+import com.liferay.commerce.product.service.CommerceChannelLocalService;
 import com.liferay.commerce.product.util.CPInstanceHelper;
 import com.liferay.commerce.product.util.DDMFormValuesHelper;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldTypeServicesTracker;
@@ -128,11 +128,8 @@ public class CPInstanceHelperImpl implements CPInstanceHelper {
 		Map<String, Serializable> attributes = new HashMap<>();
 
 		attributes.put(
-			CPAttachmentFileEntryIndexer.FIELD_RELATED_ENTITY_CLASS_NAME_ID,
-			cpDefinitionClassNameId);
-		attributes.put(
-			CPAttachmentFileEntryIndexer.FIELD_RELATED_ENTITY_CLASS_PK,
-			cpDefinitionId);
+			CPField.RELATED_ENTITY_CLASS_NAME_ID, cpDefinitionClassNameId);
+		attributes.put(CPField.RELATED_ENTITY_CLASS_PK, cpDefinitionId);
 		attributes.put(Field.STATUS, WorkflowConstants.STATUS_APPROVED);
 		attributes.put(Field.TYPE, type);
 
@@ -140,10 +137,6 @@ public class CPInstanceHelperImpl implements CPInstanceHelper {
 
 		for (int i = 0; i < jsonArray.length(); i++) {
 			JSONObject jsonObject = jsonArray.getJSONObject(i);
-
-			String key = jsonObject.getString("key");
-
-			String fieldName = "ATTRIBUTE_" + key + "_VALUES_IDS";
 
 			JSONArray valuesJSONArray = _jsonFactory.createJSONArray(
 				jsonObject.getString("value"));
@@ -157,6 +150,10 @@ public class CPInstanceHelperImpl implements CPInstanceHelper {
 			for (int j = 0; j < valuesJSONArray.length(); j++) {
 				values[j] = valuesJSONArray.getString(j);
 			}
+
+			String key = jsonObject.getString("key");
+
+			String fieldName = "ATTRIBUTE_" + key + "_VALUES_IDS";
 
 			attributes.put(fieldName, values);
 
@@ -209,7 +206,7 @@ public class CPInstanceHelperImpl implements CPInstanceHelper {
 
 	@Override
 	public Map<CPDefinitionOptionRel, List<CPDefinitionOptionValueRel>>
-			getCPDefinitionOptionRelsMap(String json)
+			getCPDefinitionOptionRelsMap(long cpDefinitionId, String json)
 		throws PortalException {
 
 		Map<CPDefinitionOptionRel, List<CPDefinitionOptionValueRel>>
@@ -224,25 +221,23 @@ public class CPInstanceHelperImpl implements CPInstanceHelper {
 		for (int i = 0; i < jsonArray.length(); i++) {
 			JSONObject jsonObject = jsonArray.getJSONObject(i);
 
-			long cpDefinitionOptionRelId = jsonObject.getLong("key");
-			JSONArray valueJSONArray = jsonObject.getJSONArray("value");
-
 			CPDefinitionOptionRel cpDefinitionOptionRel =
-				_cpDefinitionOptionRelLocalService.fetchCPDefinitionOptionRel(
-					cpDefinitionOptionRelId);
+				_cpDefinitionOptionRelLocalService.
+					fetchCPDefinitionOptionRelByKey(
+						cpDefinitionId, jsonObject.getString("key"));
 
 			if (cpDefinitionOptionRel == null) {
 				continue;
 			}
 
-			for (int j = 0; j < valueJSONArray.length(); j++) {
-				long cpDefinitionOptionValueRelId = GetterUtil.getLong(
-					valueJSONArray.getString(j));
+			JSONArray valueJSONArray = jsonObject.getJSONArray("value");
 
+			for (int j = 0; j < valueJSONArray.length(); j++) {
 				CPDefinitionOptionValueRel cpDefinitionOptionValueRel =
 					_cpDefinitionOptionValueRelLocalService.
 						fetchCPDefinitionOptionValueRel(
-							cpDefinitionOptionValueRelId);
+							cpDefinitionOptionRel.getCPDefinitionOptionRelId(),
+							valueJSONArray.getString(j));
 
 				if (cpDefinitionOptionValueRel == null) {
 					continue;
@@ -267,12 +262,19 @@ public class CPInstanceHelperImpl implements CPInstanceHelper {
 
 	@Override
 	public List<CPDefinitionOptionValueRel> getCPDefinitionOptionValueRel(
-			long cpDefinitionId, String optionFieldName,
+			long cpDefinitionId, String optionKey,
 			Map<String, String> optionMap)
 		throws Exception {
 
+		List<CPDefinitionOptionValueRel> cpDefinitionOptionValueRels =
+			new ArrayList<>();
+
 		CPDefinition cpDefinition = _cpDefinitionLocalService.getCPDefinition(
 			cpDefinitionId);
+
+		CPDefinitionOptionRel cpDefinitionOptionRel =
+			_cpDefinitionOptionRelLocalService.fetchCPDefinitionOptionRelByKey(
+				cpDefinitionId, optionKey);
 
 		Indexer<CPInstance> indexer = IndexerRegistryUtil.nullSafeGetIndexer(
 			CPInstance.class);
@@ -281,10 +283,9 @@ public class CPInstanceHelperImpl implements CPInstanceHelper {
 
 		Map<String, Serializable> attributes = new HashMap<>();
 
-		attributes.put(
-			CPInstanceIndexer.FIELD_CP_DEFINITION_ID, cpDefinitionId);
+		attributes.put(CPField.CP_DEFINITION_ID, cpDefinitionId);
+		attributes.put(CPField.PUBLISHED, Boolean.TRUE);
 		attributes.put(Field.STATUS, WorkflowConstants.STATUS_APPROVED);
-		attributes.put(CPInstanceIndexer.FIELD_PUBLISHED, Boolean.TRUE);
 
 		List<String> optionsKeys = new ArrayList<>();
 
@@ -309,25 +310,23 @@ public class CPInstanceHelperImpl implements CPInstanceHelper {
 		searchContext.setCompanyId(cpDefinition.getCompanyId());
 		searchContext.setGroupIds(new long[] {cpDefinition.getGroupId()});
 
+		String optionFieldName = "ATTRIBUTE_" + optionKey + "_VALUE_ID";
+
 		Hits hits = indexer.search(searchContext, optionFieldName);
 
 		Document[] documents = hits.getDocs();
 
-		List<Long> cpDefinitionOptionValueRelIsList = new ArrayList<>();
-
 		for (Document document : documents) {
-			long classPK = GetterUtil.getLong(document.get(optionFieldName));
+			String key = GetterUtil.getString(document.get(optionFieldName));
 
-			if (classPK > 0) {
-				cpDefinitionOptionValueRelIsList.add(classPK);
-			}
+			cpDefinitionOptionValueRels.add(
+				_cpDefinitionOptionValueRelLocalService.
+					fetchCPDefinitionOptionValueRel(
+						cpDefinitionOptionRel.getCPDefinitionOptionRelId(),
+						key));
 		}
 
-		long[] cpDefinitionOptionValueRelIds = ArrayUtil.toLongArray(
-			cpDefinitionOptionValueRelIsList);
-
-		return _cpDefinitionOptionValueRelLocalService.
-			getCPDefinitionOptionValueRels(cpDefinitionOptionValueRelIds);
+		return cpDefinitionOptionValueRels;
 	}
 
 	@Override
@@ -352,10 +351,9 @@ public class CPInstanceHelperImpl implements CPInstanceHelper {
 
 		Map<String, Serializable> attributes = new HashMap<>();
 
-		attributes.put(
-			CPInstanceIndexer.FIELD_CP_DEFINITION_ID, cpDefinitionId);
+		attributes.put(CPField.CP_DEFINITION_ID, cpDefinitionId);
+		attributes.put(CPField.PUBLISHED, Boolean.TRUE);
 		attributes.put(Field.STATUS, WorkflowConstants.STATUS_APPROVED);
-		attributes.put(CPInstanceIndexer.FIELD_PUBLISHED, Boolean.TRUE);
 
 		List<String> optionsKeys = new ArrayList<>();
 
@@ -364,17 +362,15 @@ public class CPInstanceHelperImpl implements CPInstanceHelper {
 
 			String key = jsonObject.getString("key");
 
-			long cpDefinitionOptionRelId = GetterUtil.getLong(key);
-
 			CPDefinitionOptionRel cpDefinitionOptionRel =
-				_cpDefinitionOptionRelLocalService.getCPDefinitionOptionRel(
-					cpDefinitionOptionRelId);
+				_cpDefinitionOptionRelLocalService.
+					fetchCPDefinitionOptionRelByKey(cpDefinitionId, key);
 
-			if (!cpDefinitionOptionRel.isSkuContributor()) {
+			if ((cpDefinitionOptionRel != null) &&
+				!cpDefinitionOptionRel.isSkuContributor()) {
+
 				continue;
 			}
-
-			String fieldName = "ATTRIBUTE_" + key + "_VALUE_ID";
 
 			JSONArray valuesJSONArray = _jsonFactory.createJSONArray(
 				jsonObject.getString("value"));
@@ -382,6 +378,8 @@ public class CPInstanceHelperImpl implements CPInstanceHelper {
 			if (valuesJSONArray.length() == 0) {
 				continue;
 			}
+
+			String fieldName = "ATTRIBUTE_" + key + "_VALUE_ID";
 
 			String value = valuesJSONArray.getString(0);
 
@@ -475,7 +473,8 @@ public class CPInstanceHelperImpl implements CPInstanceHelper {
 	}
 
 	@Override
-	public List<KeyValuePair> getKeyValuePairs(String json, Locale locale)
+	public List<KeyValuePair> getKeyValuePairs(
+			long cpDefinitionId, String json, Locale locale)
 		throws PortalException {
 
 		List<KeyValuePair> values = new ArrayList<>();
@@ -489,27 +488,26 @@ public class CPInstanceHelperImpl implements CPInstanceHelper {
 		for (int i = 0; i < jsonArray.length(); i++) {
 			JSONObject jsonObject = jsonArray.getJSONObject(i);
 
-			long cpDefinitionOptionRelId = jsonObject.getLong("key");
-			JSONArray valueJSONArray = jsonObject.getJSONArray("value");
+			String key = jsonObject.getString("key");
 
 			CPDefinitionOptionRel cpDefinitionOptionRel =
-				_cpDefinitionOptionRelLocalService.fetchCPDefinitionOptionRel(
-					cpDefinitionOptionRelId);
+				_cpDefinitionOptionRelLocalService.
+					fetchCPDefinitionOptionRelByKey(cpDefinitionId, key);
 
 			if (cpDefinitionOptionRel == null) {
 				continue;
 			}
 
-			for (int j = 0; j < valueJSONArray.length(); j++) {
-				String value = StringPool.BLANK;
+			JSONArray valueJSONArray = jsonObject.getJSONArray("value");
 
-				long cpDefinitionOptionValueRelId = GetterUtil.getLong(
-					valueJSONArray.getString(j));
+			for (int j = 0; j < valueJSONArray.length(); j++) {
+				String value = valueJSONArray.getString(j);
 
 				CPDefinitionOptionValueRel cpDefinitionOptionValueRel =
 					_cpDefinitionOptionValueRelLocalService.
 						fetchCPDefinitionOptionValueRel(
-							cpDefinitionOptionValueRelId);
+							cpDefinitionOptionRel.getCPDefinitionOptionRelId(),
+							value);
 
 				if (cpDefinitionOptionValueRel != null) {
 					value = cpDefinitionOptionValueRel.getName(locale);
@@ -594,6 +592,9 @@ public class CPInstanceHelperImpl implements CPInstanceHelper {
 
 		CommerceAccount commerceAccount =
 			_commerceAccountHelper.getCurrentCommerceAccount(
+				_commerceChannelLocalService.
+					getCommerceChannelGroupIdBySiteGroupId(
+						_portal.getScopeGroupId(renderRequest)),
 				_portal.getHttpServletRequest(renderRequest));
 
 		long commerceAccountId = 0;
@@ -705,8 +706,6 @@ public class CPInstanceHelperImpl implements CPInstanceHelper {
 			boolean skuContributor, boolean optional, boolean publicStore)
 		throws PortalException {
 
-		DDMForm ddmForm = new DDMForm();
-
 		List<CPDefinitionOptionRel> cpDefinitionOptionRels;
 
 		if (skuContributor) {
@@ -724,11 +723,12 @@ public class CPInstanceHelperImpl implements CPInstanceHelper {
 			return null;
 		}
 
+		DDMForm ddmForm = new DDMForm();
+
+		Map<String, String> filters = new HashMap<>();
+
 		for (CPDefinitionOptionRel cpDefinitionOptionRel :
 				cpDefinitionOptionRels) {
-
-			List<CPDefinitionOptionValueRel> cpDefinitionOptionValueRels =
-				cpDefinitionOptionRel.getCPDefinitionOptionValueRels();
 
 			if (Validator.isNull(
 					cpDefinitionOptionRel.getDDMFormFieldTypeName())) {
@@ -736,44 +736,57 @@ public class CPInstanceHelperImpl implements CPInstanceHelper {
 				continue;
 			}
 
-			DDMFormField ddmFormField = new DDMFormField(
-				String.valueOf(
-					cpDefinitionOptionRel.getCPDefinitionOptionRelId()),
-				cpDefinitionOptionRel.getDDMFormFieldTypeName());
+			try {
+				List<CPDefinitionOptionValueRel> cpDefinitionOptionValueRels =
+					null;
 
-			if (!cpDefinitionOptionValueRels.isEmpty()) {
-				DDMFormFieldOptions ddmFormFieldOptions =
-					new DDMFormFieldOptions();
-
-				for (CPDefinitionOptionValueRel cpDefinitionOptionValueRel :
-						cpDefinitionOptionValueRels) {
-
-					String optionLabel = String.valueOf(
-						cpDefinitionOptionValueRel.
-							getCPDefinitionOptionValueRelId());
-
-					ddmFormFieldOptions.addOptionLabel(
-						optionLabel, locale,
-						cpDefinitionOptionValueRel.getName(locale));
+				if (cpDefinitionOptionRel.isSkuContributor() && publicStore) {
+					cpDefinitionOptionValueRels = getCPDefinitionOptionValueRel(
+						cpDefinitionId, cpDefinitionOptionRel.getKey(),
+						filters);
+				}
+				else {
+					cpDefinitionOptionValueRels =
+						cpDefinitionOptionRel.getCPDefinitionOptionValueRels();
 				}
 
-				ddmFormField.setDDMFormFieldOptions(ddmFormFieldOptions);
+				DDMFormField ddmFormField = new DDMFormField(
+					cpDefinitionOptionRel.getKey(),
+					cpDefinitionOptionRel.getDDMFormFieldTypeName());
+
+				if (!cpDefinitionOptionValueRels.isEmpty()) {
+					DDMFormFieldOptions ddmFormFieldOptions =
+						new DDMFormFieldOptions();
+
+					for (CPDefinitionOptionValueRel cpDefinitionOptionValueRel :
+							cpDefinitionOptionValueRels) {
+
+						ddmFormFieldOptions.addOptionLabel(
+							cpDefinitionOptionValueRel.getKey(), locale,
+							cpDefinitionOptionValueRel.getName(locale));
+					}
+
+					ddmFormField.setDDMFormFieldOptions(ddmFormFieldOptions);
+				}
+
+				LocalizedValue localizedValue = new LocalizedValue(locale);
+
+				localizedValue.addString(
+					locale, cpDefinitionOptionRel.getName(locale));
+
+				ddmFormField.setLabel(localizedValue);
+
+				boolean required = _isDDMFormRequired(
+					cpDefinitionOptionRel, ignoreSKUCombinations, optional,
+					publicStore);
+
+				ddmFormField.setRequired(required);
+
+				ddmForm.addDDMFormField(ddmFormField);
 			}
-
-			LocalizedValue localizedValue = new LocalizedValue(locale);
-
-			localizedValue.addString(
-				locale, cpDefinitionOptionRel.getName(locale));
-
-			ddmFormField.setLabel(localizedValue);
-
-			boolean required = _isDDMFormRequired(
-				cpDefinitionOptionRel, ignoreSKUCombinations, optional,
-				publicStore);
-
-			ddmFormField.setRequired(required);
-
-			ddmForm.addDDMFormField(ddmFormField);
+			catch (Exception e) {
+				throw new PortalException("Unable to find option values", e);
+			}
 		}
 
 		ddmForm.addAvailableLocale(locale);
@@ -833,20 +846,21 @@ public class CPInstanceHelperImpl implements CPInstanceHelper {
 			RenderRequest renderRequest, RenderResponse renderResponse)
 		throws PortalException {
 
+		if (ddmForm == null) {
+			return StringPool.BLANK;
+		}
+
 		HttpServletRequest httpServletRequest = _portal.getHttpServletRequest(
 			renderRequest);
 
 		HttpServletResponse httpServletResponse =
 			_portal.getHttpServletResponse(renderResponse);
 
-		if (ddmForm == null) {
-			return StringPool.BLANK;
-		}
-
 		DDMFormRenderingContext ddmFormRenderingContext =
 			new DDMFormRenderingContext();
 
-		ddmFormRenderingContext.setContainerId(String.valueOf(cpDefinitionId));
+		ddmFormRenderingContext.setContainerId(
+			"ProductOptions" + String.valueOf(cpDefinitionId));
 		ddmFormRenderingContext.setHttpServletRequest(httpServletRequest);
 		ddmFormRenderingContext.setHttpServletResponse(httpServletResponse);
 		ddmFormRenderingContext.setLocale(locale);
@@ -868,6 +882,9 @@ public class CPInstanceHelperImpl implements CPInstanceHelper {
 
 	@Reference
 	private CommerceAccountHelper _commerceAccountHelper;
+
+	@Reference
+	private CommerceChannelLocalService _commerceChannelLocalService;
 
 	@Reference
 	private CommerceMediaResolver _commerceMediaResolver;

@@ -59,6 +59,7 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.FriendlyURLNormalizerUtil;
+import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.InheritableMap;
 import com.liferay.portal.kernel.util.ListUtil;
@@ -527,9 +528,11 @@ public class DisplayPageFriendlyURLResolver implements FriendlyURLResolver {
 				layoutActualURL + StringPool.QUESTION + queryString;
 		}
 
-		_portal.addPageSubtitle(journalArticle.getTitle(locale), request);
+		_portal.addPageTitle(journalArticle.getTitle(locale), request);
 		_portal.addPageDescription(
-			journalArticle.getDescription(locale), request);
+			HtmlUtil.unescape(
+				HtmlUtil.stripHtml(journalArticle.getDescription(locale))),
+			request);
 
 		List<AssetTag> assetTags = _assetTagLocalService.getTags(
 			JournalArticle.class.getName(), journalArticle.getPrimaryKey());
@@ -566,7 +569,10 @@ public class DisplayPageFriendlyURLResolver implements FriendlyURLResolver {
 		Locale locale = _portal.getLocale(request);
 
 		_portal.addPageSubtitle(assetEntry.getTitle(locale), request);
-		_portal.addPageDescription(assetEntry.getDescription(locale), request);
+		_portal.addPageDescription(
+			HtmlUtil.unescape(
+				HtmlUtil.stripHtml(assetEntry.getDescription(locale))),
+			request);
 
 		Layout layout = _getAssetDisplayPageEntryLayout(assetEntry);
 

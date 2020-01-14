@@ -1765,6 +1765,18 @@ public class KaleoNotificationRecipientPersistenceImpl
 		}
 	}
 
+	public void clearCache(Set<Serializable> primaryKeys) {
+		finderCache.clearCache(FINDER_CLASS_NAME_ENTITY);
+		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
+		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
+
+		for (Serializable primaryKey : primaryKeys) {
+			entityCache.removeResult(
+				KaleoNotificationRecipientModelImpl.ENTITY_CACHE_ENABLED,
+				KaleoNotificationRecipientImpl.class, primaryKey);
+		}
+	}
+
 	/**
 	 * Creates a new kaleo notification recipient with the primary key. Does not add the kaleo notification recipient to the database.
 	 *

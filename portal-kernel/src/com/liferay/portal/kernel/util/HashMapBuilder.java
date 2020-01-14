@@ -14,31 +14,124 @@
 
 package com.liferay.portal.kernel.util;
 
+import java.util.Collection;
 import java.util.HashMap;
 
 /**
  * @author Hugo Huijser
  */
-public class HashMapBuilder<K, V> {
+public class HashMapBuilder<K, V> extends BaseMapBuilder {
+
+	public static <K, V> HashMapWrapper<K, V> put(
+		Collection<? extends K> inputCollection,
+		UnsafeFunction<K, V, Exception> unsafeFunction) {
+
+		return new HashMapWrapper<>(inputCollection, unsafeFunction);
+	}
+
+	public static <K, V> HashMapWrapper<K, V> put(
+		K key, UnsafeSupplier<V, Exception> valueUnsafeSupplier) {
+
+		return new HashMapWrapper<>(key, valueUnsafeSupplier);
+	}
 
 	public static <K, V> HashMapWrapper<K, V> put(K key, V value) {
 		return new HashMapWrapper<>(key, value);
 	}
 
-	public static final class HashMapWrapper<K, V> {
+	public static <K, V> HashMapWrapper<K, V> put(
+		UnsafeSupplier<K, Exception> keyUnsafeSupplier,
+		UnsafeSupplier<V, Exception> valueUnsafeSupplier) {
+
+		return new HashMapWrapper<>(keyUnsafeSupplier, valueUnsafeSupplier);
+	}
+
+	public static <K, V> HashMapWrapper<K, V> put(
+		UnsafeSupplier<K, Exception> keyUnsafeSupplier, V value) {
+
+		return new HashMapWrapper<>(keyUnsafeSupplier, value);
+	}
+
+	public static final class HashMapWrapper<K, V>
+		extends BaseMapWrapper<K, V> {
+
+		public HashMapWrapper(
+			Collection<? extends K> inputCollection,
+			UnsafeFunction<K, V, Exception> unsafeFunction) {
+
+			doPut(inputCollection, unsafeFunction);
+		}
+
+		public HashMapWrapper(
+			K key, UnsafeSupplier<V, Exception> valueUnsafeSupplier) {
+
+			doPut(key, valueUnsafeSupplier);
+		}
 
 		public HashMapWrapper(K key, V value) {
 			_hashMap.put(key, value);
+		}
+
+		public HashMapWrapper(
+			UnsafeSupplier<K, Exception> keyUnsafeSupplier,
+			UnsafeSupplier<V, Exception> valueUnsafeSupplier) {
+
+			doPut(keyUnsafeSupplier, valueUnsafeSupplier);
+		}
+
+		public HashMapWrapper(
+			UnsafeSupplier<K, Exception> keyUnsafeSupplier, V value) {
+
+			doPut(keyUnsafeSupplier, value);
 		}
 
 		public HashMap<K, V> build() {
 			return _hashMap;
 		}
 
+		public HashMapWrapper<K, V> put(
+			Collection<? extends K> inputCollection,
+			UnsafeFunction<K, V, Exception> unsafeFunction) {
+
+			doPut(inputCollection, unsafeFunction);
+
+			return this;
+		}
+
+		public HashMapWrapper<K, V> put(
+			K key, UnsafeSupplier<V, Exception> valueUnsafeSupplier) {
+
+			doPut(key, valueUnsafeSupplier);
+
+			return this;
+		}
+
 		public HashMapWrapper<K, V> put(K key, V value) {
 			_hashMap.put(key, value);
 
 			return this;
+		}
+
+		public HashMapWrapper<K, V> put(
+			UnsafeSupplier<K, Exception> keyUnsafeSupplier,
+			UnsafeSupplier<V, Exception> valueUnsafeSupplier) {
+
+			doPut(keyUnsafeSupplier, valueUnsafeSupplier);
+
+			return this;
+		}
+
+		public HashMapWrapper<K, V> put(
+			UnsafeSupplier<K, Exception> keyUnsafeSupplier, V value) {
+
+			doPut(keyUnsafeSupplier, value);
+
+			return this;
+		}
+
+		@Override
+		protected HashMap<K, V> getMap() {
+			return _hashMap;
 		}
 
 		private final HashMap<K, V> _hashMap = new HashMap<>();

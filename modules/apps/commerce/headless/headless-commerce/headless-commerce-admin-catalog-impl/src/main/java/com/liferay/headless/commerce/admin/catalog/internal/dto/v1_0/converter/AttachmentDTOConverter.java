@@ -25,8 +25,8 @@ import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
-import com.liferay.portal.kernel.repository.model.FileEntry;
-import com.liferay.portal.kernel.util.Base64;
+import com.liferay.portal.kernel.model.Company;
+import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.util.File;
 import com.liferay.portal.kernel.util.Validator;
 
@@ -59,13 +59,13 @@ public class AttachmentDTOConverter implements DTOConverter {
 			_cpAttachmentFileEntryService.getCPAttachmentFileEntry(
 				dtoConverterContext.getResourcePrimKey());
 
-		FileEntry fileEntry = cpAttachmentFileEntry.getFileEntry();
+		Company company = _companyLocalService.getCompany(
+			cpAttachmentFileEntry.getCompanyId());
 
-		byte[] bytes = _file.getBytes(fileEntry.getContentStream());
+		String portalURL = company.getPortalURL(0);
 
 		return new Attachment() {
 			{
-				attachment = Base64.encode(bytes);
 				displayDate = cpAttachmentFileEntry.getDisplayDate();
 				expirationDate = cpAttachmentFileEntry.getExpirationDate();
 				externalReferenceCode =
@@ -73,8 +73,10 @@ public class AttachmentDTOConverter implements DTOConverter {
 				id = cpAttachmentFileEntry.getCPAttachmentFileEntryId();
 				options = _getAttachmentOptions(cpAttachmentFileEntry);
 				priority = cpAttachmentFileEntry.getPriority();
-				src = _commerceMediaResolver.getDownloadUrl(
-					cpAttachmentFileEntry.getCPAttachmentFileEntryId());
+				src =
+					portalURL +
+						_commerceMediaResolver.getDownloadUrl(
+							cpAttachmentFileEntry.getCPAttachmentFileEntryId());
 				title = LanguageUtils.getLanguageIdMap(
 					cpAttachmentFileEntry.getTitleMap());
 				type = cpAttachmentFileEntry.getType();
@@ -112,6 +114,9 @@ public class AttachmentDTOConverter implements DTOConverter {
 
 	@Reference
 	private CommerceMediaResolver _commerceMediaResolver;
+
+	@Reference
+	private CompanyLocalService _companyLocalService;
 
 	@Reference
 	private CPAttachmentFileEntryService _cpAttachmentFileEntryService;

@@ -24,6 +24,7 @@ import com.liferay.commerce.account.service.CommerceAccountGroupLocalService;
 import com.liferay.commerce.account.service.CommerceAccountLocalService;
 import com.liferay.commerce.account.service.CommerceAccountService;
 import com.liferay.commerce.account.util.CommerceAccountHelper;
+import com.liferay.commerce.product.service.CommerceChannelLocalService;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -89,18 +90,24 @@ public class CommerceAccountHelperImpl implements CommerceAccountHelper {
 		).toArray();
 	}
 
+	/**
+	 * @deprecated As of Mueller (7.2.x), you must pass channelGroupId
+	 */
+	@Deprecated
 	@Override
 	public CommerceAccount getCurrentCommerceAccount(
 			HttpServletRequest httpServletRequest)
 		throws PortalException {
 
 		return getCurrentCommerceAccount(
-			_portal.getScopeGroupId(httpServletRequest), httpServletRequest);
+			_commerceChannelLocalService.getCommerceChannelGroupIdBySiteGroupId(
+				_portal.getScopeGroupId(httpServletRequest)),
+			httpServletRequest);
 	}
 
 	@Override
 	public CommerceAccount getCurrentCommerceAccount(
-			long groupId, HttpServletRequest httpServletRequest)
+			long channelGroupId, HttpServletRequest httpServletRequest)
 		throws PortalException {
 
 		httpServletRequest = _portal.getOriginalServletRequest(
@@ -109,35 +116,42 @@ public class CommerceAccountHelperImpl implements CommerceAccountHelper {
 		CommerceAccount commerceAccount = null;
 
 		String curGroupCommerceAccountIdKey =
-			_CURRENT_COMMERCE_ACCOUNT_ID_KEY + groupId;
+			_CURRENT_COMMERCE_ACCOUNT_ID_KEY + channelGroupId;
 
 		long currentCommerceAccountId = SessionParamUtil.getLong(
 			httpServletRequest, curGroupCommerceAccountIdKey);
 
-		if (currentCommerceAccountId == 0) {
-			commerceAccount = _getSingleCommerceAccount(
-				groupId, httpServletRequest);
-
-			if (commerceAccount == null) {
-				setCurrentCommerceAccount(httpServletRequest, groupId, -1);
-			}
-		}
-		else if (currentCommerceAccountId > 0) {
+		if (currentCommerceAccountId > 0) {
 			commerceAccount = _commerceAccountService.fetchCommerceAccount(
 				currentCommerceAccountId);
+		}
+
+		if ((commerceAccount == null) || !commerceAccount.isActive()) {
+			commerceAccount = _getSingleCommerceAccount(
+				channelGroupId, httpServletRequest);
+
+			if (commerceAccount == null) {
+				setCurrentCommerceAccount(
+					httpServletRequest, channelGroupId, -1);
+			}
+			else {
+				setCurrentCommerceAccount(
+					httpServletRequest, channelGroupId,
+					commerceAccount.getCommerceAccountId());
+			}
 		}
 
 		return commerceAccount;
 	}
 
 	@Override
-	public long[] getUserCommerceAccountIds(long userId, long siteGroupId)
+	public long[] getUserCommerceAccountIds(long userId, long channelGroupId)
 		throws PortalException {
 
 		List<CommerceAccount> commerceAccounts =
 			_commerceAccountLocalService.getUserCommerceAccounts(
 				userId, CommerceAccountConstants.DEFAULT_PARENT_ACCOUNT_ID,
-				_getCommerceSiteType(siteGroupId), StringPool.BLANK,
+				_getCommerceSiteType(channelGroupId), StringPool.BLANK,
 				QueryUtil.ALL_POS, QueryUtil.ALL_POS);
 
 		return ListUtil.toLongArray(
@@ -146,16 +160,16 @@ public class CommerceAccountHelperImpl implements CommerceAccountHelper {
 
 	@Override
 	public void setCurrentCommerceAccount(
-			HttpServletRequest httpServletRequest, long groupId,
+			HttpServletRequest httpServletRequest, long channelGroupId,
 			long commerceAccountId)
 		throws PortalException {
 
 		if (commerceAccountId > 0) {
-			_checkAccountType(groupId, commerceAccountId);
+			_checkAccountType(channelGroupId, commerceAccountId);
 		}
 
 		String curGroupOrganizationIdKey =
-			_CURRENT_COMMERCE_ACCOUNT_ID_KEY + groupId;
+			_CURRENT_COMMERCE_ACCOUNT_ID_KEY + channelGroupId;
 
 		httpServletRequest = _portal.getOriginalServletRequest(
 			httpServletRequest);
@@ -165,10 +179,10 @@ public class CommerceAccountHelperImpl implements CommerceAccountHelper {
 		httpSession.setAttribute(curGroupOrganizationIdKey, commerceAccountId);
 	}
 
-	private void _checkAccountType(long groupId, long commerceAccountId)
+	private void _checkAccountType(long channelGroupId, long commerceAccountId)
 		throws PortalException {
 
-		int commerceSiteType = _getCommerceSiteType(groupId);
+		int commerceSiteType = _getCommerceSiteType(channelGroupId);
 
 		CommerceAccount commerceAccount =
 			_commerceAccountLocalService.getCommerceAccount(commerceAccountId);
@@ -188,7 +202,7 @@ public class CommerceAccountHelperImpl implements CommerceAccountHelper {
 		}
 	}
 
-	private int _getCommerceSiteType(long groupId)
+	private int _getCommerceSiteType(long channelGroupId)
 		throws ConfigurationException {
 
 		CommerceAccountGroupServiceConfiguration
@@ -196,13 +210,13 @@ public class CommerceAccountHelperImpl implements CommerceAccountHelper {
 				_configurationProvider.getConfiguration(
 					CommerceAccountGroupServiceConfiguration.class,
 					new GroupServiceSettingsLocator(
-						groupId, CommerceAccountConstants.SERVICE_NAME));
+						channelGroupId, CommerceAccountConstants.SERVICE_NAME));
 
 		return commerceAccountGroupServiceConfiguration.commerceSiteType();
 	}
 
 	private CommerceAccount _getSingleCommerceAccount(
-			long groupId, HttpServletRequest httpServletRequest)
+			long channelGroupId, HttpServletRequest httpServletRequest)
 		throws PortalException {
 
 		User user = _portal.getUser(httpServletRequest);
@@ -212,17 +226,10 @@ public class CommerceAccountHelperImpl implements CommerceAccountHelper {
 				_portal.getCompanyId(httpServletRequest));
 		}
 
-		CommerceAccountGroupServiceConfiguration
-			commerceAccountGroupServiceConfiguration =
-				_configurationProvider.getConfiguration(
-					CommerceAccountGroupServiceConfiguration.class,
-					new GroupServiceSettingsLocator(
-						groupId, CommerceAccountConstants.SERVICE_NAME));
+		int commerceSiteType = _getCommerceSiteType(channelGroupId);
 
-		if ((commerceAccountGroupServiceConfiguration.commerceSiteType() ==
-				CommerceAccountConstants.SITE_TYPE_B2C) ||
-			(commerceAccountGroupServiceConfiguration.commerceSiteType() ==
-				CommerceAccountConstants.SITE_TYPE_B2C_B2B)) {
+		if ((commerceSiteType == CommerceAccountConstants.SITE_TYPE_B2C) ||
+			(commerceSiteType == CommerceAccountConstants.SITE_TYPE_B2C_B2B)) {
 
 			return _commerceAccountService.getPersonalCommerceAccount(
 				user.getUserId());
@@ -232,8 +239,7 @@ public class CommerceAccountHelperImpl implements CommerceAccountHelper {
 			_commerceAccountService.getUserCommerceAccounts(
 				user.getUserId(),
 				CommerceAccountConstants.DEFAULT_PARENT_ACCOUNT_ID,
-				commerceAccountGroupServiceConfiguration.commerceSiteType(),
-				StringPool.BLANK, QueryUtil.ALL_POS, QueryUtil.ALL_POS);
+				commerceSiteType, StringPool.BLANK, true, 0, 1);
 
 		if (userCommerceAccounts.size() == 1) {
 			return userCommerceAccounts.get(0);
@@ -253,6 +259,9 @@ public class CommerceAccountHelperImpl implements CommerceAccountHelper {
 
 	@Reference
 	private CommerceAccountService _commerceAccountService;
+
+	@Reference
+	private CommerceChannelLocalService _commerceChannelLocalService;
 
 	@Reference
 	private ConfigurationProvider _configurationProvider;

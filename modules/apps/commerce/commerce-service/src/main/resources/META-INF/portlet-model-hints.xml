@@ -2,6 +2,7 @@
 
 <model-hints>
 	<model name="com.liferay.commerce.model.CommerceAddress">
+		<field name="externalReferenceCode" type="String" />
 		<field name="commerceAddressId" type="long" />
 		<field name="groupId" type="long" />
 		<field name="companyId" type="long" />
@@ -143,9 +144,13 @@
 		<field name="totalDiscountPercentageLevel4" type="BigDecimal" />
 		<field name="advanceStatus" type="String" />
 		<field name="paymentStatus" type="int" />
+		<field name="orderDate" type="Date" />
 		<field name="orderStatus" type="int" />
-		<field name="printedNote" type="String" />
+		<field name="printedNote" type="String">
+			<hint-collection name="TEXTAREA" />
+		</field>
 		<field name="requestedDeliveryDate" type="Date" />
+		<field name="manuallyAdjusted" type="boolean" />
 		<field name="status" type="int" />
 		<field name="statusByUserId" type="long" />
 		<field name="statusByUserName" type="String" />
@@ -181,9 +186,12 @@
 		<field name="subscription" type="boolean" />
 		<field name="deliveryGroup" type="String" />
 		<field name="shippingAddressId" type="long" />
-		<field name="printedNote" type="String" />
+		<field name="printedNote" type="String">
+			<hint-collection name="TEXTAREA" />
+		</field>
 		<field name="requestedDeliveryDate" type="Date" />
 		<field name="bookedQuantityId" type="long" />
+		<field name="manuallyAdjusted" type="boolean" />
 	</model>
 	<model name="com.liferay.commerce.model.CommerceOrderNote">
 		<field name="externalReferenceCode" type="String" />
@@ -251,9 +259,9 @@
 		<field name="shippingOptionName" type="String" />
 		<field name="carrier" type="String" />
 		<field name="trackingNumber" type="String" />
-		<field name="status" type="int" />
 		<field name="shippingDate" type="Date" />
 		<field name="expectedDate" type="Date" />
+		<field name="status" type="int" />
 	</model>
 	<model name="com.liferay.commerce.model.CommerceShipmentItem">
 		<field name="commerceShipmentItemId" type="long" />

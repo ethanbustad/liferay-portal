@@ -34,13 +34,6 @@ import javax.ws.rs.core.Response;
 @Generated("")
 public interface MeasurementUnitResource {
 
-	public Response deleteMeasurementUnit(Long id) throws Exception;
-
-	public MeasurementUnit getMeasurementUnit(Long id) throws Exception;
-
-	public Response putMeasurementUnit(Long id, MeasurementUnit measurementUnit)
-		throws Exception;
-
 	public Page<MeasurementUnit>
 			getCommerceAdminSiteSettingGroupMeasurementUnitPage(
 				Long groupId, Integer type, Pagination pagination)
@@ -48,6 +41,13 @@ public interface MeasurementUnitResource {
 
 	public MeasurementUnit postCommerceAdminSiteSettingGroupMeasurementUnit(
 			Long groupId, MeasurementUnit measurementUnit)
+		throws Exception;
+
+	public Response deleteMeasurementUnit(Long id) throws Exception;
+
+	public MeasurementUnit getMeasurementUnit(Long id) throws Exception;
+
+	public Response putMeasurementUnit(Long id, MeasurementUnit measurementUnit)
 		throws Exception;
 
 	public void setContextCompany(Company contextCompany);

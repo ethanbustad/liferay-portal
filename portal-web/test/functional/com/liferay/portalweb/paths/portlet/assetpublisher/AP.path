@@ -209,6 +209,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>METADATA_PRIORITY</td>
+	<td>//dd[contains(@class,'metadata-priority') and contains(.,'${key_assetPriority}')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>METADATA_TAGS</td>
 	<td>//dd[contains(@class,'tags')]</td>
 	<td></td>

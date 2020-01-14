@@ -75,6 +75,7 @@ public class CommerceAddressModelImpl
 	public static final String TABLE_NAME = "CommerceAddress";
 
 	public static final Object[][] TABLE_COLUMNS = {
+		{"externalReferenceCode", Types.VARCHAR},
 		{"commerceAddressId", Types.BIGINT}, {"groupId", Types.BIGINT},
 		{"companyId", Types.BIGINT}, {"userId", Types.BIGINT},
 		{"userName", Types.VARCHAR}, {"createDate", Types.TIMESTAMP},
@@ -93,6 +94,7 @@ public class CommerceAddressModelImpl
 		new HashMap<String, Integer>();
 
 	static {
+		TABLE_COLUMNS_MAP.put("externalReferenceCode", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("commerceAddressId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("groupId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("companyId", Types.BIGINT);
@@ -120,7 +122,7 @@ public class CommerceAddressModelImpl
 	}
 
 	public static final String TABLE_SQL_CREATE =
-		"create table CommerceAddress (commerceAddressId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,classNameId LONG,classPK LONG,name VARCHAR(255) null,description STRING null,street1 VARCHAR(255) null,street2 VARCHAR(255) null,street3 VARCHAR(255) null,city VARCHAR(75) null,zip VARCHAR(75) null,commerceRegionId LONG,commerceCountryId LONG,latitude DOUBLE,longitude DOUBLE,phoneNumber VARCHAR(75) null,defaultBilling BOOLEAN,defaultShipping BOOLEAN,type_ INTEGER)";
+		"create table CommerceAddress (externalReferenceCode VARCHAR(75) null,commerceAddressId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,classNameId LONG,classPK LONG,name VARCHAR(255) null,description STRING null,street1 VARCHAR(255) null,street2 VARCHAR(255) null,street3 VARCHAR(255) null,city VARCHAR(75) null,zip VARCHAR(75) null,commerceRegionId LONG,commerceCountryId LONG,latitude DOUBLE,longitude DOUBLE,phoneNumber VARCHAR(75) null,defaultBilling BOOLEAN,defaultShipping BOOLEAN,type_ INTEGER)";
 
 	public static final String TABLE_SQL_DROP = "drop table CommerceAddress";
 
@@ -165,11 +167,13 @@ public class CommerceAddressModelImpl
 
 	public static final long DEFAULTSHIPPING_COLUMN_BITMASK = 64L;
 
-	public static final long GROUPID_COLUMN_BITMASK = 128L;
+	public static final long EXTERNALREFERENCECODE_COLUMN_BITMASK = 128L;
 
-	public static final long TYPE_COLUMN_BITMASK = 256L;
+	public static final long GROUPID_COLUMN_BITMASK = 256L;
 
-	public static final long CREATEDATE_COLUMN_BITMASK = 512L;
+	public static final long TYPE_COLUMN_BITMASK = 512L;
+
+	public static final long CREATEDATE_COLUMN_BITMASK = 1024L;
 
 	/**
 	 * Converts the soap model instance into a normal model instance.
@@ -184,6 +188,7 @@ public class CommerceAddressModelImpl
 
 		CommerceAddress model = new CommerceAddressImpl();
 
+		model.setExternalReferenceCode(soapModel.getExternalReferenceCode());
 		model.setCommerceAddressId(soapModel.getCommerceAddressId());
 		model.setGroupId(soapModel.getGroupId());
 		model.setCompanyId(soapModel.getCompanyId());
@@ -366,6 +371,30 @@ public class CommerceAddressModelImpl
 			new LinkedHashMap<String, BiConsumer<CommerceAddress, ?>>();
 
 		attributeGetterFunctions.put(
+			"externalReferenceCode",
+			new Function<CommerceAddress, Object>() {
+
+				@Override
+				public Object apply(CommerceAddress commerceAddress) {
+					return commerceAddress.getExternalReferenceCode();
+				}
+
+			});
+		attributeSetterBiConsumers.put(
+			"externalReferenceCode",
+			new BiConsumer<CommerceAddress, Object>() {
+
+				@Override
+				public void accept(
+					CommerceAddress commerceAddress,
+					Object externalReferenceCodeObject) {
+
+					commerceAddress.setExternalReferenceCode(
+						(String)externalReferenceCodeObject);
+				}
+
+			});
+		attributeGetterFunctions.put(
 			"commerceAddressId",
 			new Function<CommerceAddress, Object>() {
 
@@ -381,10 +410,11 @@ public class CommerceAddressModelImpl
 
 				@Override
 				public void accept(
-					CommerceAddress commerceAddress, Object commerceAddressId) {
+					CommerceAddress commerceAddress,
+					Object commerceAddressIdObject) {
 
 					commerceAddress.setCommerceAddressId(
-						(Long)commerceAddressId);
+						(Long)commerceAddressIdObject);
 				}
 
 			});
@@ -404,9 +434,9 @@ public class CommerceAddressModelImpl
 
 				@Override
 				public void accept(
-					CommerceAddress commerceAddress, Object groupId) {
+					CommerceAddress commerceAddress, Object groupIdObject) {
 
-					commerceAddress.setGroupId((Long)groupId);
+					commerceAddress.setGroupId((Long)groupIdObject);
 				}
 
 			});
@@ -426,9 +456,9 @@ public class CommerceAddressModelImpl
 
 				@Override
 				public void accept(
-					CommerceAddress commerceAddress, Object companyId) {
+					CommerceAddress commerceAddress, Object companyIdObject) {
 
-					commerceAddress.setCompanyId((Long)companyId);
+					commerceAddress.setCompanyId((Long)companyIdObject);
 				}
 
 			});
@@ -448,9 +478,9 @@ public class CommerceAddressModelImpl
 
 				@Override
 				public void accept(
-					CommerceAddress commerceAddress, Object userId) {
+					CommerceAddress commerceAddress, Object userIdObject) {
 
-					commerceAddress.setUserId((Long)userId);
+					commerceAddress.setUserId((Long)userIdObject);
 				}
 
 			});
@@ -470,9 +500,9 @@ public class CommerceAddressModelImpl
 
 				@Override
 				public void accept(
-					CommerceAddress commerceAddress, Object userName) {
+					CommerceAddress commerceAddress, Object userNameObject) {
 
-					commerceAddress.setUserName((String)userName);
+					commerceAddress.setUserName((String)userNameObject);
 				}
 
 			});
@@ -492,9 +522,9 @@ public class CommerceAddressModelImpl
 
 				@Override
 				public void accept(
-					CommerceAddress commerceAddress, Object createDate) {
+					CommerceAddress commerceAddress, Object createDateObject) {
 
-					commerceAddress.setCreateDate((Date)createDate);
+					commerceAddress.setCreateDate((Date)createDateObject);
 				}
 
 			});
@@ -514,9 +544,10 @@ public class CommerceAddressModelImpl
 
 				@Override
 				public void accept(
-					CommerceAddress commerceAddress, Object modifiedDate) {
+					CommerceAddress commerceAddress,
+					Object modifiedDateObject) {
 
-					commerceAddress.setModifiedDate((Date)modifiedDate);
+					commerceAddress.setModifiedDate((Date)modifiedDateObject);
 				}
 
 			});
@@ -536,9 +567,9 @@ public class CommerceAddressModelImpl
 
 				@Override
 				public void accept(
-					CommerceAddress commerceAddress, Object classNameId) {
+					CommerceAddress commerceAddress, Object classNameIdObject) {
 
-					commerceAddress.setClassNameId((Long)classNameId);
+					commerceAddress.setClassNameId((Long)classNameIdObject);
 				}
 
 			});
@@ -558,9 +589,9 @@ public class CommerceAddressModelImpl
 
 				@Override
 				public void accept(
-					CommerceAddress commerceAddress, Object classPK) {
+					CommerceAddress commerceAddress, Object classPKObject) {
 
-					commerceAddress.setClassPK((Long)classPK);
+					commerceAddress.setClassPK((Long)classPKObject);
 				}
 
 			});
@@ -580,9 +611,9 @@ public class CommerceAddressModelImpl
 
 				@Override
 				public void accept(
-					CommerceAddress commerceAddress, Object name) {
+					CommerceAddress commerceAddress, Object nameObject) {
 
-					commerceAddress.setName((String)name);
+					commerceAddress.setName((String)nameObject);
 				}
 
 			});
@@ -602,9 +633,9 @@ public class CommerceAddressModelImpl
 
 				@Override
 				public void accept(
-					CommerceAddress commerceAddress, Object description) {
+					CommerceAddress commerceAddress, Object descriptionObject) {
 
-					commerceAddress.setDescription((String)description);
+					commerceAddress.setDescription((String)descriptionObject);
 				}
 
 			});
@@ -624,9 +655,9 @@ public class CommerceAddressModelImpl
 
 				@Override
 				public void accept(
-					CommerceAddress commerceAddress, Object street1) {
+					CommerceAddress commerceAddress, Object street1Object) {
 
-					commerceAddress.setStreet1((String)street1);
+					commerceAddress.setStreet1((String)street1Object);
 				}
 
 			});
@@ -646,9 +677,9 @@ public class CommerceAddressModelImpl
 
 				@Override
 				public void accept(
-					CommerceAddress commerceAddress, Object street2) {
+					CommerceAddress commerceAddress, Object street2Object) {
 
-					commerceAddress.setStreet2((String)street2);
+					commerceAddress.setStreet2((String)street2Object);
 				}
 
 			});
@@ -668,9 +699,9 @@ public class CommerceAddressModelImpl
 
 				@Override
 				public void accept(
-					CommerceAddress commerceAddress, Object street3) {
+					CommerceAddress commerceAddress, Object street3Object) {
 
-					commerceAddress.setStreet3((String)street3);
+					commerceAddress.setStreet3((String)street3Object);
 				}
 
 			});
@@ -690,9 +721,9 @@ public class CommerceAddressModelImpl
 
 				@Override
 				public void accept(
-					CommerceAddress commerceAddress, Object city) {
+					CommerceAddress commerceAddress, Object cityObject) {
 
-					commerceAddress.setCity((String)city);
+					commerceAddress.setCity((String)cityObject);
 				}
 
 			});
@@ -712,9 +743,9 @@ public class CommerceAddressModelImpl
 
 				@Override
 				public void accept(
-					CommerceAddress commerceAddress, Object zip) {
+					CommerceAddress commerceAddress, Object zipObject) {
 
-					commerceAddress.setZip((String)zip);
+					commerceAddress.setZip((String)zipObject);
 				}
 
 			});
@@ -734,9 +765,11 @@ public class CommerceAddressModelImpl
 
 				@Override
 				public void accept(
-					CommerceAddress commerceAddress, Object commerceRegionId) {
+					CommerceAddress commerceAddress,
+					Object commerceRegionIdObject) {
 
-					commerceAddress.setCommerceRegionId((Long)commerceRegionId);
+					commerceAddress.setCommerceRegionId(
+						(Long)commerceRegionIdObject);
 				}
 
 			});
@@ -756,10 +789,11 @@ public class CommerceAddressModelImpl
 
 				@Override
 				public void accept(
-					CommerceAddress commerceAddress, Object commerceCountryId) {
+					CommerceAddress commerceAddress,
+					Object commerceCountryIdObject) {
 
 					commerceAddress.setCommerceCountryId(
-						(Long)commerceCountryId);
+						(Long)commerceCountryIdObject);
 				}
 
 			});
@@ -779,9 +813,9 @@ public class CommerceAddressModelImpl
 
 				@Override
 				public void accept(
-					CommerceAddress commerceAddress, Object latitude) {
+					CommerceAddress commerceAddress, Object latitudeObject) {
 
-					commerceAddress.setLatitude((Double)latitude);
+					commerceAddress.setLatitude((Double)latitudeObject);
 				}
 
 			});
@@ -801,9 +835,9 @@ public class CommerceAddressModelImpl
 
 				@Override
 				public void accept(
-					CommerceAddress commerceAddress, Object longitude) {
+					CommerceAddress commerceAddress, Object longitudeObject) {
 
-					commerceAddress.setLongitude((Double)longitude);
+					commerceAddress.setLongitude((Double)longitudeObject);
 				}
 
 			});
@@ -823,9 +857,9 @@ public class CommerceAddressModelImpl
 
 				@Override
 				public void accept(
-					CommerceAddress commerceAddress, Object phoneNumber) {
+					CommerceAddress commerceAddress, Object phoneNumberObject) {
 
-					commerceAddress.setPhoneNumber((String)phoneNumber);
+					commerceAddress.setPhoneNumber((String)phoneNumberObject);
 				}
 
 			});
@@ -845,9 +879,11 @@ public class CommerceAddressModelImpl
 
 				@Override
 				public void accept(
-					CommerceAddress commerceAddress, Object defaultBilling) {
+					CommerceAddress commerceAddress,
+					Object defaultBillingObject) {
 
-					commerceAddress.setDefaultBilling((Boolean)defaultBilling);
+					commerceAddress.setDefaultBilling(
+						(Boolean)defaultBillingObject);
 				}
 
 			});
@@ -867,10 +903,11 @@ public class CommerceAddressModelImpl
 
 				@Override
 				public void accept(
-					CommerceAddress commerceAddress, Object defaultShipping) {
+					CommerceAddress commerceAddress,
+					Object defaultShippingObject) {
 
 					commerceAddress.setDefaultShipping(
-						(Boolean)defaultShipping);
+						(Boolean)defaultShippingObject);
 				}
 
 			});
@@ -890,9 +927,9 @@ public class CommerceAddressModelImpl
 
 				@Override
 				public void accept(
-					CommerceAddress commerceAddress, Object type) {
+					CommerceAddress commerceAddress, Object typeObject) {
 
-					commerceAddress.setType((Integer)type);
+					commerceAddress.setType((Integer)typeObject);
 				}
 
 			});
@@ -901,6 +938,32 @@ public class CommerceAddressModelImpl
 			attributeGetterFunctions);
 		_attributeSetterBiConsumers = Collections.unmodifiableMap(
 			(Map)attributeSetterBiConsumers);
+	}
+
+	@JSON
+	@Override
+	public String getExternalReferenceCode() {
+		if (_externalReferenceCode == null) {
+			return "";
+		}
+		else {
+			return _externalReferenceCode;
+		}
+	}
+
+	@Override
+	public void setExternalReferenceCode(String externalReferenceCode) {
+		_columnBitmask |= EXTERNALREFERENCECODE_COLUMN_BITMASK;
+
+		if (_originalExternalReferenceCode == null) {
+			_originalExternalReferenceCode = _externalReferenceCode;
+		}
+
+		_externalReferenceCode = externalReferenceCode;
+	}
+
+	public String getOriginalExternalReferenceCode() {
+		return GetterUtil.getString(_originalExternalReferenceCode);
 	}
 
 	@JSON
@@ -1412,6 +1475,8 @@ public class CommerceAddressModelImpl
 	public Object clone() {
 		CommerceAddressImpl commerceAddressImpl = new CommerceAddressImpl();
 
+		commerceAddressImpl.setExternalReferenceCode(
+			getExternalReferenceCode());
 		commerceAddressImpl.setCommerceAddressId(getCommerceAddressId());
 		commerceAddressImpl.setGroupId(getGroupId());
 		commerceAddressImpl.setCompanyId(getCompanyId());
@@ -1499,6 +1564,9 @@ public class CommerceAddressModelImpl
 	public void resetOriginalValues() {
 		CommerceAddressModelImpl commerceAddressModelImpl = this;
 
+		commerceAddressModelImpl._originalExternalReferenceCode =
+			commerceAddressModelImpl._externalReferenceCode;
+
 		commerceAddressModelImpl._originalGroupId =
 			commerceAddressModelImpl._groupId;
 
@@ -1552,6 +1620,18 @@ public class CommerceAddressModelImpl
 	public CacheModel<CommerceAddress> toCacheModel() {
 		CommerceAddressCacheModel commerceAddressCacheModel =
 			new CommerceAddressCacheModel();
+
+		commerceAddressCacheModel.externalReferenceCode =
+			getExternalReferenceCode();
+
+		String externalReferenceCode =
+			commerceAddressCacheModel.externalReferenceCode;
+
+		if ((externalReferenceCode != null) &&
+			(externalReferenceCode.length() == 0)) {
+
+			commerceAddressCacheModel.externalReferenceCode = null;
+		}
 
 		commerceAddressCacheModel.commerceAddressId = getCommerceAddressId();
 
@@ -1742,6 +1822,8 @@ public class CommerceAddressModelImpl
 
 	}
 
+	private String _externalReferenceCode;
+	private String _originalExternalReferenceCode;
 	private long _commerceAddressId;
 	private long _groupId;
 	private long _originalGroupId;

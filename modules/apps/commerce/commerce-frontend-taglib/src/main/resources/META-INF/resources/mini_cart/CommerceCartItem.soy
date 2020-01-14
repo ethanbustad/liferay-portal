@@ -10,6 +10,7 @@
 	{@param sku: string }
 	{@param spritemap: string }
 	{@param quantity: int }
+	{@param displayDiscountLevels: bool|null }
 
 	{@param? errorMessages: ? }
 	{@param settings: ? }
@@ -89,6 +90,7 @@
 			{else}
 				{call Price.render}
 					{param prices: $prices /}
+					{param displayDiscountLevels: $displayDiscountLevels /}
 				{/call}
 			{/if}
 		</div>

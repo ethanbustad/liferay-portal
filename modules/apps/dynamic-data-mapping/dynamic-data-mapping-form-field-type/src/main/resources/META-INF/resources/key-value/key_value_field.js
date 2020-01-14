@@ -1,6 +1,8 @@
 AUI.add(
 	'liferay-ddm-form-field-key-value',
 	function(A) {
+		var STR_UNDERSCORE = '_';
+
 		var KeyValueField = A.Component.create(
 			{
 				ATTRS: {
@@ -79,7 +81,7 @@ AUI.add(
 					isValidCharacter: function(character) {
 						var instance = this;
 
-						return A.Text.Unicode.test(character, 'L') || A.Text.Unicode.test(character, 'N');
+						return A.Text.Unicode.test(character, 'L') || A.Text.Unicode.test(character, 'N') || character === STR_UNDERSCORE;
 					},
 
 					normalizeKey: function(key) {

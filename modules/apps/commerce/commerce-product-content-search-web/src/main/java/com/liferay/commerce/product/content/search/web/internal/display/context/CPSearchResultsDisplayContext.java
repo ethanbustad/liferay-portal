@@ -14,7 +14,10 @@
 
 package com.liferay.commerce.product.content.search.web.internal.display.context;
 
+import com.liferay.commerce.constants.CommerceWebKeys;
+import com.liferay.commerce.context.CommerceContext;
 import com.liferay.commerce.product.catalog.CPCatalogEntry;
+import com.liferay.commerce.product.catalog.CPQuery;
 import com.liferay.commerce.product.constants.CPPortletKeys;
 import com.liferay.commerce.product.content.render.list.CPContentListRenderer;
 import com.liferay.commerce.product.content.render.list.CPContentListRendererRegistry;
@@ -29,15 +32,21 @@ import com.liferay.commerce.product.util.CPDefinitionHelper;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.search.DisplayTerms;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.search.Document;
+import com.liferay.portal.kernel.search.Field;
+import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.theme.PortletDisplay;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.HttpUtil;
+import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
-import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchResponse;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
+
+import java.io.Serializable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -63,8 +72,7 @@ public class CPSearchResultsDisplayContext {
 			CPContentListRendererRegistry cpContentListRendererRegistry,
 			CPDefinitionHelper cpDefinitionHelper,
 			CPTypeServicesTracker cpTypeServicesTracker,
-			HttpServletRequest httpServletRequest,
-			PortletSharedSearchResponse portletSharedSearchResponse)
+			HttpServletRequest httpServletRequest)
 		throws ConfigurationException {
 
 		_cpContentListEntryRendererRegistry =
@@ -73,7 +81,6 @@ public class CPSearchResultsDisplayContext {
 		_cpDefinitionHelper = cpDefinitionHelper;
 		_cpTypeServicesTracker = cpTypeServicesTracker;
 		_httpServletRequest = httpServletRequest;
-		_portletSharedSearchResponse = portletSharedSearchResponse;
 
 		_cpRequestHelper = new CPRequestHelper(httpServletRequest);
 
@@ -139,12 +146,52 @@ public class CPSearchResultsDisplayContext {
 			CPPortletKeys.CP_SEARCH_RESULTS);
 	}
 
-	public CPDataSourceResult getCPDataSourceResult() {
-		List<CPCatalogEntry> cpCatalogEntries = getCPCatalogEntries(
-			_portletSharedSearchResponse.getDocuments());
+	public CPDataSourceResult getCPDataSourceResult() throws PortalException {
+		SearchContext searchContext = new SearchContext();
 
-		return new CPDataSourceResult(
-			cpCatalogEntries, _portletSharedSearchResponse.getTotalHits());
+		Map<String, Serializable> attributes = new HashMap<>();
+
+		attributes.put(Field.STATUS, WorkflowConstants.STATUS_APPROVED);
+
+		searchContext.setAttributes(attributes);
+
+		searchContext.setCompanyId(_cpRequestHelper.getCompanyId());
+
+		CPQuery cpQuery = new CPQuery();
+
+		String orderByCol = getOrderByCol();
+
+		if (orderByCol.equals("price-low-to-high")) {
+			cpQuery.setOrderByCol1("basePrice");
+			cpQuery.setOrderByType1("ASC");
+		}
+		else if (orderByCol.equals("price-high-to-low")) {
+			cpQuery.setOrderByCol1("basePrice");
+			cpQuery.setOrderByType1("DESC");
+		}
+		else if (orderByCol.equals("new-items")) {
+			cpQuery.setOrderByCol1(Field.CREATE_DATE);
+			cpQuery.setOrderByType1("DESC");
+		}
+		else if (orderByCol.equals("name-ascending")) {
+			cpQuery.setOrderByCol1("name_localized");
+			cpQuery.setOrderByType1("ASC");
+		}
+
+		if (orderByCol.equals("name-descending")) {
+			cpQuery.setOrderByCol1("name_localized");
+			cpQuery.setOrderByType1("DESC");
+			cpQuery.setOrderByCol2(Field.NAME);
+			cpQuery.setOrderByType2("DESC");
+		}
+		else {
+			cpQuery.setOrderByCol2(Field.NAME);
+			cpQuery.setOrderByType2("ASC");
+		}
+
+		return _cpDefinitionHelper.search(
+			_cpRequestHelper.getScopeGroupId(), searchContext, cpQuery,
+			getPaginationStart(), getPaginationEnd());
 	}
 
 	public String getCPTypeListEntryRendererKey(String cpType) {
@@ -203,29 +250,73 @@ public class CPSearchResultsDisplayContext {
 		return _displayStyleGroupId;
 	}
 
+	public String getOrderByCol() {
+		return ParamUtil.getString(
+			_httpServletRequest, SearchContainer.DEFAULT_ORDER_BY_COL_PARAM,
+			StringPool.BLANK);
+	}
+
 	public int getPaginationDelta() {
-		return _cpSearchResultsPortletInstanceConfiguration.paginationDelta();
+		return ParamUtil.getInteger(
+			PortalUtil.getOriginalServletRequest(_httpServletRequest), "delta",
+			_cpSearchResultsPortletInstanceConfiguration.paginationDelta());
+	}
+
+	public int getPaginationEnd() {
+		if (getPaginationPage() == 0) {
+			return getPaginationDelta();
+		}
+
+		return getPaginationPage() * getPaginationDelta();
+	}
+
+	public int getPaginationPage() {
+		return ParamUtil.getInteger(
+			PortalUtil.getOriginalServletRequest(_httpServletRequest), "start");
+	}
+
+	public int getPaginationStart() {
+		if (getPaginationPage() == 0) {
+			return 0;
+		}
+
+		return (getPaginationPage() - 1) * getPaginationDelta();
 	}
 
 	public String getPaginationType() {
 		return _cpSearchResultsPortletInstanceConfiguration.paginationType();
 	}
 
-	public SearchContainer<CPCatalogEntry> getSearchContainer() {
+	public SearchContainer<CPCatalogEntry> getSearchContainer()
+		throws PortalException {
+
 		if (_searchContainer != null) {
 			return _searchContainer;
 		}
 
 		_searchContainer = buildSearchContainer(
-			getCPDataSourceResult(),
-			_portletSharedSearchResponse.getPaginationStart(), "start",
-			_portletSharedSearchResponse.getPaginationDelta(), "delta");
+			getCPDataSourceResult(), getPaginationPage(), "start",
+			getPaginationDelta(), "delta");
 
 		return _searchContainer;
 	}
 
 	public String getSelectionStyle() {
 		return _cpSearchResultsPortletInstanceConfiguration.selectionStyle();
+	}
+
+	public boolean hasCommerceChannel() throws PortalException {
+		CommerceContext commerceContext =
+			(CommerceContext)_httpServletRequest.getAttribute(
+				CommerceWebKeys.COMMERCE_CONTEXT);
+
+		long commerceChannelId = commerceContext.getCommerceChannelId();
+
+		if (commerceChannelId > 0) {
+			return true;
+		}
+
+		return false;
 	}
 
 	public boolean isPaginate() {
@@ -324,7 +415,6 @@ public class CPSearchResultsDisplayContext {
 	private final CPTypeServicesTracker _cpTypeServicesTracker;
 	private long _displayStyleGroupId;
 	private final HttpServletRequest _httpServletRequest;
-	private final PortletSharedSearchResponse _portletSharedSearchResponse;
 	private SearchContainer<CPCatalogEntry> _searchContainer;
 
 }

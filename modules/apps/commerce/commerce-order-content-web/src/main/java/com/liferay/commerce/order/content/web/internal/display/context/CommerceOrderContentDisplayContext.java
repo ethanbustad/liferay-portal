@@ -26,6 +26,7 @@ import com.liferay.commerce.constants.CommerceWebKeys;
 import com.liferay.commerce.context.CommerceContext;
 import com.liferay.commerce.currency.model.CommerceCurrency;
 import com.liferay.commerce.currency.model.CommerceMoney;
+import com.liferay.commerce.frontend.model.HeaderActionModel;
 import com.liferay.commerce.model.CommerceAddress;
 import com.liferay.commerce.model.CommerceOrder;
 import com.liferay.commerce.model.CommerceOrderNote;
@@ -43,6 +44,7 @@ import com.liferay.commerce.service.CommerceAddressService;
 import com.liferay.commerce.service.CommerceOrderNoteService;
 import com.liferay.commerce.service.CommerceOrderService;
 import com.liferay.commerce.service.CommerceShipmentItemService;
+import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItem;
 import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
@@ -70,6 +72,8 @@ import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.Format;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.portlet.PortletURL;
@@ -165,8 +169,13 @@ public class CommerceOrderContentDisplayContext {
 	}
 
 	public String getCommerceOrderDate(CommerceOrder commerceOrder) {
-		return _commerceOrderDateFormatDate.format(
-			commerceOrder.getCreateDate());
+		Date orderDate = commerceOrder.getCreateDate();
+
+		if (commerceOrder.getOrderDate() != null) {
+			orderDate = commerceOrder.getOrderDate();
+		}
+
+		return _commerceOrderDateFormatDate.format(orderDate);
 	}
 
 	public long getCommerceOrderId() {
@@ -277,14 +286,17 @@ public class CommerceOrderContentDisplayContext {
 		String keywords = ParamUtil.getString(_httpServletRequest, "keywords");
 
 		if (isOpenOrderContentPortlet()) {
-			_commerceOrders = _commerceOrderService.getPendingCommerceOrders(
-				_cpRequestHelper.getChannelGroupId(), getCommerceAccountId(),
-				keywords, QueryUtil.ALL_POS, QueryUtil.ALL_POS);
+			_commerceOrders =
+				_commerceOrderService.getUserPendingCommerceOrders(
+					_cpRequestHelper.getCompanyId(),
+					_cpRequestHelper.getChannelGroupId(), keywords,
+					QueryUtil.ALL_POS, QueryUtil.ALL_POS);
 		}
 		else {
-			_commerceOrders = _commerceOrderService.getPlacedCommerceOrders(
-				_cpRequestHelper.getChannelGroupId(), getCommerceAccountId(),
-				keywords, QueryUtil.ALL_POS, QueryUtil.ALL_POS);
+			_commerceOrders = _commerceOrderService.getUserPlacedCommerceOrders(
+				_cpRequestHelper.getCompanyId(),
+				_cpRequestHelper.getChannelGroupId(), keywords,
+				QueryUtil.ALL_POS, QueryUtil.ALL_POS);
 		}
 
 		return _commerceOrders;
@@ -298,8 +310,13 @@ public class CommerceOrderContentDisplayContext {
 	}
 
 	public String getCommerceOrderTime(CommerceOrder commerceOrder) {
-		return _commerceOrderDateFormatTime.format(
-			commerceOrder.getCreateDate());
+		Date orderDate = commerceOrder.getCreateDate();
+
+		if (commerceOrder.getOrderDate() != null) {
+			orderDate = commerceOrder.getOrderDate();
+		}
+
+		return _commerceOrderDateFormatTime.format(orderDate);
 	}
 
 	public String getCommerceOrderTotal(CommerceOrder commerceOrder)
@@ -349,6 +366,29 @@ public class CommerceOrderContentDisplayContext {
 		return _displayStyleGroupId;
 	}
 
+	public List<DropdownItem> getDropdownItems() {
+		List<DropdownItem> headerDropdownItems = new ArrayList<>();
+
+		DropdownItem headerDropdownItem = new DropdownItem();
+
+		headerDropdownItem.setHref("/first-link");
+		headerDropdownItem.setIcon("home");
+		headerDropdownItem.setLabel("First link");
+
+		headerDropdownItems.add(headerDropdownItem);
+
+		DropdownItem headerDropdownItem2 = new DropdownItem();
+
+		headerDropdownItem2.setActive(true);
+		headerDropdownItem2.setIcon("blogs");
+		headerDropdownItem2.setHref("/second-link");
+		headerDropdownItem2.setLabel("Second link");
+
+		headerDropdownItems.add(headerDropdownItem2);
+
+		return headerDropdownItems;
+	}
+
 	public String getFormattedPercentage(BigDecimal percentage)
 		throws PortalException {
 
@@ -373,14 +413,38 @@ public class CommerceOrderContentDisplayContext {
 		return decimalFormat.format(percentage);
 	}
 
+	public List<HeaderActionModel> getHeaderActionModels()
+		throws PortalException {
+
+		List<HeaderActionModel> headerActionModels = new ArrayList<>();
+
+		HeaderActionModel headerActionModel1 = new HeaderActionModel();
+
+		headerActionModel1.setLabel("Action 1");
+		headerActionModel1.setStyle("secondary");
+
+		headerActionModels.add(headerActionModel1);
+
+		HeaderActionModel headerActionModel2 = new HeaderActionModel();
+
+		headerActionModel2.setLabel("Action 2");
+
+		headerActionModels.add(headerActionModel2);
+
+		return headerActionModels;
+	}
+
 	public OrderFilterImpl getOrderFilter() {
-		OrderFilterImpl orderFilter = new OrderFilterImpl();
+		OrderFilterImpl orderFilterImpl = new OrderFilterImpl();
 
 		if (_commerceAccount != null) {
-			orderFilter.setAccountId(_commerceAccount.getCommerceAccountId());
+			orderFilterImpl.setAccountId(
+				_commerceAccount.getCommerceAccountId());
 		}
 
-		return orderFilter;
+		orderFilterImpl.setCommerceOrderId(getCommerceOrderId());
+
+		return orderFilterImpl;
 	}
 
 	public PortletURL getPortletURL() throws PortalException {

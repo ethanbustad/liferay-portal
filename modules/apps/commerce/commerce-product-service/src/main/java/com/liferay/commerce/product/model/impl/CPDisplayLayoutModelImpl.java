@@ -140,9 +140,11 @@ public class CPDisplayLayoutModelImpl
 
 	public static final long GROUPID_COLUMN_BITMASK = 8L;
 
-	public static final long UUID_COLUMN_BITMASK = 16L;
+	public static final long LAYOUTUUID_COLUMN_BITMASK = 16L;
 
-	public static final long CPDISPLAYLAYOUTID_COLUMN_BITMASK = 32L;
+	public static final long UUID_COLUMN_BITMASK = 32L;
+
+	public static final long CPDISPLAYLAYOUTID_COLUMN_BITMASK = 64L;
 
 	/**
 	 * Converts the soap model instance into a normal model instance.
@@ -341,9 +343,9 @@ public class CPDisplayLayoutModelImpl
 
 				@Override
 				public void accept(
-					CPDisplayLayout cpDisplayLayout, Object uuid) {
+					CPDisplayLayout cpDisplayLayout, Object uuidObject) {
 
-					cpDisplayLayout.setUuid((String)uuid);
+					cpDisplayLayout.setUuid((String)uuidObject);
 				}
 
 			});
@@ -363,10 +365,11 @@ public class CPDisplayLayoutModelImpl
 
 				@Override
 				public void accept(
-					CPDisplayLayout cpDisplayLayout, Object CPDisplayLayoutId) {
+					CPDisplayLayout cpDisplayLayout,
+					Object CPDisplayLayoutIdObject) {
 
 					cpDisplayLayout.setCPDisplayLayoutId(
-						(Long)CPDisplayLayoutId);
+						(Long)CPDisplayLayoutIdObject);
 				}
 
 			});
@@ -386,9 +389,9 @@ public class CPDisplayLayoutModelImpl
 
 				@Override
 				public void accept(
-					CPDisplayLayout cpDisplayLayout, Object groupId) {
+					CPDisplayLayout cpDisplayLayout, Object groupIdObject) {
 
-					cpDisplayLayout.setGroupId((Long)groupId);
+					cpDisplayLayout.setGroupId((Long)groupIdObject);
 				}
 
 			});
@@ -408,9 +411,9 @@ public class CPDisplayLayoutModelImpl
 
 				@Override
 				public void accept(
-					CPDisplayLayout cpDisplayLayout, Object companyId) {
+					CPDisplayLayout cpDisplayLayout, Object companyIdObject) {
 
-					cpDisplayLayout.setCompanyId((Long)companyId);
+					cpDisplayLayout.setCompanyId((Long)companyIdObject);
 				}
 
 			});
@@ -430,9 +433,9 @@ public class CPDisplayLayoutModelImpl
 
 				@Override
 				public void accept(
-					CPDisplayLayout cpDisplayLayout, Object userId) {
+					CPDisplayLayout cpDisplayLayout, Object userIdObject) {
 
-					cpDisplayLayout.setUserId((Long)userId);
+					cpDisplayLayout.setUserId((Long)userIdObject);
 				}
 
 			});
@@ -452,9 +455,9 @@ public class CPDisplayLayoutModelImpl
 
 				@Override
 				public void accept(
-					CPDisplayLayout cpDisplayLayout, Object userName) {
+					CPDisplayLayout cpDisplayLayout, Object userNameObject) {
 
-					cpDisplayLayout.setUserName((String)userName);
+					cpDisplayLayout.setUserName((String)userNameObject);
 				}
 
 			});
@@ -474,9 +477,9 @@ public class CPDisplayLayoutModelImpl
 
 				@Override
 				public void accept(
-					CPDisplayLayout cpDisplayLayout, Object createDate) {
+					CPDisplayLayout cpDisplayLayout, Object createDateObject) {
 
-					cpDisplayLayout.setCreateDate((Date)createDate);
+					cpDisplayLayout.setCreateDate((Date)createDateObject);
 				}
 
 			});
@@ -496,9 +499,10 @@ public class CPDisplayLayoutModelImpl
 
 				@Override
 				public void accept(
-					CPDisplayLayout cpDisplayLayout, Object modifiedDate) {
+					CPDisplayLayout cpDisplayLayout,
+					Object modifiedDateObject) {
 
-					cpDisplayLayout.setModifiedDate((Date)modifiedDate);
+					cpDisplayLayout.setModifiedDate((Date)modifiedDateObject);
 				}
 
 			});
@@ -518,9 +522,9 @@ public class CPDisplayLayoutModelImpl
 
 				@Override
 				public void accept(
-					CPDisplayLayout cpDisplayLayout, Object classNameId) {
+					CPDisplayLayout cpDisplayLayout, Object classNameIdObject) {
 
-					cpDisplayLayout.setClassNameId((Long)classNameId);
+					cpDisplayLayout.setClassNameId((Long)classNameIdObject);
 				}
 
 			});
@@ -540,9 +544,9 @@ public class CPDisplayLayoutModelImpl
 
 				@Override
 				public void accept(
-					CPDisplayLayout cpDisplayLayout, Object classPK) {
+					CPDisplayLayout cpDisplayLayout, Object classPKObject) {
 
-					cpDisplayLayout.setClassPK((Long)classPK);
+					cpDisplayLayout.setClassPK((Long)classPKObject);
 				}
 
 			});
@@ -562,9 +566,9 @@ public class CPDisplayLayoutModelImpl
 
 				@Override
 				public void accept(
-					CPDisplayLayout cpDisplayLayout, Object layoutUuid) {
+					CPDisplayLayout cpDisplayLayout, Object layoutUuidObject) {
 
-					cpDisplayLayout.setLayoutUuid((String)layoutUuid);
+					cpDisplayLayout.setLayoutUuid((String)layoutUuidObject);
 				}
 
 			});
@@ -808,7 +812,17 @@ public class CPDisplayLayoutModelImpl
 
 	@Override
 	public void setLayoutUuid(String layoutUuid) {
+		_columnBitmask |= LAYOUTUUID_COLUMN_BITMASK;
+
+		if (_originalLayoutUuid == null) {
+			_originalLayoutUuid = _layoutUuid;
+		}
+
 		_layoutUuid = layoutUuid;
+	}
+
+	public String getOriginalLayoutUuid() {
+		return GetterUtil.getString(_originalLayoutUuid);
 	}
 
 	@Override
@@ -950,6 +964,9 @@ public class CPDisplayLayoutModelImpl
 			cpDisplayLayoutModelImpl._classPK;
 
 		cpDisplayLayoutModelImpl._setOriginalClassPK = false;
+
+		cpDisplayLayoutModelImpl._originalLayoutUuid =
+			cpDisplayLayoutModelImpl._layoutUuid;
 
 		cpDisplayLayoutModelImpl._columnBitmask = 0;
 	}
@@ -1107,6 +1124,7 @@ public class CPDisplayLayoutModelImpl
 	private long _originalClassPK;
 	private boolean _setOriginalClassPK;
 	private String _layoutUuid;
+	private String _originalLayoutUuid;
 	private long _columnBitmask;
 	private CPDisplayLayout _escapedModel;
 

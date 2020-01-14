@@ -69,6 +69,13 @@ public class CommerceOrderItemServiceWrapper
 	}
 
 	@Override
+	public void deleteCommerceOrderItems(long commerceOrderId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		_commerceOrderItemService.deleteCommerceOrderItems(commerceOrderId);
+	}
+
+	@Override
 	public com.liferay.commerce.model.CommerceOrderItem
 			fetchByExternalReferenceCode(
 				long companyId, String externalReferenceCode)
@@ -240,6 +247,31 @@ public class CommerceOrderItemServiceWrapper
 			commerceOrderItemId, unitPrice, promoPrice, discountAmount,
 			finalPrice, discountPercentageLevel1, discountPercentageLevel2,
 			discountPercentageLevel3, discountPercentageLevel4);
+	}
+
+	/**
+	 * @deprecated
+	 */
+	@Deprecated
+	@Override
+	public com.liferay.commerce.model.CommerceOrderItem
+			updateCommerceOrderItemUnitPrice(
+				long commerceOrderItemId, java.math.BigDecimal unitPrice)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _commerceOrderItemService.updateCommerceOrderItemUnitPrice(
+			commerceOrderItemId, unitPrice);
+	}
+
+	@Override
+	public com.liferay.commerce.model.CommerceOrderItem
+			updateCommerceOrderItemUnitPrice(
+				long commerceOrderItemId, java.math.BigDecimal unitPrice,
+				int quantity)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _commerceOrderItemService.updateCommerceOrderItemUnitPrice(
+			commerceOrderItemId, unitPrice, quantity);
 	}
 
 	@Override

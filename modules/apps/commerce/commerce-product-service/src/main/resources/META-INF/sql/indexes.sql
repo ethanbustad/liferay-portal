@@ -6,6 +6,7 @@ create index IX_A0B4C71A on CPAttachmentFileEntry (displayDate, status);
 create index IX_C2C5D600 on CPAttachmentFileEntry (uuid_[$COLUMN_LENGTH:75$], companyId);
 create unique index IX_BFCBDC82 on CPAttachmentFileEntry (uuid_[$COLUMN_LENGTH:75$], groupId);
 
+create unique index IX_D8B93434 on CPDSpecificationOptionValue (CPDSpecificationOptionValueId, CPDefinitionId);
 create unique index IX_EDD77D36 on CPDSpecificationOptionValue (CPDefinitionId, CPDSpecificationOptionValueId);
 create index IX_95975FB4 on CPDSpecificationOptionValue (CPDefinitionId, CPOptionCategoryId);
 create index IX_173E8E91 on CPDSpecificationOptionValue (CPDefinitionId, CPSpecificationOptionId);
@@ -20,6 +21,7 @@ create index IX_1F4B9C67 on CPDefinition (CProductId, status);
 create index IX_217AF702 on CPDefinition (companyId);
 create index IX_A465D100 on CPDefinition (displayDate, status);
 create index IX_419350EA on CPDefinition (groupId, status);
+create index IX_99C4ED10 on CPDefinition (groupId, subscriptionEnabled);
 create index IX_8EA585DA on CPDefinition (uuid_[$COLUMN_LENGTH:75$], companyId);
 create unique index IX_BA9BADC on CPDefinition (uuid_[$COLUMN_LENGTH:75$], groupId);
 
@@ -32,6 +34,7 @@ create unique index IX_865AFC76 on CPDefinitionLink (uuid_[$COLUMN_LENGTH:75$], 
 create unique index IX_F4B4ACB5 on CPDefinitionLocalization (CPDefinitionId, languageId[$COLUMN_LENGTH:75$]);
 
 create unique index IX_E57A1C2A on CPDefinitionOptionRel (CPDefinitionId, CPOptionId);
+create unique index IX_75456D8D on CPDefinitionOptionRel (CPDefinitionId, key_[$COLUMN_LENGTH:75$]);
 create index IX_749E99EB on CPDefinitionOptionRel (CPDefinitionId, skuContributor);
 create index IX_449BFCFE on CPDefinitionOptionRel (companyId);
 create index IX_A65BAB00 on CPDefinitionOptionRel (groupId);
@@ -47,6 +50,8 @@ create unique index IX_34516B9 on CPDefinitionOptionValueRel (uuid_[$COLUMN_LENG
 
 create unique index IX_290BF7BA on CPDisplayLayout (classNameId, classPK);
 create index IX_71FB6E49 on CPDisplayLayout (groupId, classNameId);
+create index IX_381B82DE on CPDisplayLayout (groupId, layoutUuid[$COLUMN_LENGTH:75$]);
+create index IX_409112DE on CPDisplayLayout (layoutUuid[$COLUMN_LENGTH:75$]);
 create index IX_EEFA81D9 on CPDisplayLayout (uuid_[$COLUMN_LENGTH:75$], companyId);
 create unique index IX_68BBAA9B on CPDisplayLayout (uuid_[$COLUMN_LENGTH:75$], groupId);
 

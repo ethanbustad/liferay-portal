@@ -844,8 +844,6 @@ AUI.add(
 							if (!folderEntry) {
 								folderEntry = target.ancestor(SELECTOR_DATA_FOLDER_DATA_TITLE);
 							}
-
-							folderEntry = folderEntry && folderEntry.ancestor();
 						}
 
 						return folderEntry;
@@ -911,9 +909,7 @@ AUI.add(
 
 						var folderEntry = instance._getFolderEntryNode(target);
 
-						var dataFolder = folderEntry && folderEntry.one('[data-folder-id]');
-
-						return dataFolder && Lang.toInt(dataFolder.attr('data-folder-id')) || instance.get(STR_FOLDER_ID);
+						return folderEntry && Lang.toInt(folderEntry.attr('data-folder-id')) || instance.get(STR_FOLDER_ID);
 					},
 
 					_getUploader: function() {

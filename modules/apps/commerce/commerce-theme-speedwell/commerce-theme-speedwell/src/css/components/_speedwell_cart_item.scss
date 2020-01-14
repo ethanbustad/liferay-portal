@@ -1,22 +1,23 @@
 .commerce-cart-item {
   $item-image-size: 70px;
   $item-image-size-sm: 50px;
+  $price-size: 70px;
 
   align-items: center;
   border-bottom: 1px solid rgba(180, 187, 201, 0.2);
   color: $stroke;
   display: grid;
-  font-size: 13px;
+  font-size: 12px;
   grid-gap: 15px;
   grid-template-areas: "image content actions price delete";
-  grid-template-columns: $item-image-size 180px $item-image-size 75px;
+  grid-template-columns: $item-image-size 1fr auto minmax(min-content, 122px) min-content;
   max-height: 140px;
   overflow: hidden;
   padding: 10px;
   position: relative;
   transition: max-height .2s ease-in, padding .1s ease-in;
 
-  @media screen and (min-width: 376px) and (max-width: 767px) {
+  @media screen and (min-width: $bp-xxsmall) and (max-width: $bp-small) {
     grid-template-areas: "image content actions price"
                          "image price price" !important;
     grid-template-columns: $item-image-size-sm 120px $item-image-size 75px !important;
@@ -38,7 +39,7 @@
     overflow: hidden;
     width: 70px;
 
-    @media screen and (max-width: 767px) {
+    @media screen and (max-width: $bp-small) {
       height: 50px !important;
       width: 50px !important;
     }
@@ -50,12 +51,12 @@
     text-overflow: ellipsis;
     white-space: nowrap;
 
-    @media screen and (max-width: 767px) {
+    @media screen and (max-width: $bp-small) {
       font-size: 11px !important;
     }
 
     big {
-      font-weight: bold;
+      font-weight: 600;
     }
   }
 
@@ -74,17 +75,39 @@
     grid-area: price;
     text-align: right;
 
-    .price__value {
-      display: block;
-      font-size: 1.1em;
-      margin: 0;
+    .price {
+      grid-template-columns: unset;
 
-      @include specialPricesStyles;
+      &-label {
+        display: none;
+      }
+
+      &-value {
+        display: block;
+        font-size: 1.1em;
+        margin: 0;
+      }
     }
   }
 
   &__actions {
-    grid-area: actions;
+		grid-area: actions;
+
+		.quantity-selector {
+			input {
+				font-size: 14px;
+				max-width: 50px;
+			}
+
+			select {
+				font-size: 14px;
+				max-width: 70px;
+			}
+
+			.btn {
+				font-size: 20px;
+			}
+		}
   }
 
   &__options {

@@ -105,7 +105,7 @@ public class CommerceSubscriptionEntryPersistenceImpl
 	 * Returns a range of all the commerce subscription entries where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>CommerceSubscriptionEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceSubscriptionEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -124,7 +124,7 @@ public class CommerceSubscriptionEntryPersistenceImpl
 	 * Returns an ordered range of all the commerce subscription entries where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>CommerceSubscriptionEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceSubscriptionEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -145,7 +145,7 @@ public class CommerceSubscriptionEntryPersistenceImpl
 	 * Returns an ordered range of all the commerce subscription entries where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>CommerceSubscriptionEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceSubscriptionEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -163,14 +163,11 @@ public class CommerceSubscriptionEntryPersistenceImpl
 
 		uuid = Objects.toString(uuid, "");
 
-		boolean pagination = true;
 		FinderPath finderPath = null;
 		Object[] finderArgs = null;
 
 		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
 			(orderByComparator == null)) {
-
-			pagination = false;
 
 			if (useFinderCache) {
 				finderPath = _finderPathWithoutPaginationFindByUuid;
@@ -229,7 +226,7 @@ public class CommerceSubscriptionEntryPersistenceImpl
 				appendOrderByComparator(
 					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
 			}
-			else if (pagination) {
+			else {
 				query.append(CommerceSubscriptionEntryModelImpl.ORDER_BY_JPQL);
 			}
 
@@ -248,18 +245,8 @@ public class CommerceSubscriptionEntryPersistenceImpl
 					qPos.add(uuid);
 				}
 
-				if (!pagination) {
-					list = (List<CommerceSubscriptionEntry>)QueryUtil.list(
-						q, getDialect(), start, end, false);
-
-					Collections.sort(list);
-
-					list = Collections.unmodifiableList(list);
-				}
-				else {
-					list = (List<CommerceSubscriptionEntry>)QueryUtil.list(
-						q, getDialect(), start, end);
-				}
+				list = (List<CommerceSubscriptionEntry>)QueryUtil.list(
+					q, getDialect(), start, end);
 
 				cacheResult(list);
 
@@ -934,7 +921,7 @@ public class CommerceSubscriptionEntryPersistenceImpl
 	 * Returns a range of all the commerce subscription entries where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>CommerceSubscriptionEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceSubscriptionEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -954,7 +941,7 @@ public class CommerceSubscriptionEntryPersistenceImpl
 	 * Returns an ordered range of all the commerce subscription entries where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>CommerceSubscriptionEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceSubscriptionEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -977,7 +964,7 @@ public class CommerceSubscriptionEntryPersistenceImpl
 	 * Returns an ordered range of all the commerce subscription entries where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>CommerceSubscriptionEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceSubscriptionEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -996,14 +983,11 @@ public class CommerceSubscriptionEntryPersistenceImpl
 
 		uuid = Objects.toString(uuid, "");
 
-		boolean pagination = true;
 		FinderPath finderPath = null;
 		Object[] finderArgs = null;
 
 		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
 			(orderByComparator == null)) {
-
-			pagination = false;
 
 			if (useFinderCache) {
 				finderPath = _finderPathWithoutPaginationFindByUuid_C;
@@ -1069,7 +1053,7 @@ public class CommerceSubscriptionEntryPersistenceImpl
 				appendOrderByComparator(
 					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
 			}
-			else if (pagination) {
+			else {
 				query.append(CommerceSubscriptionEntryModelImpl.ORDER_BY_JPQL);
 			}
 
@@ -1090,18 +1074,8 @@ public class CommerceSubscriptionEntryPersistenceImpl
 
 				qPos.add(companyId);
 
-				if (!pagination) {
-					list = (List<CommerceSubscriptionEntry>)QueryUtil.list(
-						q, getDialect(), start, end, false);
-
-					Collections.sort(list);
-
-					list = Collections.unmodifiableList(list);
-				}
-				else {
-					list = (List<CommerceSubscriptionEntry>)QueryUtil.list(
-						q, getDialect(), start, end);
-				}
+				list = (List<CommerceSubscriptionEntry>)QueryUtil.list(
+					q, getDialect(), start, end);
 
 				cacheResult(list);
 
@@ -1520,6 +1494,519 @@ public class CommerceSubscriptionEntryPersistenceImpl
 	private static final String _FINDER_COLUMN_UUID_C_COMPANYID_2 =
 		"commerceSubscriptionEntry.companyId = ?";
 
+	private FinderPath _finderPathWithPaginationFindByGroupId;
+	private FinderPath _finderPathWithoutPaginationFindByGroupId;
+	private FinderPath _finderPathCountByGroupId;
+
+	/**
+	 * Returns all the commerce subscription entries where groupId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @return the matching commerce subscription entries
+	 */
+	@Override
+	public List<CommerceSubscriptionEntry> findByGroupId(long groupId) {
+		return findByGroupId(
+			groupId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+	}
+
+	/**
+	 * Returns a range of all the commerce subscription entries where groupId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceSubscriptionEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param start the lower bound of the range of commerce subscription entries
+	 * @param end the upper bound of the range of commerce subscription entries (not inclusive)
+	 * @return the range of matching commerce subscription entries
+	 */
+	@Override
+	public List<CommerceSubscriptionEntry> findByGroupId(
+		long groupId, int start, int end) {
+
+		return findByGroupId(groupId, start, end, null);
+	}
+
+	/**
+	 * Returns an ordered range of all the commerce subscription entries where groupId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceSubscriptionEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param start the lower bound of the range of commerce subscription entries
+	 * @param end the upper bound of the range of commerce subscription entries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching commerce subscription entries
+	 */
+	@Override
+	public List<CommerceSubscriptionEntry> findByGroupId(
+		long groupId, int start, int end,
+		OrderByComparator<CommerceSubscriptionEntry> orderByComparator) {
+
+		return findByGroupId(groupId, start, end, orderByComparator, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the commerce subscription entries where groupId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceSubscriptionEntryModelImpl</code>.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param start the lower bound of the range of commerce subscription entries
+	 * @param end the upper bound of the range of commerce subscription entries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
+	 * @return the ordered range of matching commerce subscription entries
+	 */
+	@Override
+	public List<CommerceSubscriptionEntry> findByGroupId(
+		long groupId, int start, int end,
+		OrderByComparator<CommerceSubscriptionEntry> orderByComparator,
+		boolean useFinderCache) {
+
+		FinderPath finderPath = null;
+		Object[] finderArgs = null;
+
+		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
+			(orderByComparator == null)) {
+
+			if (useFinderCache) {
+				finderPath = _finderPathWithoutPaginationFindByGroupId;
+				finderArgs = new Object[] {groupId};
+			}
+		}
+		else if (useFinderCache) {
+			finderPath = _finderPathWithPaginationFindByGroupId;
+			finderArgs = new Object[] {groupId, start, end, orderByComparator};
+		}
+
+		List<CommerceSubscriptionEntry> list = null;
+
+		if (useFinderCache) {
+			list = (List<CommerceSubscriptionEntry>)finderCache.getResult(
+				finderPath, finderArgs, this);
+
+			if ((list != null) && !list.isEmpty()) {
+				for (CommerceSubscriptionEntry commerceSubscriptionEntry :
+						list) {
+
+					if (groupId != commerceSubscriptionEntry.getGroupId()) {
+						list = null;
+
+						break;
+					}
+				}
+			}
+		}
+
+		if (list == null) {
+			StringBundler query = null;
+
+			if (orderByComparator != null) {
+				query = new StringBundler(
+					3 + (orderByComparator.getOrderByFields().length * 2));
+			}
+			else {
+				query = new StringBundler(3);
+			}
+
+			query.append(_SQL_SELECT_COMMERCESUBSCRIPTIONENTRY_WHERE);
+
+			query.append(_FINDER_COLUMN_GROUPID_GROUPID_2);
+
+			if (orderByComparator != null) {
+				appendOrderByComparator(
+					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
+			}
+			else {
+				query.append(CommerceSubscriptionEntryModelImpl.ORDER_BY_JPQL);
+			}
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(groupId);
+
+				list = (List<CommerceSubscriptionEntry>)QueryUtil.list(
+					q, getDialect(), start, end);
+
+				cacheResult(list);
+
+				if (useFinderCache) {
+					finderCache.putResult(finderPath, finderArgs, list);
+				}
+			}
+			catch (Exception e) {
+				if (useFinderCache) {
+					finderCache.removeResult(finderPath, finderArgs);
+				}
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return list;
+	}
+
+	/**
+	 * Returns the first commerce subscription entry in the ordered set where groupId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching commerce subscription entry
+	 * @throws NoSuchSubscriptionEntryException if a matching commerce subscription entry could not be found
+	 */
+	@Override
+	public CommerceSubscriptionEntry findByGroupId_First(
+			long groupId,
+			OrderByComparator<CommerceSubscriptionEntry> orderByComparator)
+		throws NoSuchSubscriptionEntryException {
+
+		CommerceSubscriptionEntry commerceSubscriptionEntry =
+			fetchByGroupId_First(groupId, orderByComparator);
+
+		if (commerceSubscriptionEntry != null) {
+			return commerceSubscriptionEntry;
+		}
+
+		StringBundler msg = new StringBundler(4);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("groupId=");
+		msg.append(groupId);
+
+		msg.append("}");
+
+		throw new NoSuchSubscriptionEntryException(msg.toString());
+	}
+
+	/**
+	 * Returns the first commerce subscription entry in the ordered set where groupId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching commerce subscription entry, or <code>null</code> if a matching commerce subscription entry could not be found
+	 */
+	@Override
+	public CommerceSubscriptionEntry fetchByGroupId_First(
+		long groupId,
+		OrderByComparator<CommerceSubscriptionEntry> orderByComparator) {
+
+		List<CommerceSubscriptionEntry> list = findByGroupId(
+			groupId, 0, 1, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the last commerce subscription entry in the ordered set where groupId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching commerce subscription entry
+	 * @throws NoSuchSubscriptionEntryException if a matching commerce subscription entry could not be found
+	 */
+	@Override
+	public CommerceSubscriptionEntry findByGroupId_Last(
+			long groupId,
+			OrderByComparator<CommerceSubscriptionEntry> orderByComparator)
+		throws NoSuchSubscriptionEntryException {
+
+		CommerceSubscriptionEntry commerceSubscriptionEntry =
+			fetchByGroupId_Last(groupId, orderByComparator);
+
+		if (commerceSubscriptionEntry != null) {
+			return commerceSubscriptionEntry;
+		}
+
+		StringBundler msg = new StringBundler(4);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("groupId=");
+		msg.append(groupId);
+
+		msg.append("}");
+
+		throw new NoSuchSubscriptionEntryException(msg.toString());
+	}
+
+	/**
+	 * Returns the last commerce subscription entry in the ordered set where groupId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching commerce subscription entry, or <code>null</code> if a matching commerce subscription entry could not be found
+	 */
+	@Override
+	public CommerceSubscriptionEntry fetchByGroupId_Last(
+		long groupId,
+		OrderByComparator<CommerceSubscriptionEntry> orderByComparator) {
+
+		int count = countByGroupId(groupId);
+
+		if (count == 0) {
+			return null;
+		}
+
+		List<CommerceSubscriptionEntry> list = findByGroupId(
+			groupId, count - 1, count, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the commerce subscription entries before and after the current commerce subscription entry in the ordered set where groupId = &#63;.
+	 *
+	 * @param commerceSubscriptionEntryId the primary key of the current commerce subscription entry
+	 * @param groupId the group ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next commerce subscription entry
+	 * @throws NoSuchSubscriptionEntryException if a commerce subscription entry with the primary key could not be found
+	 */
+	@Override
+	public CommerceSubscriptionEntry[] findByGroupId_PrevAndNext(
+			long commerceSubscriptionEntryId, long groupId,
+			OrderByComparator<CommerceSubscriptionEntry> orderByComparator)
+		throws NoSuchSubscriptionEntryException {
+
+		CommerceSubscriptionEntry commerceSubscriptionEntry = findByPrimaryKey(
+			commerceSubscriptionEntryId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			CommerceSubscriptionEntry[] array =
+				new CommerceSubscriptionEntryImpl[3];
+
+			array[0] = getByGroupId_PrevAndNext(
+				session, commerceSubscriptionEntry, groupId, orderByComparator,
+				true);
+
+			array[1] = commerceSubscriptionEntry;
+
+			array[2] = getByGroupId_PrevAndNext(
+				session, commerceSubscriptionEntry, groupId, orderByComparator,
+				false);
+
+			return array;
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	protected CommerceSubscriptionEntry getByGroupId_PrevAndNext(
+		Session session, CommerceSubscriptionEntry commerceSubscriptionEntry,
+		long groupId,
+		OrderByComparator<CommerceSubscriptionEntry> orderByComparator,
+		boolean previous) {
+
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(
+				4 + (orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
+		}
+		else {
+			query = new StringBundler(3);
+		}
+
+		query.append(_SQL_SELECT_COMMERCESUBSCRIPTIONENTRY_WHERE);
+
+		query.append(_FINDER_COLUMN_GROUPID_GROUPID_2);
+
+		if (orderByComparator != null) {
+			String[] orderByConditionFields =
+				orderByComparator.getOrderByConditionFields();
+
+			if (orderByConditionFields.length > 0) {
+				query.append(WHERE_AND);
+			}
+
+			for (int i = 0; i < orderByConditionFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByConditionFields[i]);
+
+				if ((i + 1) < orderByConditionFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN_HAS_NEXT);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN);
+					}
+				}
+			}
+
+			query.append(ORDER_BY_CLAUSE);
+
+			String[] orderByFields = orderByComparator.getOrderByFields();
+
+			for (int i = 0; i < orderByFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByFields[i]);
+
+				if ((i + 1) < orderByFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC_HAS_NEXT);
+					}
+					else {
+						query.append(ORDER_BY_DESC_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC);
+					}
+					else {
+						query.append(ORDER_BY_DESC);
+					}
+				}
+			}
+		}
+		else {
+			query.append(CommerceSubscriptionEntryModelImpl.ORDER_BY_JPQL);
+		}
+
+		String sql = query.toString();
+
+		Query q = session.createQuery(sql);
+
+		q.setFirstResult(0);
+		q.setMaxResults(2);
+
+		QueryPos qPos = QueryPos.getInstance(q);
+
+		qPos.add(groupId);
+
+		if (orderByComparator != null) {
+			for (Object orderByConditionValue :
+					orderByComparator.getOrderByConditionValues(
+						commerceSubscriptionEntry)) {
+
+				qPos.add(orderByConditionValue);
+			}
+		}
+
+		List<CommerceSubscriptionEntry> list = q.list();
+
+		if (list.size() == 2) {
+			return list.get(1);
+		}
+		else {
+			return null;
+		}
+	}
+
+	/**
+	 * Removes all the commerce subscription entries where groupId = &#63; from the database.
+	 *
+	 * @param groupId the group ID
+	 */
+	@Override
+	public void removeByGroupId(long groupId) {
+		for (CommerceSubscriptionEntry commerceSubscriptionEntry :
+				findByGroupId(
+					groupId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
+
+			remove(commerceSubscriptionEntry);
+		}
+	}
+
+	/**
+	 * Returns the number of commerce subscription entries where groupId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @return the number of matching commerce subscription entries
+	 */
+	@Override
+	public int countByGroupId(long groupId) {
+		FinderPath finderPath = _finderPathCountByGroupId;
+
+		Object[] finderArgs = new Object[] {groupId};
+
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
+
+		if (count == null) {
+			StringBundler query = new StringBundler(2);
+
+			query.append(_SQL_COUNT_COMMERCESUBSCRIPTIONENTRY_WHERE);
+
+			query.append(_FINDER_COLUMN_GROUPID_GROUPID_2);
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(groupId);
+
+				count = (Long)q.uniqueResult();
+
+				finderCache.putResult(finderPath, finderArgs, count);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return count.intValue();
+	}
+
+	private static final String _FINDER_COLUMN_GROUPID_GROUPID_2 =
+		"commerceSubscriptionEntry.groupId = ?";
+
 	private FinderPath _finderPathWithPaginationFindByCompanyId;
 	private FinderPath _finderPathWithoutPaginationFindByCompanyId;
 	private FinderPath _finderPathCountByCompanyId;
@@ -1540,7 +2027,7 @@ public class CommerceSubscriptionEntryPersistenceImpl
 	 * Returns a range of all the commerce subscription entries where companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>CommerceSubscriptionEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceSubscriptionEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -1559,7 +2046,7 @@ public class CommerceSubscriptionEntryPersistenceImpl
 	 * Returns an ordered range of all the commerce subscription entries where companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>CommerceSubscriptionEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceSubscriptionEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -1580,7 +2067,7 @@ public class CommerceSubscriptionEntryPersistenceImpl
 	 * Returns an ordered range of all the commerce subscription entries where companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>CommerceSubscriptionEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceSubscriptionEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -1596,14 +2083,11 @@ public class CommerceSubscriptionEntryPersistenceImpl
 		OrderByComparator<CommerceSubscriptionEntry> orderByComparator,
 		boolean useFinderCache) {
 
-		boolean pagination = true;
 		FinderPath finderPath = null;
 		Object[] finderArgs = null;
 
 		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
 			(orderByComparator == null)) {
-
-			pagination = false;
 
 			if (useFinderCache) {
 				finderPath = _finderPathWithoutPaginationFindByCompanyId;
@@ -1655,7 +2139,7 @@ public class CommerceSubscriptionEntryPersistenceImpl
 				appendOrderByComparator(
 					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
 			}
-			else if (pagination) {
+			else {
 				query.append(CommerceSubscriptionEntryModelImpl.ORDER_BY_JPQL);
 			}
 
@@ -1672,18 +2156,8 @@ public class CommerceSubscriptionEntryPersistenceImpl
 
 				qPos.add(companyId);
 
-				if (!pagination) {
-					list = (List<CommerceSubscriptionEntry>)QueryUtil.list(
-						q, getDialect(), start, end, false);
-
-					Collections.sort(list);
-
-					list = Collections.unmodifiableList(list);
-				}
-				else {
-					list = (List<CommerceSubscriptionEntry>)QueryUtil.list(
-						q, getDialect(), start, end);
-				}
+				list = (List<CommerceSubscriptionEntry>)QueryUtil.list(
+					q, getDialect(), start, end);
 
 				cacheResult(list);
 
@@ -2048,6 +2522,225 @@ public class CommerceSubscriptionEntryPersistenceImpl
 	private static final String _FINDER_COLUMN_COMPANYID_COMPANYID_2 =
 		"commerceSubscriptionEntry.companyId = ?";
 
+	private FinderPath _finderPathFetchByCommerceOrderItemId;
+	private FinderPath _finderPathCountByCommerceOrderItemId;
+
+	/**
+	 * Returns the commerce subscription entry where commerceOrderItemId = &#63; or throws a <code>NoSuchSubscriptionEntryException</code> if it could not be found.
+	 *
+	 * @param commerceOrderItemId the commerce order item ID
+	 * @return the matching commerce subscription entry
+	 * @throws NoSuchSubscriptionEntryException if a matching commerce subscription entry could not be found
+	 */
+	@Override
+	public CommerceSubscriptionEntry findByCommerceOrderItemId(
+			long commerceOrderItemId)
+		throws NoSuchSubscriptionEntryException {
+
+		CommerceSubscriptionEntry commerceSubscriptionEntry =
+			fetchByCommerceOrderItemId(commerceOrderItemId);
+
+		if (commerceSubscriptionEntry == null) {
+			StringBundler msg = new StringBundler(4);
+
+			msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+			msg.append("commerceOrderItemId=");
+			msg.append(commerceOrderItemId);
+
+			msg.append("}");
+
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
+			}
+
+			throw new NoSuchSubscriptionEntryException(msg.toString());
+		}
+
+		return commerceSubscriptionEntry;
+	}
+
+	/**
+	 * Returns the commerce subscription entry where commerceOrderItemId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param commerceOrderItemId the commerce order item ID
+	 * @return the matching commerce subscription entry, or <code>null</code> if a matching commerce subscription entry could not be found
+	 */
+	@Override
+	public CommerceSubscriptionEntry fetchByCommerceOrderItemId(
+		long commerceOrderItemId) {
+
+		return fetchByCommerceOrderItemId(commerceOrderItemId, true);
+	}
+
+	/**
+	 * Returns the commerce subscription entry where commerceOrderItemId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	 *
+	 * @param commerceOrderItemId the commerce order item ID
+	 * @param useFinderCache whether to use the finder cache
+	 * @return the matching commerce subscription entry, or <code>null</code> if a matching commerce subscription entry could not be found
+	 */
+	@Override
+	public CommerceSubscriptionEntry fetchByCommerceOrderItemId(
+		long commerceOrderItemId, boolean useFinderCache) {
+
+		Object[] finderArgs = null;
+
+		if (useFinderCache) {
+			finderArgs = new Object[] {commerceOrderItemId};
+		}
+
+		Object result = null;
+
+		if (useFinderCache) {
+			result = finderCache.getResult(
+				_finderPathFetchByCommerceOrderItemId, finderArgs, this);
+		}
+
+		if (result instanceof CommerceSubscriptionEntry) {
+			CommerceSubscriptionEntry commerceSubscriptionEntry =
+				(CommerceSubscriptionEntry)result;
+
+			if (commerceOrderItemId !=
+					commerceSubscriptionEntry.getCommerceOrderItemId()) {
+
+				result = null;
+			}
+		}
+
+		if (result == null) {
+			StringBundler query = new StringBundler(3);
+
+			query.append(_SQL_SELECT_COMMERCESUBSCRIPTIONENTRY_WHERE);
+
+			query.append(
+				_FINDER_COLUMN_COMMERCEORDERITEMID_COMMERCEORDERITEMID_2);
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(commerceOrderItemId);
+
+				List<CommerceSubscriptionEntry> list = q.list();
+
+				if (list.isEmpty()) {
+					if (useFinderCache) {
+						finderCache.putResult(
+							_finderPathFetchByCommerceOrderItemId, finderArgs,
+							list);
+					}
+				}
+				else {
+					CommerceSubscriptionEntry commerceSubscriptionEntry =
+						list.get(0);
+
+					result = commerceSubscriptionEntry;
+
+					cacheResult(commerceSubscriptionEntry);
+				}
+			}
+			catch (Exception e) {
+				if (useFinderCache) {
+					finderCache.removeResult(
+						_finderPathFetchByCommerceOrderItemId, finderArgs);
+				}
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		if (result instanceof List<?>) {
+			return null;
+		}
+		else {
+			return (CommerceSubscriptionEntry)result;
+		}
+	}
+
+	/**
+	 * Removes the commerce subscription entry where commerceOrderItemId = &#63; from the database.
+	 *
+	 * @param commerceOrderItemId the commerce order item ID
+	 * @return the commerce subscription entry that was removed
+	 */
+	@Override
+	public CommerceSubscriptionEntry removeByCommerceOrderItemId(
+			long commerceOrderItemId)
+		throws NoSuchSubscriptionEntryException {
+
+		CommerceSubscriptionEntry commerceSubscriptionEntry =
+			findByCommerceOrderItemId(commerceOrderItemId);
+
+		return remove(commerceSubscriptionEntry);
+	}
+
+	/**
+	 * Returns the number of commerce subscription entries where commerceOrderItemId = &#63;.
+	 *
+	 * @param commerceOrderItemId the commerce order item ID
+	 * @return the number of matching commerce subscription entries
+	 */
+	@Override
+	public int countByCommerceOrderItemId(long commerceOrderItemId) {
+		FinderPath finderPath = _finderPathCountByCommerceOrderItemId;
+
+		Object[] finderArgs = new Object[] {commerceOrderItemId};
+
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
+
+		if (count == null) {
+			StringBundler query = new StringBundler(2);
+
+			query.append(_SQL_COUNT_COMMERCESUBSCRIPTIONENTRY_WHERE);
+
+			query.append(
+				_FINDER_COLUMN_COMMERCEORDERITEMID_COMMERCEORDERITEMID_2);
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(commerceOrderItemId);
+
+				count = (Long)q.uniqueResult();
+
+				finderCache.putResult(finderPath, finderArgs, count);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return count.intValue();
+	}
+
+	private static final String
+		_FINDER_COLUMN_COMMERCEORDERITEMID_COMMERCEORDERITEMID_2 =
+			"commerceSubscriptionEntry.commerceOrderItemId = ?";
+
 	private FinderPath _finderPathWithPaginationFindBySubscriptionStatus;
 	private FinderPath _finderPathWithoutPaginationFindBySubscriptionStatus;
 	private FinderPath _finderPathCountBySubscriptionStatus;
@@ -2070,7 +2763,7 @@ public class CommerceSubscriptionEntryPersistenceImpl
 	 * Returns a range of all the commerce subscription entries where subscriptionStatus = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>CommerceSubscriptionEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceSubscriptionEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param subscriptionStatus the subscription status
@@ -2089,7 +2782,7 @@ public class CommerceSubscriptionEntryPersistenceImpl
 	 * Returns an ordered range of all the commerce subscription entries where subscriptionStatus = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>CommerceSubscriptionEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceSubscriptionEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param subscriptionStatus the subscription status
@@ -2111,7 +2804,7 @@ public class CommerceSubscriptionEntryPersistenceImpl
 	 * Returns an ordered range of all the commerce subscription entries where subscriptionStatus = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>CommerceSubscriptionEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceSubscriptionEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param subscriptionStatus the subscription status
@@ -2127,14 +2820,11 @@ public class CommerceSubscriptionEntryPersistenceImpl
 		OrderByComparator<CommerceSubscriptionEntry> orderByComparator,
 		boolean useFinderCache) {
 
-		boolean pagination = true;
 		FinderPath finderPath = null;
 		Object[] finderArgs = null;
 
 		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
 			(orderByComparator == null)) {
-
-			pagination = false;
 
 			if (useFinderCache) {
 				finderPath =
@@ -2190,7 +2880,7 @@ public class CommerceSubscriptionEntryPersistenceImpl
 				appendOrderByComparator(
 					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
 			}
-			else if (pagination) {
+			else {
 				query.append(CommerceSubscriptionEntryModelImpl.ORDER_BY_JPQL);
 			}
 
@@ -2207,18 +2897,8 @@ public class CommerceSubscriptionEntryPersistenceImpl
 
 				qPos.add(subscriptionStatus);
 
-				if (!pagination) {
-					list = (List<CommerceSubscriptionEntry>)QueryUtil.list(
-						q, getDialect(), start, end, false);
-
-					Collections.sort(list);
-
-					list = Collections.unmodifiableList(list);
-				}
-				else {
-					list = (List<CommerceSubscriptionEntry>)QueryUtil.list(
-						q, getDialect(), start, end);
-				}
+				list = (List<CommerceSubscriptionEntry>)QueryUtil.list(
+					q, getDialect(), start, end);
 
 				cacheResult(list);
 
@@ -2611,7 +3291,7 @@ public class CommerceSubscriptionEntryPersistenceImpl
 	 * Returns a range of all the commerce subscription entries where companyId = &#63; and userId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>CommerceSubscriptionEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceSubscriptionEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -2631,7 +3311,7 @@ public class CommerceSubscriptionEntryPersistenceImpl
 	 * Returns an ordered range of all the commerce subscription entries where companyId = &#63; and userId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>CommerceSubscriptionEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceSubscriptionEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -2654,7 +3334,7 @@ public class CommerceSubscriptionEntryPersistenceImpl
 	 * Returns an ordered range of all the commerce subscription entries where companyId = &#63; and userId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>CommerceSubscriptionEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceSubscriptionEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param companyId the company ID
@@ -2671,14 +3351,11 @@ public class CommerceSubscriptionEntryPersistenceImpl
 		OrderByComparator<CommerceSubscriptionEntry> orderByComparator,
 		boolean useFinderCache) {
 
-		boolean pagination = true;
 		FinderPath finderPath = null;
 		Object[] finderArgs = null;
 
 		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
 			(orderByComparator == null)) {
-
-			pagination = false;
 
 			if (useFinderCache) {
 				finderPath = _finderPathWithoutPaginationFindByC_U;
@@ -2735,7 +3412,7 @@ public class CommerceSubscriptionEntryPersistenceImpl
 				appendOrderByComparator(
 					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
 			}
-			else if (pagination) {
+			else {
 				query.append(CommerceSubscriptionEntryModelImpl.ORDER_BY_JPQL);
 			}
 
@@ -2754,18 +3431,8 @@ public class CommerceSubscriptionEntryPersistenceImpl
 
 				qPos.add(userId);
 
-				if (!pagination) {
-					list = (List<CommerceSubscriptionEntry>)QueryUtil.list(
-						q, getDialect(), start, end, false);
-
-					Collections.sort(list);
-
-					list = Collections.unmodifiableList(list);
-				}
-				else {
-					list = (List<CommerceSubscriptionEntry>)QueryUtil.list(
-						q, getDialect(), start, end);
-				}
+				list = (List<CommerceSubscriptionEntry>)QueryUtil.list(
+					q, getDialect(), start, end);
 
 				cacheResult(list);
 
@@ -3180,7 +3847,7 @@ public class CommerceSubscriptionEntryPersistenceImpl
 	 * Returns a range of all the commerce subscription entries where groupId = &#63; and companyId = &#63; and userId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>CommerceSubscriptionEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceSubscriptionEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -3201,7 +3868,7 @@ public class CommerceSubscriptionEntryPersistenceImpl
 	 * Returns an ordered range of all the commerce subscription entries where groupId = &#63; and companyId = &#63; and userId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>CommerceSubscriptionEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceSubscriptionEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -3225,7 +3892,7 @@ public class CommerceSubscriptionEntryPersistenceImpl
 	 * Returns an ordered range of all the commerce subscription entries where groupId = &#63; and companyId = &#63; and userId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>CommerceSubscriptionEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceSubscriptionEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param groupId the group ID
@@ -3243,14 +3910,11 @@ public class CommerceSubscriptionEntryPersistenceImpl
 		OrderByComparator<CommerceSubscriptionEntry> orderByComparator,
 		boolean useFinderCache) {
 
-		boolean pagination = true;
 		FinderPath finderPath = null;
 		Object[] finderArgs = null;
 
 		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
 			(orderByComparator == null)) {
-
-			pagination = false;
 
 			if (useFinderCache) {
 				finderPath = _finderPathWithoutPaginationFindByG_C_U;
@@ -3310,7 +3974,7 @@ public class CommerceSubscriptionEntryPersistenceImpl
 				appendOrderByComparator(
 					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
 			}
-			else if (pagination) {
+			else {
 				query.append(CommerceSubscriptionEntryModelImpl.ORDER_BY_JPQL);
 			}
 
@@ -3331,18 +3995,8 @@ public class CommerceSubscriptionEntryPersistenceImpl
 
 				qPos.add(userId);
 
-				if (!pagination) {
-					list = (List<CommerceSubscriptionEntry>)QueryUtil.list(
-						q, getDialect(), start, end, false);
-
-					Collections.sort(list);
-
-					list = Collections.unmodifiableList(list);
-				}
-				else {
-					list = (List<CommerceSubscriptionEntry>)QueryUtil.list(
-						q, getDialect(), start, end);
-				}
+				list = (List<CommerceSubscriptionEntry>)QueryUtil.list(
+					q, getDialect(), start, end);
 
 				cacheResult(list);
 
@@ -4097,6 +4751,11 @@ public class CommerceSubscriptionEntryPersistenceImpl
 			commerceSubscriptionEntry);
 
 		finderCache.putResult(
+			_finderPathFetchByCommerceOrderItemId,
+			new Object[] {commerceSubscriptionEntry.getCommerceOrderItemId()},
+			commerceSubscriptionEntry);
+
+		finderCache.putResult(
 			_finderPathFetchByC_C_C,
 			new Object[] {
 				commerceSubscriptionEntry.getCPInstanceUuid(),
@@ -4194,6 +4853,18 @@ public class CommerceSubscriptionEntryPersistenceImpl
 		}
 	}
 
+	public void clearCache(Set<Serializable> primaryKeys) {
+		finderCache.clearCache(FINDER_CLASS_NAME_ENTITY);
+		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
+		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
+
+		for (Serializable primaryKey : primaryKeys) {
+			entityCache.removeResult(
+				CommerceSubscriptionEntryModelImpl.ENTITY_CACHE_ENABLED,
+				CommerceSubscriptionEntryImpl.class, primaryKey);
+		}
+	}
+
 	protected void cacheUniqueFindersCache(
 		CommerceSubscriptionEntryModelImpl commerceSubscriptionEntryModelImpl) {
 
@@ -4207,6 +4878,17 @@ public class CommerceSubscriptionEntryPersistenceImpl
 		finderCache.putResult(
 			_finderPathFetchByUUID_G, args, commerceSubscriptionEntryModelImpl,
 			false);
+
+		args = new Object[] {
+			commerceSubscriptionEntryModelImpl.getCommerceOrderItemId()
+		};
+
+		finderCache.putResult(
+			_finderPathCountByCommerceOrderItemId, args, Long.valueOf(1),
+			false);
+		finderCache.putResult(
+			_finderPathFetchByCommerceOrderItemId, args,
+			commerceSubscriptionEntryModelImpl, false);
 
 		args = new Object[] {
 			commerceSubscriptionEntryModelImpl.getCPInstanceUuid(),
@@ -4245,6 +4927,31 @@ public class CommerceSubscriptionEntryPersistenceImpl
 
 			finderCache.removeResult(_finderPathCountByUUID_G, args);
 			finderCache.removeResult(_finderPathFetchByUUID_G, args);
+		}
+
+		if (clearCurrent) {
+			Object[] args = new Object[] {
+				commerceSubscriptionEntryModelImpl.getCommerceOrderItemId()
+			};
+
+			finderCache.removeResult(
+				_finderPathCountByCommerceOrderItemId, args);
+			finderCache.removeResult(
+				_finderPathFetchByCommerceOrderItemId, args);
+		}
+
+		if ((commerceSubscriptionEntryModelImpl.getColumnBitmask() &
+			 _finderPathFetchByCommerceOrderItemId.getColumnBitmask()) != 0) {
+
+			Object[] args = new Object[] {
+				commerceSubscriptionEntryModelImpl.
+					getOriginalCommerceOrderItemId()
+			};
+
+			finderCache.removeResult(
+				_finderPathCountByCommerceOrderItemId, args);
+			finderCache.removeResult(
+				_finderPathFetchByCommerceOrderItemId, args);
 		}
 
 		if (clearCurrent) {
@@ -4493,6 +5200,14 @@ public class CommerceSubscriptionEntryPersistenceImpl
 				_finderPathWithoutPaginationFindByUuid_C, args);
 
 			args = new Object[] {
+				commerceSubscriptionEntryModelImpl.getGroupId()
+			};
+
+			finderCache.removeResult(_finderPathCountByGroupId, args);
+			finderCache.removeResult(
+				_finderPathWithoutPaginationFindByGroupId, args);
+
+			args = new Object[] {
 				commerceSubscriptionEntryModelImpl.getCompanyId()
 			};
 
@@ -4575,6 +5290,27 @@ public class CommerceSubscriptionEntryPersistenceImpl
 				finderCache.removeResult(_finderPathCountByUuid_C, args);
 				finderCache.removeResult(
 					_finderPathWithoutPaginationFindByUuid_C, args);
+			}
+
+			if ((commerceSubscriptionEntryModelImpl.getColumnBitmask() &
+				 _finderPathWithoutPaginationFindByGroupId.
+					 getColumnBitmask()) != 0) {
+
+				Object[] args = new Object[] {
+					commerceSubscriptionEntryModelImpl.getOriginalGroupId()
+				};
+
+				finderCache.removeResult(_finderPathCountByGroupId, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByGroupId, args);
+
+				args = new Object[] {
+					commerceSubscriptionEntryModelImpl.getGroupId()
+				};
+
+				finderCache.removeResult(_finderPathCountByGroupId, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByGroupId, args);
 			}
 
 			if ((commerceSubscriptionEntryModelImpl.getColumnBitmask() &
@@ -4914,7 +5650,7 @@ public class CommerceSubscriptionEntryPersistenceImpl
 	 * Returns a range of all the commerce subscription entries.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>CommerceSubscriptionEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceSubscriptionEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param start the lower bound of the range of commerce subscription entries
@@ -4930,7 +5666,7 @@ public class CommerceSubscriptionEntryPersistenceImpl
 	 * Returns an ordered range of all the commerce subscription entries.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>CommerceSubscriptionEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceSubscriptionEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param start the lower bound of the range of commerce subscription entries
@@ -4950,7 +5686,7 @@ public class CommerceSubscriptionEntryPersistenceImpl
 	 * Returns an ordered range of all the commerce subscription entries.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>CommerceSubscriptionEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>CommerceSubscriptionEntryModelImpl</code>.
 	 * </p>
 	 *
 	 * @param start the lower bound of the range of commerce subscription entries
@@ -4965,14 +5701,11 @@ public class CommerceSubscriptionEntryPersistenceImpl
 		OrderByComparator<CommerceSubscriptionEntry> orderByComparator,
 		boolean useFinderCache) {
 
-		boolean pagination = true;
 		FinderPath finderPath = null;
 		Object[] finderArgs = null;
 
 		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
 			(orderByComparator == null)) {
-
-			pagination = false;
 
 			if (useFinderCache) {
 				finderPath = _finderPathWithoutPaginationFindAll;
@@ -5009,10 +5742,8 @@ public class CommerceSubscriptionEntryPersistenceImpl
 			else {
 				sql = _SQL_SELECT_COMMERCESUBSCRIPTIONENTRY;
 
-				if (pagination) {
-					sql = sql.concat(
-						CommerceSubscriptionEntryModelImpl.ORDER_BY_JPQL);
-				}
+				sql = sql.concat(
+					CommerceSubscriptionEntryModelImpl.ORDER_BY_JPQL);
 			}
 
 			Session session = null;
@@ -5022,18 +5753,8 @@ public class CommerceSubscriptionEntryPersistenceImpl
 
 				Query q = session.createQuery(sql);
 
-				if (!pagination) {
-					list = (List<CommerceSubscriptionEntry>)QueryUtil.list(
-						q, getDialect(), start, end, false);
-
-					Collections.sort(list);
-
-					list = Collections.unmodifiableList(list);
-				}
-				else {
-					list = (List<CommerceSubscriptionEntry>)QueryUtil.list(
-						q, getDialect(), start, end);
-				}
+				list = (List<CommerceSubscriptionEntry>)QueryUtil.list(
+					q, getDialect(), start, end);
 
 				cacheResult(list);
 
@@ -5205,6 +5926,31 @@ public class CommerceSubscriptionEntryPersistenceImpl
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUuid_C",
 			new String[] {String.class.getName(), Long.class.getName()});
 
+		_finderPathWithPaginationFindByGroupId = new FinderPath(
+			CommerceSubscriptionEntryModelImpl.ENTITY_CACHE_ENABLED,
+			CommerceSubscriptionEntryModelImpl.FINDER_CACHE_ENABLED,
+			CommerceSubscriptionEntryImpl.class,
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByGroupId",
+			new String[] {
+				Long.class.getName(), Integer.class.getName(),
+				Integer.class.getName(), OrderByComparator.class.getName()
+			});
+
+		_finderPathWithoutPaginationFindByGroupId = new FinderPath(
+			CommerceSubscriptionEntryModelImpl.ENTITY_CACHE_ENABLED,
+			CommerceSubscriptionEntryModelImpl.FINDER_CACHE_ENABLED,
+			CommerceSubscriptionEntryImpl.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByGroupId",
+			new String[] {Long.class.getName()},
+			CommerceSubscriptionEntryModelImpl.GROUPID_COLUMN_BITMASK |
+			CommerceSubscriptionEntryModelImpl.CREATEDATE_COLUMN_BITMASK);
+
+		_finderPathCountByGroupId = new FinderPath(
+			CommerceSubscriptionEntryModelImpl.ENTITY_CACHE_ENABLED,
+			CommerceSubscriptionEntryModelImpl.FINDER_CACHE_ENABLED, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByGroupId",
+			new String[] {Long.class.getName()});
+
 		_finderPathWithPaginationFindByCompanyId = new FinderPath(
 			CommerceSubscriptionEntryModelImpl.ENTITY_CACHE_ENABLED,
 			CommerceSubscriptionEntryModelImpl.FINDER_CACHE_ENABLED,
@@ -5229,6 +5975,20 @@ public class CommerceSubscriptionEntryPersistenceImpl
 			CommerceSubscriptionEntryModelImpl.FINDER_CACHE_ENABLED, Long.class,
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByCompanyId",
 			new String[] {Long.class.getName()});
+
+		_finderPathFetchByCommerceOrderItemId = new FinderPath(
+			CommerceSubscriptionEntryModelImpl.ENTITY_CACHE_ENABLED,
+			CommerceSubscriptionEntryModelImpl.FINDER_CACHE_ENABLED,
+			CommerceSubscriptionEntryImpl.class, FINDER_CLASS_NAME_ENTITY,
+			"fetchByCommerceOrderItemId", new String[] {Long.class.getName()},
+			CommerceSubscriptionEntryModelImpl.
+				COMMERCEORDERITEMID_COLUMN_BITMASK);
+
+		_finderPathCountByCommerceOrderItemId = new FinderPath(
+			CommerceSubscriptionEntryModelImpl.ENTITY_CACHE_ENABLED,
+			CommerceSubscriptionEntryModelImpl.FINDER_CACHE_ENABLED, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+			"countByCommerceOrderItemId", new String[] {Long.class.getName()});
 
 		_finderPathWithPaginationFindBySubscriptionStatus = new FinderPath(
 			CommerceSubscriptionEntryModelImpl.ENTITY_CACHE_ENABLED,

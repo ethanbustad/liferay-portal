@@ -237,19 +237,23 @@ definition {
 
 		Type(
 			locator1 = "PortalSettingsAuthentication#AUTHENTICATION_CAS_LOGIN_URL_FIELD",
-			value1 = "${casLoginURL}");
+			value1 = "http://localhost:8080/cas-web/login");
 
 		Type(
 			locator1 = "PortalSettingsAuthentication#AUTHENTICATION_CAS_LOGOUT_URL_FIELD",
-			value1 = "${casLogoutURL}");
+			value1 = "http://localhost:8080/cas-web/logout");
+
+		Type(
+			locator1 = "PortalSettingsAuthentication#AUTHENTICATION_CAS_SERVER_NAME_FIELD",
+			value1 = "http://localhost:8080");
 
 		Type(
 			locator1 = "PortalSettingsAuthentication#AUTHENTICATION_CAS_SERVER_URL_FIELD",
-			value1 = "${casServerURL}");
+			value1 = "http://localhost:8080/cas-web");
 
 		Type(
 			locator1 = "PortalSettingsAuthentication#AUTHENTICATION_CAS_SERVICE_URL_FIELD",
-			value1 = "${casServiceURL}");
+			value1 = "http://localhost:8080/c/portal/login");
 
 		AssertClick(
 			locator1 = "PortalSettingsAuthentication#AUTHENTICATION_CAS_TEST_CAS_CONFIGURATION_BUTTON",

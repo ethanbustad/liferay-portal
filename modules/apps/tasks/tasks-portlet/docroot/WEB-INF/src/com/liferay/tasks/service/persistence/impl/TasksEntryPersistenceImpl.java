@@ -10123,6 +10123,18 @@ public class TasksEntryPersistenceImpl
 		}
 	}
 
+	public void clearCache(Set<Serializable> primaryKeys) {
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
+
+		for (Serializable primaryKey : primaryKeys) {
+			EntityCacheUtil.removeResult(
+				TasksEntryModelImpl.ENTITY_CACHE_ENABLED, TasksEntryImpl.class,
+				primaryKey);
+		}
+	}
+
 	/**
 	 * Creates a new tasks entry with the primary key. Does not add the tasks entry to the database.
 	 *

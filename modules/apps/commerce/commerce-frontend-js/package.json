@@ -1,0 +1,40 @@
+{
+	"dependencies": {
+		"@clayui/alert": "^3.0.0",
+		"@clayui/autocomplete": "^3.0.0",
+		"@clayui/badge": "^3.0.0",
+		"@clayui/button": "^3.0.0",
+		"@clayui/card": "^3.0.0-milestone.3",
+		"@clayui/checkbox": "^3.0.0-milestone.1",
+		"@clayui/date-picker": "^3.0.0-milestone.3",
+		"@clayui/drop-down": "^3.0.0",
+		"@clayui/form": "^3.0.0",
+		"@clayui/icon": "^3.0.0",
+		"@clayui/label": "^3.0.0",
+		"@clayui/link": "^3.0.0",
+		"@clayui/list": "^3.0.0",
+		"@clayui/loading-indicator": "^3.0.0",
+		"@clayui/modal": "^3.0.0",
+		"@clayui/pagination": "^3.0.0",
+		"@clayui/pagination-bar": "^3.0.0",
+		"@clayui/panel": "^3.0.1",
+		"@clayui/select": "^3.0.0-milestone.3",
+		"@clayui/shared": "^3.0.1",
+		"@clayui/sticker": "^3.0.0",
+		"@clayui/table": "^3.0.0",
+		"classnames": "^2.2.6",
+		"prop-types": "^15.7.2",
+		"react": "^16.8.6",
+		"react-dom": "^16.8.6",
+		"redux": "^4.0.4"
+	},
+	"name": "commerce-frontend-js",
+	"private": true,
+	"scripts": {
+		"build": "liferay-npm-scripts build",
+		"checkFormat": "liferay-npm-scripts check",
+		"test": "liferay-npm-scripts test",
+		"watch": "liferay-npm-scripts webpack --watch --host 0.0.0.0"
+	},
+	"version": "1.0.6"
+}

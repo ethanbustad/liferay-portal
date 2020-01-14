@@ -36,6 +36,7 @@ import com.liferay.portal.kernel.security.permission.resource.PortletResourcePer
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.spring.extender.service.ServiceReference;
 import com.liferay.portlet.asset.service.permission.AssetCategoryPermission;
 
@@ -53,24 +54,25 @@ public class CPAttachmentFileEntryServiceImpl
 
 	@Override
 	public CPAttachmentFileEntry addCPAttachmentFileEntry(
-			long classNameId, long classPK, long fileEntryId,
-			int displayDateMonth, int displayDateDay, int displayDateYear,
-			int displayDateHour, int displayDateMinute, int expirationDateMonth,
-			int expirationDateDay, int expirationDateYear,
-			int expirationDateHour, int expirationDateMinute,
-			boolean neverExpire, Map<Locale, String> titleMap, String json,
-			double priority, int type, ServiceContext serviceContext)
+			long userId, long groupId, long classNameId, long classPK,
+			long fileEntryId, int displayDateMonth, int displayDateDay,
+			int displayDateYear, int displayDateHour, int displayDateMinute,
+			int expirationDateMonth, int expirationDateDay,
+			int expirationDateYear, int expirationDateHour,
+			int expirationDateMinute, boolean neverExpire,
+			Map<Locale, String> titleMap, String json, double priority,
+			int type, ServiceContext serviceContext)
 		throws PortalException {
 
 		checkCPAttachmentFileEntryPermissions(
 			serviceContext.getScopeGroupId(), classNameId, classPK, type);
 
 		return cpAttachmentFileEntryLocalService.addCPAttachmentFileEntry(
-			classNameId, classPK, fileEntryId, displayDateMonth, displayDateDay,
-			displayDateYear, displayDateHour, displayDateMinute,
-			expirationDateMonth, expirationDateDay, expirationDateYear,
-			expirationDateHour, expirationDateMinute, neverExpire, titleMap,
-			json, priority, type, serviceContext);
+			userId, groupId, classNameId, classPK, fileEntryId,
+			displayDateMonth, displayDateDay, displayDateYear, displayDateHour,
+			displayDateMinute, expirationDateMonth, expirationDateDay,
+			expirationDateYear, expirationDateHour, expirationDateMinute,
+			neverExpire, titleMap, json, priority, type, null, serviceContext);
 	}
 
 	@Override
@@ -285,9 +287,37 @@ public class CPAttachmentFileEntryServiceImpl
 			json, priority, type, serviceContext);
 	}
 
+	/**
+	 * @param      classNameId
+	 * @param      classPK
+	 * @param      fileEntryId
+	 * @param      displayDateMonth
+	 * @param      displayDateDay
+	 * @param      displayDateYear
+	 * @param      displayDateHour
+	 * @param      displayDateMinute
+	 * @param      expirationDateMonth
+	 * @param      expirationDateDay
+	 * @param      expirationDateYear
+	 * @param      expirationDateHour
+	 * @param      expirationDateMinute
+	 * @param      neverExpire
+	 * @param      titleMap
+	 * @param      json
+	 * @param      priority
+	 * @param      type
+	 * @param      externalReferenceCode
+	 * @param      serviceContext
+	 * @throws     PortalException
+	 * @deprecated As of Athanasius (7.3.x), use {@link
+	 *             #upsertCPAttachmentFileEntry(long, long, long, long, int,
+	 *             int, int, int, int, int, int, int, int, int, boolean, Map,
+	 *             String, double, int, String, ServiceContext)}
+	 */
+	@Deprecated
 	@Override
 	public CPAttachmentFileEntry upsertCPAttachmentFileEntry(
-			long classNameId, long classPK, long fileEntryId,
+			long groupId, long classNameId, long classPK, long fileEntryId,
 			int displayDateMonth, int displayDateDay, int displayDateYear,
 			int displayDateHour, int displayDateMinute, int expirationDateMonth,
 			int expirationDateDay, int expirationDateYear,
@@ -310,11 +340,54 @@ public class CPAttachmentFileEntryServiceImpl
 		}
 
 		return cpAttachmentFileEntryLocalService.upsertCPAttachmentFileEntry(
-			classNameId, classPK, fileEntryId, displayDateMonth, displayDateDay,
-			displayDateYear, displayDateHour, displayDateMinute,
+			groupId, classNameId, classPK, 0, fileEntryId, displayDateMonth,
+			displayDateDay, displayDateYear, displayDateHour, displayDateMinute,
 			expirationDateMonth, expirationDateDay, expirationDateYear,
 			expirationDateHour, expirationDateMinute, neverExpire, titleMap,
 			json, priority, type, externalReferenceCode, serviceContext);
+	}
+
+	@Override
+	public CPAttachmentFileEntry upsertCPAttachmentFileEntry(
+			long groupId, long classNameId, long classPK,
+			long cpAttachmentFileEntryId, long fileEntryId,
+			int displayDateMonth, int displayDateDay, int displayDateYear,
+			int displayDateHour, int displayDateMinute, int expirationDateMonth,
+			int expirationDateDay, int expirationDateYear,
+			int expirationDateHour, int expirationDateMinute,
+			boolean neverExpire, Map<Locale, String> titleMap, String json,
+			double priority, int type, String externalReferenceCode,
+			ServiceContext serviceContext)
+		throws PortalException {
+
+		CPAttachmentFileEntry cpAttachmentFileEntry = null;
+
+		if (cpAttachmentFileEntryId != 0) {
+			cpAttachmentFileEntry =
+				cpAttachmentFileEntryPersistence.fetchByPrimaryKey(
+					cpAttachmentFileEntryId);
+		}
+		else if (Validator.isNotNull(externalReferenceCode)) {
+			cpAttachmentFileEntry =
+				cpAttachmentFileEntryPersistence.fetchByC_ERC(
+					serviceContext.getCompanyId(), externalReferenceCode);
+		}
+
+		if (cpAttachmentFileEntry == null) {
+			checkCPAttachmentFileEntryPermissions(
+				serviceContext.getScopeGroupId(), classNameId, classPK, type);
+		}
+		else {
+			checkCPAttachmentFileEntryPermissions(cpAttachmentFileEntry);
+		}
+
+		return cpAttachmentFileEntryLocalService.upsertCPAttachmentFileEntry(
+			groupId, classNameId, classPK, cpAttachmentFileEntryId, fileEntryId,
+			displayDateMonth, displayDateDay, displayDateYear, displayDateHour,
+			displayDateMinute, expirationDateMonth, expirationDateDay,
+			expirationDateYear, expirationDateHour, expirationDateMinute,
+			neverExpire, titleMap, json, priority, type, externalReferenceCode,
+			serviceContext);
 	}
 
 	protected void checkCPAttachmentFileEntryPermissions(

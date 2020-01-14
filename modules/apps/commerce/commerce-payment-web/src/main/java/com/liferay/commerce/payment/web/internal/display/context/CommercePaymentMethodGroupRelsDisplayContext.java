@@ -21,7 +21,12 @@ import com.liferay.commerce.payment.method.CommercePaymentMethodRegistry;
 import com.liferay.commerce.payment.model.CommercePaymentMethodGroupRel;
 import com.liferay.commerce.payment.service.CommercePaymentMethodGroupRelService;
 import com.liferay.commerce.payment.util.comparator.CommercePaymentMethodGroupRelNameComparator;
+import com.liferay.commerce.payment.util.comparator.CommercePaymentMethodGroupRelNameOrderByComparator;
 import com.liferay.commerce.payment.web.internal.admin.PaymentMethodsCommerceAdminModule;
+import com.liferay.commerce.product.service.CPDefinitionLocalService;
+import com.liferay.commerce.product.service.CommerceChannelLocalService;
+import com.liferay.commerce.service.CommerceOrderLocalService;
+import com.liferay.commerce.service.CommerceSubscriptionEntryLocalService;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.security.permission.resource.PortletResourcePermission;
@@ -29,6 +34,7 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -53,15 +59,25 @@ import javax.portlet.RenderResponse;
 public class CommercePaymentMethodGroupRelsDisplayContext {
 
 	public CommercePaymentMethodGroupRelsDisplayContext(
+		CommerceChannelLocalService commerceChannelLocalService,
+		CommerceOrderLocalService commerceOrderLocalService,
 		CommercePaymentMethodRegistry commercePaymentMethodRegistry,
 		CommercePaymentMethodGroupRelService
 			commercePaymentMethodGroupRelService,
+		CommerceSubscriptionEntryLocalService
+			commerceSubscriptionEntryLocalService,
+		CPDefinitionLocalService cpDefinitionLocalService,
 		PortletResourcePermission portletResourcePermission,
 		RenderRequest renderRequest, RenderResponse renderResponse) {
 
+		_commerceChannelLocalService = commerceChannelLocalService;
+		_commerceOrderLocalService = commerceOrderLocalService;
 		_commercePaymentMethodRegistry = commercePaymentMethodRegistry;
 		_commercePaymentMethodGroupRelService =
 			commercePaymentMethodGroupRelService;
+		_commerceSubscriptionEntryLocalService =
+			commerceSubscriptionEntryLocalService;
+		_cpDefinitionLocalService = cpDefinitionLocalService;
 		_portletResourcePermission = portletResourcePermission;
 		_defaultCommercePaymentMethodGroupRels = new ArrayList<>();
 		_renderRequest = renderRequest;
@@ -178,12 +194,18 @@ public class CommercePaymentMethodGroupRelsDisplayContext {
 			null;
 		int commercePaymentMethodGroupRelsCount = 0;
 
+		OrderByComparator<CommercePaymentMethodGroupRel>
+			commercePaymentMethodGroupRelNameOrderByComparator =
+				_getCommercePaymentMethodGroupRelNameOrderByComparator(
+					"name", "asc");
+
 		if (active != null) {
 			commercePaymentMethodGroupRels =
 				_commercePaymentMethodGroupRelService.
 					getCommercePaymentMethodGroupRels(
 						themeDisplay.getScopeGroupId(), active,
-						_searchContainer.getStart(), _searchContainer.getEnd());
+						_searchContainer.getStart(), _searchContainer.getEnd(),
+						commercePaymentMethodGroupRelNameOrderByComparator);
 			commercePaymentMethodGroupRelsCount =
 				_commercePaymentMethodGroupRelService.
 					getCommercePaymentMethodGroupRelsCount(
@@ -194,14 +216,11 @@ public class CommercePaymentMethodGroupRelsDisplayContext {
 				_commercePaymentMethodGroupRelService.
 					getCommercePaymentMethodGroupRels(
 						themeDisplay.getScopeGroupId());
-			commercePaymentMethodGroupRelsCount =
-				commercePaymentMethodGroupRels.size();
-		}
 
-		if ((active == null) || !active) {
-			commercePaymentMethodGroupRels =
-				addDefaultCommercePaymentMethodGroupRels(
-					commercePaymentMethodGroupRels);
+			commercePaymentMethodGroupRelsCount =
+				_commercePaymentMethodGroupRelService.
+					getCommercePaymentMethodGroupRelsCount(
+						themeDisplay.getScopeGroupId());
 		}
 
 		if (ListUtil.isNotEmpty(commercePaymentMethodGroupRels)) {
@@ -210,9 +229,6 @@ public class CommercePaymentMethodGroupRelsDisplayContext {
 				new CommercePaymentMethodGroupRelNameComparator(
 					themeDisplay.getLocale()));
 		}
-
-		commercePaymentMethodGroupRelsCount +=
-			commercePaymentMethodGroupRels.size();
 
 		_searchContainer.setResults(commercePaymentMethodGroupRels);
 		_searchContainer.setTotal(commercePaymentMethodGroupRelsCount);
@@ -234,6 +250,33 @@ public class CommercePaymentMethodGroupRelsDisplayContext {
 		return _portletResourcePermission.contains(
 			themeDisplay.getPermissionChecker(), themeDisplay.getScopeGroupId(),
 			CommerceActionKeys.MANAGE_COMMERCE_PAYMENT_METHODS);
+	}
+
+	public boolean isLastRecurringPaymentMethod(String engineKey) {
+		Map<String, CommercePaymentMethod> commercePaymentMethodsMap =
+			_commercePaymentMethodRegistry.getCommercePaymentMethods();
+
+		List<CommercePaymentMethod> recurringCommercePaymentMethods =
+			new ArrayList<>();
+
+		for (CommercePaymentMethod commercePaymentMethod :
+				commercePaymentMethodsMap.values()) {
+
+			if (commercePaymentMethod.isProcessRecurringEnabled()) {
+				recurringCommercePaymentMethods.add(commercePaymentMethod);
+			}
+		}
+
+		if (recurringCommercePaymentMethods.size() == 1) {
+			CommercePaymentMethod lastRecurringCommercePaymentMethod =
+				recurringCommercePaymentMethods.get(0);
+
+			if (engineKey.equals(lastRecurringCommercePaymentMethod.getKey())) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	protected List<CommercePaymentMethodGroupRel>
@@ -297,10 +340,37 @@ public class CommercePaymentMethodGroupRelsDisplayContext {
 		return ParamUtil.getString(_renderRequest, "navigation");
 	}
 
+	private OrderByComparator<CommercePaymentMethodGroupRel>
+		_getCommercePaymentMethodGroupRelNameOrderByComparator(
+			String orderByCol, String orderByType) {
+
+		boolean orderByAsc = false;
+
+		if (orderByType.equals("asc")) {
+			orderByAsc = true;
+		}
+
+		OrderByComparator<CommercePaymentMethodGroupRel> orderByComparator =
+			null;
+
+		if (orderByCol.equals("name")) {
+			orderByComparator =
+				new CommercePaymentMethodGroupRelNameOrderByComparator(
+					orderByAsc);
+		}
+
+		return orderByComparator;
+	}
+
+	private final CommerceChannelLocalService _commerceChannelLocalService;
+	private final CommerceOrderLocalService _commerceOrderLocalService;
 	private CommercePaymentMethodGroupRel _commercePaymentMethodGroupRel;
 	private final CommercePaymentMethodGroupRelService
 		_commercePaymentMethodGroupRelService;
 	private final CommercePaymentMethodRegistry _commercePaymentMethodRegistry;
+	private final CommerceSubscriptionEntryLocalService
+		_commerceSubscriptionEntryLocalService;
+	private final CPDefinitionLocalService _cpDefinitionLocalService;
 	private List<CommercePaymentMethodGroupRel>
 		_defaultCommercePaymentMethodGroupRels;
 	private final PortletResourcePermission _portletResourcePermission;

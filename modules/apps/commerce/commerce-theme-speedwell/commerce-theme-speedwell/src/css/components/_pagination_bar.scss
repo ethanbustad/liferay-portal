@@ -10,7 +10,7 @@
     font-weight: 600;
     line-height: 12px;
 
-    @media only screen and (max-width: 767px) {
+    @media only screen and (max-width: $bp-small) {
       display: none;
     }
   }
@@ -22,8 +22,8 @@
   .pagination {
     justify-content: center;
 
-    li {
-      a {
+    .page-item {
+      .page-link {
         background: transparent;
         border: 0;
         color: $stroke;
@@ -41,11 +41,11 @@
         opacity: 0.5;
       }
 
-      &.active a {
+      &.active .page-link {
         border-bottom: 2px solid currentColor;
       }
 
-      @media only screen and (max-width: 767px) {
+      @media only screen and (max-width: $bp-small) {
         &:first-child,
         &:last-child {
           display: none
@@ -53,4 +53,10 @@
       }
     }
   }
+}
+
+.commerce-order-by {
+  background-color: #FFF;
+  font-size: 18px;
+  line-height: 18px;
 }

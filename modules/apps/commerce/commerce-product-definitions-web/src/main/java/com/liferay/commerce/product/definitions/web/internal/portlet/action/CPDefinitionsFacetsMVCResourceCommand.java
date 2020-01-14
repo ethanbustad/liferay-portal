@@ -14,12 +14,12 @@
 
 package com.liferay.commerce.product.definitions.web.internal.portlet.action;
 
+import com.liferay.commerce.product.constants.CPField;
 import com.liferay.commerce.product.constants.CPPortletKeys;
 import com.liferay.commerce.product.model.CPDefinition;
 import com.liferay.commerce.product.model.CPDefinitionOptionValueRel;
 import com.liferay.commerce.product.model.CPOption;
 import com.liferay.commerce.product.model.CommerceCatalog;
-import com.liferay.commerce.product.search.CPDefinitionIndexer;
 import com.liferay.commerce.product.service.CPDefinitionLocalService;
 import com.liferay.commerce.product.service.CPDefinitionOptionValueRelLocalService;
 import com.liferay.commerce.product.service.CPOptionService;
@@ -50,6 +50,7 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.StringBundler;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
@@ -134,7 +135,8 @@ public class CPDefinitionsFacetsMVCResourceCommand
 		String currentOptionKey = StringPool.BLANK;
 
 		if (fieldName.startsWith("OPTION_")) {
-			currentOptionKey = fieldName.replace("OPTION_", StringPool.BLANK);
+			currentOptionKey = StringUtil.replace(
+				fieldName, "OPTION_", StringPool.BLANK);
 		}
 
 		JSONArray jsonArray = _jsonFactory.createJSONArray();
@@ -194,9 +196,7 @@ public class CPDefinitionsFacetsMVCResourceCommand
 					themeDisplay.getLocale(),
 					WorkflowConstants.getStatusLabel(status));
 			}
-			else if (fieldName.equals(
-						CPDefinitionIndexer.FIELD_PRODUCT_TYPE_NAME)) {
-
+			else if (fieldName.equals(CPField.PRODUCT_TYPE_NAME)) {
 				String productTypeName = termCollector.getTerm();
 
 				CPType cpType = _cpTypeServicesTracker.getCPType(
@@ -204,7 +204,7 @@ public class CPDefinitionsFacetsMVCResourceCommand
 
 				label = cpType.getLabel(themeDisplay.getLocale());
 			}
-			else if (fieldName.equals(CPDefinitionIndexer.FIELD_OPTION_NAMES)) {
+			else if (fieldName.equals(CPField.OPTION_NAMES)) {
 				String optionKey = termCollector.getTerm();
 
 				CPOption cpOption = _cpOptionService.fetchCPOption(
@@ -245,7 +245,8 @@ public class CPDefinitionsFacetsMVCResourceCommand
 
 	private String _getIndexFieldName(String fieldName, String languageId) {
 		if (fieldName.startsWith("OPTION_")) {
-			fieldName = fieldName.replace("OPTION_", StringPool.BLANK);
+			fieldName = StringUtil.replace(
+				fieldName, "OPTION_", StringPool.BLANK);
 
 			return StringBundler.concat(
 				languageId, "_ATTRIBUTE_", fieldName, "_VALUES_NAMES");

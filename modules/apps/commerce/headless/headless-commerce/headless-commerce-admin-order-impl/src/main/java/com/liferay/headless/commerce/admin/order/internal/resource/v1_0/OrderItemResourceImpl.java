@@ -23,6 +23,7 @@ import com.liferay.commerce.model.CommerceOrderItem;
 import com.liferay.commerce.product.service.CPInstanceService;
 import com.liferay.commerce.service.CommerceOrderItemService;
 import com.liferay.commerce.service.CommerceOrderService;
+import com.liferay.headless.commerce.admin.order.dto.v1_0.Order;
 import com.liferay.headless.commerce.admin.order.dto.v1_0.OrderItem;
 import com.liferay.headless.commerce.admin.order.internal.util.v1_0.OrderItemUtil;
 import com.liferay.headless.commerce.admin.order.resource.v1_0.OrderItemResource;
@@ -35,6 +36,7 @@ import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.service.permission.PortalPermissionUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.vulcan.fields.NestedField;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
 
@@ -137,10 +139,18 @@ public class OrderItemResourceImpl extends BaseOrderItemResourceImpl {
 			_toOrderItems(commerceOrderItems), pagination, totalItems);
 	}
 
+	@NestedField(parentClass = Order.class, value = "items")
 	@Override
 	public Page<OrderItem> getOrderIdOrderItemsPage(
 			Long id, Pagination pagination)
 		throws Exception {
+
+		CommerceOrder commerceOrder = _commerceOrderService.fetchCommerceOrder(
+			id);
+
+		if (commerceOrder == null) {
+			return super.getOrderIdOrderItemsPage(id, pagination);
+		}
 
 		List<CommerceOrderItem> commerceOrderItems =
 			_commerceOrderItemService.getCommerceOrderItems(

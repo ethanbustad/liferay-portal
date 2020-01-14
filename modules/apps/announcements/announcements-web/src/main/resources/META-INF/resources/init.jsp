@@ -97,6 +97,7 @@ page import="java.util.List" %>
 
 <%
 AnnouncementsRequestHelper announcementsRequestHelper = new AnnouncementsRequestHelper(request);
+
 AnnouncementsDisplayContext announcementsDisplayContext = new DefaultAnnouncementsDisplayContext(announcementsRequestHelper);
 %>
 

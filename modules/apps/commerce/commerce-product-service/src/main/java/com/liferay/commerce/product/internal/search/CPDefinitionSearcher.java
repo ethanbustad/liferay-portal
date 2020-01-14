@@ -17,8 +17,8 @@ package com.liferay.commerce.product.internal.search;
 import com.liferay.asset.kernel.model.AssetCategory;
 import com.liferay.asset.kernel.service.AssetCategoryLocalServiceUtil;
 import com.liferay.commerce.product.catalog.CPQuery;
+import com.liferay.commerce.product.constants.CPField;
 import com.liferay.commerce.product.model.CPDefinition;
-import com.liferay.commerce.product.search.CPDefinitionIndexer;
 import com.liferay.portal.kernel.search.BaseSearcher;
 import com.liferay.portal.kernel.search.BooleanClauseOccur;
 import com.liferay.portal.kernel.search.BooleanQuery;
@@ -27,7 +27,6 @@ import com.liferay.portal.kernel.search.Query;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.filter.BooleanFilter;
 import com.liferay.portal.kernel.search.filter.TermsFilter;
-import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -49,13 +48,12 @@ public class CPDefinitionSearcher extends BaseSearcher {
 
 		setDefaultSelectedFieldNames(
 			Field.ENTRY_CLASS_NAME, Field.ENTRY_CLASS_PK, Field.UID, Field.NAME,
-			Field.DESCRIPTION, Field.URL,
-			CPDefinitionIndexer.FIELD_SHORT_DESCRIPTION,
-			CPDefinitionIndexer.FIELD_DEFAULT_IMAGE_FILE_URL,
-			CPDefinitionIndexer.FIELD_DEPTH, CPDefinitionIndexer.FIELD_HEIGHT,
-			CPDefinitionIndexer.FIELD_IS_IGNORE_SKU_COMBINATIONS,
-			CPDefinitionIndexer.FIELD_PRODUCT_TYPE_NAME,
-			CPDefinitionIndexer.FIELD_DEFAULT_IMAGE_FILE_URL);
+			Field.DESCRIPTION, Field.URL, CPField.SHORT_DESCRIPTION,
+			CPField.DEFAULT_IMAGE_FILE_URL, CPField.DEPTH, CPField.HEIGHT,
+			CPField.IS_IGNORE_SKU_COMBINATIONS, CPField.PRODUCT_TYPE_NAME,
+			CPField.DEFAULT_IMAGE_FILE_URL);
+
+		setDefaultSelectedLocalizedFieldNames(Field.NAME);
 	}
 
 	@Override
@@ -73,9 +71,6 @@ public class CPDefinitionSearcher extends BaseSearcher {
 	protected void addSearchAllCategories(BooleanFilter queryBooleanFilter)
 		throws Exception {
 
-		PermissionChecker permissionChecker =
-			PermissionThreadLocal.getPermissionChecker();
-
 		long[] allCategoryIds = _cpQuery.getAllCategoryIds();
 
 		if (allCategoryIds.length == 0) {
@@ -83,7 +78,7 @@ public class CPDefinitionSearcher extends BaseSearcher {
 		}
 
 		long[] filteredAllCategoryIds = AssetUtil.filterCategoryIds(
-			permissionChecker, allCategoryIds);
+			PermissionThreadLocal.getPermissionChecker(), allCategoryIds);
 
 		if (allCategoryIds.length != filteredAllCategoryIds.length) {
 			addImpossibleTerm(queryBooleanFilter, Field.ASSET_CATEGORY_IDS);
@@ -159,9 +154,6 @@ public class CPDefinitionSearcher extends BaseSearcher {
 	protected void addSearchAnyCategories(BooleanFilter queryBooleanFilter)
 		throws Exception {
 
-		PermissionChecker permissionChecker =
-			PermissionThreadLocal.getPermissionChecker();
-
 		long[] anyCategoryIds = _cpQuery.getAnyCategoryIds();
 
 		if (anyCategoryIds.length == 0) {
@@ -169,7 +161,7 @@ public class CPDefinitionSearcher extends BaseSearcher {
 		}
 
 		long[] filteredAnyCategoryIds = AssetUtil.filterCategoryIds(
-			permissionChecker, anyCategoryIds);
+			PermissionThreadLocal.getPermissionChecker(), anyCategoryIds);
 
 		if (filteredAnyCategoryIds.length == 0) {
 			addImpossibleTerm(queryBooleanFilter, Field.ASSET_CATEGORY_IDS);

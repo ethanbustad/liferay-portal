@@ -99,7 +99,7 @@ public class CommerceOrderItemModelImpl
 		{"subscription", Types.BOOLEAN}, {"deliveryGroup", Types.VARCHAR},
 		{"shippingAddressId", Types.BIGINT}, {"printedNote", Types.VARCHAR},
 		{"requestedDeliveryDate", Types.TIMESTAMP},
-		{"bookedQuantityId", Types.BIGINT}
+		{"bookedQuantityId", Types.BIGINT}, {"manuallyAdjusted", Types.BOOLEAN}
 	};
 
 	public static final Map<String, Integer> TABLE_COLUMNS_MAP =
@@ -136,10 +136,11 @@ public class CommerceOrderItemModelImpl
 		TABLE_COLUMNS_MAP.put("printedNote", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("requestedDeliveryDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("bookedQuantityId", Types.BIGINT);
+		TABLE_COLUMNS_MAP.put("manuallyAdjusted", Types.BOOLEAN);
 	}
 
 	public static final String TABLE_SQL_CREATE =
-		"create table CommerceOrderItem (externalReferenceCode VARCHAR(75) null,commerceOrderItemId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,commerceOrderId LONG,CProductId LONG,CPInstanceId LONG,quantity INTEGER,shippedQuantity INTEGER,json TEXT null,name STRING null,sku VARCHAR(75) null,unitPrice DECIMAL(30, 16) null,promoPrice DECIMAL(30, 16) null,discountAmount DECIMAL(30, 16) null,finalPrice DECIMAL(30, 16) null,discountPercentageLevel1 DECIMAL(30, 16) null,discountPercentageLevel2 DECIMAL(30, 16) null,discountPercentageLevel3 DECIMAL(30, 16) null,discountPercentageLevel4 DECIMAL(30, 16) null,subscription BOOLEAN,deliveryGroup VARCHAR(75) null,shippingAddressId LONG,printedNote VARCHAR(75) null,requestedDeliveryDate DATE null,bookedQuantityId LONG)";
+		"create table CommerceOrderItem (externalReferenceCode VARCHAR(75) null,commerceOrderItemId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,commerceOrderId LONG,CProductId LONG,CPInstanceId LONG,quantity INTEGER,shippedQuantity INTEGER,json TEXT null,name STRING null,sku VARCHAR(75) null,unitPrice DECIMAL(30, 16) null,promoPrice DECIMAL(30, 16) null,discountAmount DECIMAL(30, 16) null,finalPrice DECIMAL(30, 16) null,discountPercentageLevel1 DECIMAL(30, 16) null,discountPercentageLevel2 DECIMAL(30, 16) null,discountPercentageLevel3 DECIMAL(30, 16) null,discountPercentageLevel4 DECIMAL(30, 16) null,subscription BOOLEAN,deliveryGroup VARCHAR(75) null,shippingAddressId LONG,printedNote STRING null,requestedDeliveryDate DATE null,bookedQuantityId LONG,manuallyAdjusted BOOLEAN)";
 
 	public static final String TABLE_SQL_DROP = "drop table CommerceOrderItem";
 
@@ -231,6 +232,7 @@ public class CommerceOrderItemModelImpl
 		model.setPrintedNote(soapModel.getPrintedNote());
 		model.setRequestedDeliveryDate(soapModel.getRequestedDeliveryDate());
 		model.setBookedQuantityId(soapModel.getBookedQuantityId());
+		model.setManuallyAdjusted(soapModel.isManuallyAdjusted());
 
 		return model;
 	}
@@ -407,10 +409,10 @@ public class CommerceOrderItemModelImpl
 				@Override
 				public void accept(
 					CommerceOrderItem commerceOrderItem,
-					Object externalReferenceCode) {
+					Object externalReferenceCodeObject) {
 
 					commerceOrderItem.setExternalReferenceCode(
-						(String)externalReferenceCode);
+						(String)externalReferenceCodeObject);
 				}
 
 			});
@@ -431,10 +433,10 @@ public class CommerceOrderItemModelImpl
 				@Override
 				public void accept(
 					CommerceOrderItem commerceOrderItem,
-					Object commerceOrderItemId) {
+					Object commerceOrderItemIdObject) {
 
 					commerceOrderItem.setCommerceOrderItemId(
-						(Long)commerceOrderItemId);
+						(Long)commerceOrderItemIdObject);
 				}
 
 			});
@@ -454,9 +456,9 @@ public class CommerceOrderItemModelImpl
 
 				@Override
 				public void accept(
-					CommerceOrderItem commerceOrderItem, Object groupId) {
+					CommerceOrderItem commerceOrderItem, Object groupIdObject) {
 
-					commerceOrderItem.setGroupId((Long)groupId);
+					commerceOrderItem.setGroupId((Long)groupIdObject);
 				}
 
 			});
@@ -476,9 +478,10 @@ public class CommerceOrderItemModelImpl
 
 				@Override
 				public void accept(
-					CommerceOrderItem commerceOrderItem, Object companyId) {
+					CommerceOrderItem commerceOrderItem,
+					Object companyIdObject) {
 
-					commerceOrderItem.setCompanyId((Long)companyId);
+					commerceOrderItem.setCompanyId((Long)companyIdObject);
 				}
 
 			});
@@ -498,9 +501,9 @@ public class CommerceOrderItemModelImpl
 
 				@Override
 				public void accept(
-					CommerceOrderItem commerceOrderItem, Object userId) {
+					CommerceOrderItem commerceOrderItem, Object userIdObject) {
 
-					commerceOrderItem.setUserId((Long)userId);
+					commerceOrderItem.setUserId((Long)userIdObject);
 				}
 
 			});
@@ -520,9 +523,10 @@ public class CommerceOrderItemModelImpl
 
 				@Override
 				public void accept(
-					CommerceOrderItem commerceOrderItem, Object userName) {
+					CommerceOrderItem commerceOrderItem,
+					Object userNameObject) {
 
-					commerceOrderItem.setUserName((String)userName);
+					commerceOrderItem.setUserName((String)userNameObject);
 				}
 
 			});
@@ -542,9 +546,10 @@ public class CommerceOrderItemModelImpl
 
 				@Override
 				public void accept(
-					CommerceOrderItem commerceOrderItem, Object createDate) {
+					CommerceOrderItem commerceOrderItem,
+					Object createDateObject) {
 
-					commerceOrderItem.setCreateDate((Date)createDate);
+					commerceOrderItem.setCreateDate((Date)createDateObject);
 				}
 
 			});
@@ -564,9 +569,10 @@ public class CommerceOrderItemModelImpl
 
 				@Override
 				public void accept(
-					CommerceOrderItem commerceOrderItem, Object modifiedDate) {
+					CommerceOrderItem commerceOrderItem,
+					Object modifiedDateObject) {
 
-					commerceOrderItem.setModifiedDate((Date)modifiedDate);
+					commerceOrderItem.setModifiedDate((Date)modifiedDateObject);
 				}
 
 			});
@@ -587,9 +593,10 @@ public class CommerceOrderItemModelImpl
 				@Override
 				public void accept(
 					CommerceOrderItem commerceOrderItem,
-					Object commerceOrderId) {
+					Object commerceOrderIdObject) {
 
-					commerceOrderItem.setCommerceOrderId((Long)commerceOrderId);
+					commerceOrderItem.setCommerceOrderId(
+						(Long)commerceOrderIdObject);
 				}
 
 			});
@@ -609,9 +616,10 @@ public class CommerceOrderItemModelImpl
 
 				@Override
 				public void accept(
-					CommerceOrderItem commerceOrderItem, Object CProductId) {
+					CommerceOrderItem commerceOrderItem,
+					Object CProductIdObject) {
 
-					commerceOrderItem.setCProductId((Long)CProductId);
+					commerceOrderItem.setCProductId((Long)CProductIdObject);
 				}
 
 			});
@@ -631,9 +639,10 @@ public class CommerceOrderItemModelImpl
 
 				@Override
 				public void accept(
-					CommerceOrderItem commerceOrderItem, Object CPInstanceId) {
+					CommerceOrderItem commerceOrderItem,
+					Object CPInstanceIdObject) {
 
-					commerceOrderItem.setCPInstanceId((Long)CPInstanceId);
+					commerceOrderItem.setCPInstanceId((Long)CPInstanceIdObject);
 				}
 
 			});
@@ -653,9 +662,10 @@ public class CommerceOrderItemModelImpl
 
 				@Override
 				public void accept(
-					CommerceOrderItem commerceOrderItem, Object quantity) {
+					CommerceOrderItem commerceOrderItem,
+					Object quantityObject) {
 
-					commerceOrderItem.setQuantity((Integer)quantity);
+					commerceOrderItem.setQuantity((Integer)quantityObject);
 				}
 
 			});
@@ -676,10 +686,10 @@ public class CommerceOrderItemModelImpl
 				@Override
 				public void accept(
 					CommerceOrderItem commerceOrderItem,
-					Object shippedQuantity) {
+					Object shippedQuantityObject) {
 
 					commerceOrderItem.setShippedQuantity(
-						(Integer)shippedQuantity);
+						(Integer)shippedQuantityObject);
 				}
 
 			});
@@ -699,9 +709,9 @@ public class CommerceOrderItemModelImpl
 
 				@Override
 				public void accept(
-					CommerceOrderItem commerceOrderItem, Object json) {
+					CommerceOrderItem commerceOrderItem, Object jsonObject) {
 
-					commerceOrderItem.setJson((String)json);
+					commerceOrderItem.setJson((String)jsonObject);
 				}
 
 			});
@@ -721,9 +731,9 @@ public class CommerceOrderItemModelImpl
 
 				@Override
 				public void accept(
-					CommerceOrderItem commerceOrderItem, Object name) {
+					CommerceOrderItem commerceOrderItem, Object nameObject) {
 
-					commerceOrderItem.setName((String)name);
+					commerceOrderItem.setName((String)nameObject);
 				}
 
 			});
@@ -743,9 +753,9 @@ public class CommerceOrderItemModelImpl
 
 				@Override
 				public void accept(
-					CommerceOrderItem commerceOrderItem, Object sku) {
+					CommerceOrderItem commerceOrderItem, Object skuObject) {
 
-					commerceOrderItem.setSku((String)sku);
+					commerceOrderItem.setSku((String)skuObject);
 				}
 
 			});
@@ -765,9 +775,10 @@ public class CommerceOrderItemModelImpl
 
 				@Override
 				public void accept(
-					CommerceOrderItem commerceOrderItem, Object unitPrice) {
+					CommerceOrderItem commerceOrderItem,
+					Object unitPriceObject) {
 
-					commerceOrderItem.setUnitPrice((BigDecimal)unitPrice);
+					commerceOrderItem.setUnitPrice((BigDecimal)unitPriceObject);
 				}
 
 			});
@@ -787,9 +798,11 @@ public class CommerceOrderItemModelImpl
 
 				@Override
 				public void accept(
-					CommerceOrderItem commerceOrderItem, Object promoPrice) {
+					CommerceOrderItem commerceOrderItem,
+					Object promoPriceObject) {
 
-					commerceOrderItem.setPromoPrice((BigDecimal)promoPrice);
+					commerceOrderItem.setPromoPrice(
+						(BigDecimal)promoPriceObject);
 				}
 
 			});
@@ -810,10 +823,10 @@ public class CommerceOrderItemModelImpl
 				@Override
 				public void accept(
 					CommerceOrderItem commerceOrderItem,
-					Object discountAmount) {
+					Object discountAmountObject) {
 
 					commerceOrderItem.setDiscountAmount(
-						(BigDecimal)discountAmount);
+						(BigDecimal)discountAmountObject);
 				}
 
 			});
@@ -833,9 +846,11 @@ public class CommerceOrderItemModelImpl
 
 				@Override
 				public void accept(
-					CommerceOrderItem commerceOrderItem, Object finalPrice) {
+					CommerceOrderItem commerceOrderItem,
+					Object finalPriceObject) {
 
-					commerceOrderItem.setFinalPrice((BigDecimal)finalPrice);
+					commerceOrderItem.setFinalPrice(
+						(BigDecimal)finalPriceObject);
 				}
 
 			});
@@ -856,10 +871,10 @@ public class CommerceOrderItemModelImpl
 				@Override
 				public void accept(
 					CommerceOrderItem commerceOrderItem,
-					Object discountPercentageLevel1) {
+					Object discountPercentageLevel1Object) {
 
 					commerceOrderItem.setDiscountPercentageLevel1(
-						(BigDecimal)discountPercentageLevel1);
+						(BigDecimal)discountPercentageLevel1Object);
 				}
 
 			});
@@ -880,10 +895,10 @@ public class CommerceOrderItemModelImpl
 				@Override
 				public void accept(
 					CommerceOrderItem commerceOrderItem,
-					Object discountPercentageLevel2) {
+					Object discountPercentageLevel2Object) {
 
 					commerceOrderItem.setDiscountPercentageLevel2(
-						(BigDecimal)discountPercentageLevel2);
+						(BigDecimal)discountPercentageLevel2Object);
 				}
 
 			});
@@ -904,10 +919,10 @@ public class CommerceOrderItemModelImpl
 				@Override
 				public void accept(
 					CommerceOrderItem commerceOrderItem,
-					Object discountPercentageLevel3) {
+					Object discountPercentageLevel3Object) {
 
 					commerceOrderItem.setDiscountPercentageLevel3(
-						(BigDecimal)discountPercentageLevel3);
+						(BigDecimal)discountPercentageLevel3Object);
 				}
 
 			});
@@ -928,10 +943,10 @@ public class CommerceOrderItemModelImpl
 				@Override
 				public void accept(
 					CommerceOrderItem commerceOrderItem,
-					Object discountPercentageLevel4) {
+					Object discountPercentageLevel4Object) {
 
 					commerceOrderItem.setDiscountPercentageLevel4(
-						(BigDecimal)discountPercentageLevel4);
+						(BigDecimal)discountPercentageLevel4Object);
 				}
 
 			});
@@ -951,9 +966,11 @@ public class CommerceOrderItemModelImpl
 
 				@Override
 				public void accept(
-					CommerceOrderItem commerceOrderItem, Object subscription) {
+					CommerceOrderItem commerceOrderItem,
+					Object subscriptionObject) {
 
-					commerceOrderItem.setSubscription((Boolean)subscription);
+					commerceOrderItem.setSubscription(
+						(Boolean)subscriptionObject);
 				}
 
 			});
@@ -973,9 +990,11 @@ public class CommerceOrderItemModelImpl
 
 				@Override
 				public void accept(
-					CommerceOrderItem commerceOrderItem, Object deliveryGroup) {
+					CommerceOrderItem commerceOrderItem,
+					Object deliveryGroupObject) {
 
-					commerceOrderItem.setDeliveryGroup((String)deliveryGroup);
+					commerceOrderItem.setDeliveryGroup(
+						(String)deliveryGroupObject);
 				}
 
 			});
@@ -996,10 +1015,10 @@ public class CommerceOrderItemModelImpl
 				@Override
 				public void accept(
 					CommerceOrderItem commerceOrderItem,
-					Object shippingAddressId) {
+					Object shippingAddressIdObject) {
 
 					commerceOrderItem.setShippingAddressId(
-						(Long)shippingAddressId);
+						(Long)shippingAddressIdObject);
 				}
 
 			});
@@ -1019,9 +1038,10 @@ public class CommerceOrderItemModelImpl
 
 				@Override
 				public void accept(
-					CommerceOrderItem commerceOrderItem, Object printedNote) {
+					CommerceOrderItem commerceOrderItem,
+					Object printedNoteObject) {
 
-					commerceOrderItem.setPrintedNote((String)printedNote);
+					commerceOrderItem.setPrintedNote((String)printedNoteObject);
 				}
 
 			});
@@ -1042,10 +1062,10 @@ public class CommerceOrderItemModelImpl
 				@Override
 				public void accept(
 					CommerceOrderItem commerceOrderItem,
-					Object requestedDeliveryDate) {
+					Object requestedDeliveryDateObject) {
 
 					commerceOrderItem.setRequestedDeliveryDate(
-						(Date)requestedDeliveryDate);
+						(Date)requestedDeliveryDateObject);
 				}
 
 			});
@@ -1066,10 +1086,34 @@ public class CommerceOrderItemModelImpl
 				@Override
 				public void accept(
 					CommerceOrderItem commerceOrderItem,
-					Object bookedQuantityId) {
+					Object bookedQuantityIdObject) {
 
 					commerceOrderItem.setBookedQuantityId(
-						(Long)bookedQuantityId);
+						(Long)bookedQuantityIdObject);
+				}
+
+			});
+		attributeGetterFunctions.put(
+			"manuallyAdjusted",
+			new Function<CommerceOrderItem, Object>() {
+
+				@Override
+				public Object apply(CommerceOrderItem commerceOrderItem) {
+					return commerceOrderItem.getManuallyAdjusted();
+				}
+
+			});
+		attributeSetterBiConsumers.put(
+			"manuallyAdjusted",
+			new BiConsumer<CommerceOrderItem, Object>() {
+
+				@Override
+				public void accept(
+					CommerceOrderItem commerceOrderItem,
+					Object manuallyAdjustedObject) {
+
+					commerceOrderItem.setManuallyAdjusted(
+						(Boolean)manuallyAdjustedObject);
 				}
 
 			});
@@ -1640,6 +1684,23 @@ public class CommerceOrderItemModelImpl
 		_bookedQuantityId = bookedQuantityId;
 	}
 
+	@JSON
+	@Override
+	public boolean getManuallyAdjusted() {
+		return _manuallyAdjusted;
+	}
+
+	@JSON
+	@Override
+	public boolean isManuallyAdjusted() {
+		return _manuallyAdjusted;
+	}
+
+	@Override
+	public void setManuallyAdjusted(boolean manuallyAdjusted) {
+		_manuallyAdjusted = manuallyAdjusted;
+	}
+
 	public long getColumnBitmask() {
 		return _columnBitmask;
 	}
@@ -1779,6 +1840,7 @@ public class CommerceOrderItemModelImpl
 		commerceOrderItemImpl.setRequestedDeliveryDate(
 			getRequestedDeliveryDate());
 		commerceOrderItemImpl.setBookedQuantityId(getBookedQuantityId());
+		commerceOrderItemImpl.setManuallyAdjusted(isManuallyAdjusted());
 
 		commerceOrderItemImpl.resetOriginalValues();
 
@@ -2011,6 +2073,8 @@ public class CommerceOrderItemModelImpl
 
 		commerceOrderItemCacheModel.bookedQuantityId = getBookedQuantityId();
 
+		commerceOrderItemCacheModel.manuallyAdjusted = isManuallyAdjusted();
+
 		return commerceOrderItemCacheModel;
 	}
 
@@ -2127,6 +2191,7 @@ public class CommerceOrderItemModelImpl
 	private String _printedNote;
 	private Date _requestedDeliveryDate;
 	private long _bookedQuantityId;
+	private boolean _manuallyAdjusted;
 	private long _columnBitmask;
 	private CommerceOrderItem _escapedModel;
 

@@ -22,7 +22,7 @@ components:
                     readOnly: true
                     type: integer
                 ratingValue:
-                    #@review
+                    # @review
                     description:
                         The rating value.
                     format: double
@@ -264,6 +264,9 @@ components:
             description:
                 Represents a document (binary data and metadata) associated with structured content. Properties follow the [Media Object](https://schema.org/MediaObject) specification.
             properties:
+                contentType:
+                    readOnly: true
+                    type: string
                 contentUrl:
                     description:
                         The document's relative URL.
@@ -374,6 +377,9 @@ components:
                             description:
                                 A link to structured content on the server.
                             properties:
+                                contentType:
+                                    readOnly: true
+                                    type: string
                                 id:
                                     description:
                                         The resource's ID.
@@ -554,6 +560,12 @@ components:
                 additionalName:
                     description:
                         The author's additional name (e.g., middle name).
+                    readOnly: true
+                    type: string
+                contentType:
+                    # @review
+                    description:
+                        The type of the content.
                     readOnly: true
                     type: string
                 familyName:
@@ -1320,7 +1332,7 @@ components:
             required:
                 - title
             type: object
-        #@review
+        # @review
         MessageBoardThread:
             description:
                 Represents a discussion thread in a message board.
@@ -4921,7 +4933,7 @@ paths:
     "/sites/{siteId}/blog-posting-images":
         get:
             description:
-                Retrieves the Site's blog post images. Results can be paginated, filtered, searched, and sorted.
+                Retrieves the site's blog post images. Results can be paginated, filtered, searched, and sorted.
             operationId: getSiteBlogPostingImagesPage
             parameters:
                 - in: path
@@ -5003,7 +5015,7 @@ paths:
     "/sites/{siteId}/blog-postings":
         get:
             description:
-                Retrieves the Site's blog postings. Results can be paginated, filtered, searched, and sorted.
+                Retrieves the site's blog postings. Results can be paginated, filtered, searched, and sorted.
             operationId: getSiteBlogPostingsPage
             parameters:
                 - in: path
@@ -5198,7 +5210,7 @@ paths:
     "/sites/{siteId}/content-structures":
         get:
             description:
-                Retrieves the Site's content structures. Results can be paginated, filtered, searched, and sorted.
+                Retrieves the site's content structures. Results can be paginated, filtered, searched, and sorted.
             operationId: getSiteContentStructuresPage
             parameters:
                 - in: path
@@ -5246,7 +5258,8 @@ paths:
     "/sites/{siteId}/document-folders":
         get:
             description:
-                Retrieves the Site's document folders. Results can be paginated, filtered, searched, flattened, and sorted.
+                Retrieves the site's document folders. Results can be paginated, filtered, searched, flattened, and
+                sorted.
             operationId: getSiteDocumentFoldersPage
             parameters:
                 - in: path
@@ -5329,7 +5342,8 @@ paths:
     "/sites/{siteId}/documents":
         get:
             description:
-                Retrieves the documents in the Site's root folder. Results can be paginated, filtered, searched, flattened, and sorted.
+                Retrieves the documents in the site's root folder. Results can be paginated, filtered, searched,
+                flattened, and sorted.
             operationId: getSiteDocumentsPage
             parameters:
                 - in: path
@@ -5415,7 +5429,8 @@ paths:
     "/sites/{siteId}/knowledge-base-articles":
         get:
             description:
-                Retrieves the Site's knowledge base articles. Results can be paginated, filtered, searched, flattened, and sorted.
+                Retrieves the site's knowledge base articles. Results can be paginated, filtered, searched, flattened,
+                and sorted.
             operationId: getSiteKnowledgeBaseArticlesPage
             parameters:
                 - in: path
@@ -5532,7 +5547,7 @@ paths:
     "/sites/{siteId}/knowledge-base-folders":
         get:
             description:
-                Retrieves the Site's knowledge base folders. Results can be paginated.
+                Retrieves the site's knowledge base folders. Results can be paginated.
             operationId: getSiteKnowledgeBaseFoldersPage
             parameters:
                 - in: path
@@ -5596,10 +5611,64 @@ paths:
                     description:
                         ""
             tags: ["KnowledgeBaseFolder"]
+    "/sites/{siteId}/message-board-messages":
+        # @review
+        get:
+            description:
+                Retrieves the site's message board messages.
+            operationId: getSiteMessageBoardMessagesPage
+            parameters:
+                - in: path
+                  name: siteId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+                - in: query
+                  name: flatten
+                  schema:
+                      type: boolean
+                - in: query
+                  name: filter
+                  schema:
+                      type: string
+                - in: query
+                  name: page
+                  schema:
+                      type: integer
+                - in: query
+                  name: pageSize
+                  schema:
+                      type: integer
+                - in: query
+                  name: search
+                  schema:
+                      type: string
+                - in: query
+                  name: sort
+                  schema:
+                      type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/MessageBoardMessage"
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/MessageBoardMessage"
+                                type: array
+                    description:
+                        ""
+            tags: ["MessageBoardMessage"]
     "/sites/{siteId}/message-board-sections":
         get:
             description:
-                Retrieves the Site's message board sections. Results can be paginated, filtered, searched, flattened, and sorted.
+                Retrieves the site's message board sections. Results can be paginated, filtered, searched, flattened,
+                and sorted.
             operationId: getSiteMessageBoardSectionsPage
             parameters:
                 - in: path
@@ -5682,7 +5751,8 @@ paths:
     "/sites/{siteId}/message-board-threads":
         get:
             description:
-                Retrieves the Site's message board threads. Results can be paginated, filtered, searched, flattened, and sorted.
+                Retrieves the site's message board threads. Results can be paginated, filtered, searched, flattened, and
+                sorted.
             operationId: getSiteMessageBoardThreadsPage
             parameters:
                 - in: path
@@ -5765,7 +5835,8 @@ paths:
     "/sites/{siteId}/structured-content-folders":
         get:
             description:
-                Retrieves the Site's structured content folders. Results can be paginated, filtered, searched, flattened, and sorted.
+                Retrieves the site's structured content folders. Results can be paginated, filtered, searched,
+                flattened, and sorted.
             operationId: getSiteStructuredContentFoldersPage
             parameters:
                 - in: path
@@ -5848,7 +5919,8 @@ paths:
     "/sites/{siteId}/structured-contents":
         get:
             description:
-                Retrieves the Site's structured content. Results can be paginated, filtered, searched, flattened, and sorted.
+                Retrieves the site's structured content. Results can be paginated, filtered, searched, flattened, and
+                sorted.
             operationId: getSiteStructuredContentsPage
             parameters:
                 - in: path
@@ -6002,7 +6074,7 @@ paths:
                     description:
                         ""
             tags: ["StructuredContent"]
-    "/sites/{siteId}/wiki-nodes/":
+    "/sites/{siteId}/wiki-nodes":
         get:
             # @review
             description:
@@ -6856,7 +6928,7 @@ paths:
                     description:
                         ""
             tags: ["WikiNode"]
-    "/wiki-nodes/{wikiNodeId}/wiki-pages/":
+    "/wiki-nodes/{wikiNodeId}/wiki-pages":
         get:
             # @review
             description:

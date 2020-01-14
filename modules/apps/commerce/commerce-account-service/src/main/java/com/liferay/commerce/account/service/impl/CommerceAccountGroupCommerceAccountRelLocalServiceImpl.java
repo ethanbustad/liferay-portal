@@ -14,6 +14,7 @@
 
 package com.liferay.commerce.account.service.impl;
 
+import com.liferay.commerce.account.exception.DuplicateCommerceAccountGroupCommerceAccountRelException;
 import com.liferay.commerce.account.model.CommerceAccountGroupCommerceAccountRel;
 import com.liferay.commerce.account.service.base.CommerceAccountGroupCommerceAccountRelLocalServiceBaseImpl;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -54,13 +55,22 @@ public class CommerceAccountGroupCommerceAccountRelLocalServiceImpl
 			externalReferenceCode = null;
 		}
 
+		CommerceAccountGroupCommerceAccountRel
+			commerceAccountGroupCommerceAccountRel =
+				commerceAccountGroupCommerceAccountRelPersistence.fetchByC_C(
+					commerceAccountGroupId, commerceAccountId);
+
+		if (commerceAccountGroupCommerceAccountRel != null) {
+			throw new DuplicateCommerceAccountGroupCommerceAccountRelException(
+				"Account already associated to AccountGroup");
+		}
+
 		long commerceAccountGroupCommerceAccountRelId =
 			counterLocalService.increment();
 
-		CommerceAccountGroupCommerceAccountRel
-			commerceAccountGroupCommerceAccountRel =
-				commerceAccountGroupCommerceAccountRelPersistence.create(
-					commerceAccountGroupCommerceAccountRelId);
+		commerceAccountGroupCommerceAccountRel =
+			commerceAccountGroupCommerceAccountRelPersistence.create(
+				commerceAccountGroupCommerceAccountRelId);
 
 		commerceAccountGroupCommerceAccountRel.setCompanyId(
 			user.getCompanyId());
@@ -86,6 +96,16 @@ public class CommerceAccountGroupCommerceAccountRelLocalServiceImpl
 
 		commerceAccountGroupCommerceAccountRelPersistence.
 			removeByCommerceAccountGroupId(commerceAccountGroupId);
+	}
+
+	@Override
+	public CommerceAccountGroupCommerceAccountRel
+			getCommerceAccountGroupCommerceAccountRel(
+				long commerceAccountGroupId, long commerceAccountId)
+		throws PortalException {
+
+		return commerceAccountGroupCommerceAccountRelPersistence.findByC_C(
+			commerceAccountGroupId, commerceAccountId);
 	}
 
 	@Override

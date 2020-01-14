@@ -260,8 +260,8 @@ public class JournalArticleIndexerSummaryTest {
 						groupId = _group.getGroupId();
 						journalArticleContent = new JournalArticleContent() {
 							{
-								name = "content";
 								defaultLocale = LocaleUtil.US;
+								name = "content";
 
 								put(LocaleUtil.US, content);
 							}

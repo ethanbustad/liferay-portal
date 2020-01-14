@@ -8,11 +8,14 @@ Price.STATE = {
 	additionalDiscountClasses: Config.string(),
 	additionalPromoPriceClasses: Config.string(),
 	additionalPriceClasses: Config.string(),
+	displayDiscountLevels: Config.bool().value(false),
 	prices: Config.shapeOf(
 		{
 			price: Config.string().required(),
 			promoPrice: Config.string(),
-			discount: Config.string()
+			discountPercentage: Config.string(),
+			discountPercentages: Config.array().value(null),
+			finalPrice: Config.string()
 		}
 	)
 };

@@ -156,6 +156,18 @@ public class CounterPersistenceImpl
 		}
 	}
 
+	public void clearCache(Set<Serializable> primaryKeys) {
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
+
+		for (Serializable primaryKey : primaryKeys) {
+			EntityCacheUtil.removeResult(
+				CounterModelImpl.ENTITY_CACHE_ENABLED, CounterImpl.class,
+				primaryKey);
+		}
+	}
+
 	/**
 	 * Creates a new counter with the primary key. Does not add the counter to the database.
 	 *

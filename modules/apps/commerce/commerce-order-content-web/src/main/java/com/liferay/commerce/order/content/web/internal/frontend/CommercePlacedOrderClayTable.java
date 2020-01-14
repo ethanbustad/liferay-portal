@@ -88,8 +88,9 @@ public class CommercePlacedOrderClayTable
 				order.getOrderId(), themeDisplay);
 
 			ClayTableAction clayTableAction = new ClayTableAction(
-				viewURL, StringPool.BLANK,
-				LanguageUtil.get(httpServletRequest, "view"), false, false);
+				StringPool.BLANK, viewURL, StringPool.BLANK,
+				LanguageUtil.get(httpServletRequest, "view"), null, false,
+				false);
 
 			clayTableActions.add(clayTableAction);
 		}
@@ -113,8 +114,9 @@ public class CommercePlacedOrderClayTable
 			return 0;
 		}
 
-		return (int)_commerceOrderService.getPlacedCommerceOrdersCount(
-			commerceChannel.getCompanyId(), commerceChannel.getGroupId());
+		return (int)_commerceOrderService.getUserPlacedCommerceOrdersCount(
+			commerceChannel.getCompanyId(), commerceChannel.getGroupId(),
+			filter.getKeywords());
 	}
 
 	@Override
@@ -124,7 +126,7 @@ public class CommercePlacedOrderClayTable
 
 		clayTableSchemaBuilder.addField("title", "order-id");
 
-		clayTableSchemaBuilder.addField("createDate", "create-date");
+		clayTableSchemaBuilder.addField("date", "order-date");
 
 		clayTableSchemaBuilder.addField("accountName", "account");
 
@@ -166,9 +168,10 @@ public class CommercePlacedOrderClayTable
 		}
 
 		List<CommerceOrder> commerceOrders =
-			_commerceOrderService.getPlacedCommerceOrders(
+			_commerceOrderService.getUserPlacedCommerceOrders(
 				commerceChannel.getCompanyId(), commerceChannel.getGroupId(),
-				pagination.getStartPosition(), pagination.getEndPosition());
+				filter.getKeywords(), pagination.getStartPosition(),
+				pagination.getEndPosition());
 
 		return CommerceOrderClayTableUtil.getOrders(
 			commerceOrders, themeDisplay, false);

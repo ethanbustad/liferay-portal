@@ -21,7 +21,9 @@ import com.liferay.commerce.account.exception.DuplicateCommerceAccountException;
 import com.liferay.commerce.account.exception.NoSuchAccountException;
 import com.liferay.commerce.account.model.CommerceAccount;
 import com.liferay.commerce.account.service.CommerceAccountService;
+import com.liferay.commerce.account.util.CommerceAccountHelper;
 import com.liferay.commerce.exception.NoSuchAddressException;
+import com.liferay.commerce.product.service.CommerceChannelLocalService;
 import com.liferay.commerce.service.CommerceAddressService;
 import com.liferay.document.library.kernel.service.DLAppLocalService;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -43,6 +45,7 @@ import com.liferay.portal.kernel.transaction.TransactionInvokerUtil;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.StringUtil;
 
 import java.util.concurrent.Callable;
@@ -86,6 +89,12 @@ public class EditCommerceAccountMVCActionCommand extends BaseMVCActionCommand {
 
 				redirect = getSaveAndContinueRedirect(
 					actionRequest, commerceAccount);
+			}
+			else if (cmd.equals("setActive")) {
+				setActive(actionRequest);
+			}
+			else if (cmd.equals("setCurrentAccount")) {
+				setCurrentAccount(actionRequest);
 			}
 		}
 		catch (Throwable t) {
@@ -133,6 +142,32 @@ public class EditCommerceAccountMVCActionCommand extends BaseMVCActionCommand {
 			managePortletURL.toString());
 
 		return portletURL.toString();
+	}
+
+	protected void setActive(ActionRequest actionRequest)
+		throws PortalException {
+
+		long commerceAccountId = ParamUtil.getLong(
+			actionRequest, "commerceAccountId");
+
+		CommerceAccount commerceAccount =
+			_commerceAccountService.getCommerceAccount(commerceAccountId);
+
+		_commerceAccountService.setActive(
+			commerceAccountId, !commerceAccount.isActive());
+	}
+
+	protected void setCurrentAccount(ActionRequest actionRequest)
+		throws PortalException {
+
+		long commerceAccountId = ParamUtil.getLong(
+			actionRequest, "commerceAccountId");
+
+		_commerceAccountHelper.setCurrentCommerceAccount(
+			_portal.getHttpServletRequest(actionRequest),
+			_commerceChannelLocalService.getCommerceChannelGroupIdBySiteGroupId(
+				_portal.getScopeGroupId(actionRequest)),
+			commerceAccountId);
 	}
 
 	protected CommerceAccount updateCommerceAccount(ActionRequest actionRequest)
@@ -198,13 +233,22 @@ public class EditCommerceAccountMVCActionCommand extends BaseMVCActionCommand {
 			Propagation.REQUIRED, new Class<?>[] {Exception.class});
 
 	@Reference
+	private CommerceAccountHelper _commerceAccountHelper;
+
+	@Reference
 	private CommerceAccountService _commerceAccountService;
 
 	@Reference
 	private CommerceAddressService _commerceAddressService;
 
 	@Reference
+	private CommerceChannelLocalService _commerceChannelLocalService;
+
+	@Reference
 	private DLAppLocalService _dlAppLocalService;
+
+	@Reference
+	private Portal _portal;
 
 	private class CommerceAccountCallable implements Callable<CommerceAccount> {
 

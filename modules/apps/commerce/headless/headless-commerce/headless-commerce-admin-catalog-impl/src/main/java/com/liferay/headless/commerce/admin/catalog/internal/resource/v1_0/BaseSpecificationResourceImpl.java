@@ -18,6 +18,8 @@ import com.liferay.headless.commerce.admin.catalog.dto.v1_0.Specification;
 import com.liferay.headless.commerce.admin.catalog.resource.v1_0.SpecificationResource;
 import com.liferay.petra.function.UnsafeFunction;
 import com.liferay.portal.kernel.model.Company;
+import com.liferay.portal.kernel.search.Sort;
+import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.vulcan.accept.language.AcceptLanguage;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
@@ -57,6 +59,39 @@ import javax.ws.rs.core.UriInfo;
 @Path("/v1.0")
 public abstract class BaseSpecificationResourceImpl
 	implements SpecificationResource {
+
+	@Override
+	@GET
+	@Parameters(
+		value = {
+			@Parameter(in = ParameterIn.QUERY, name = "filter"),
+			@Parameter(in = ParameterIn.QUERY, name = "page"),
+			@Parameter(in = ParameterIn.QUERY, name = "pageSize"),
+			@Parameter(in = ParameterIn.QUERY, name = "sort")
+		}
+	)
+	@Path("/specifications/")
+	@Produces({"application/json", "application/xml"})
+	@Tags(value = {@Tag(name = "Specification")})
+	public Page<Specification> getSpecificationsPage(
+			@Context Filter filter, @Context Pagination pagination,
+			@Context Sort[] sorts)
+		throws Exception {
+
+		return Page.of(Collections.emptyList());
+	}
+
+	@Override
+	@Consumes({"application/json", "application/xml"})
+	@POST
+	@Path("/specifications/")
+	@Produces({"application/json", "application/xml"})
+	@Tags(value = {@Tag(name = "Specification")})
+	public Specification postSpecification(Specification specification)
+		throws Exception {
+
+		return new Specification();
+	}
 
 	@Override
 	@DELETE
@@ -101,36 +136,6 @@ public abstract class BaseSpecificationResourceImpl
 		Response.ResponseBuilder responseBuilder = Response.ok();
 
 		return responseBuilder.build();
-	}
-
-	@Override
-	@GET
-	@Parameters(
-		value = {
-			@Parameter(in = ParameterIn.QUERY, name = "page"),
-			@Parameter(in = ParameterIn.QUERY, name = "pageSize")
-		}
-	)
-	@Path("/specifications/")
-	@Produces({"application/json", "application/xml"})
-	@Tags(value = {@Tag(name = "Specification")})
-	public Page<Specification> getSpecificationsPage(
-			@Context Pagination pagination)
-		throws Exception {
-
-		return Page.of(Collections.emptyList());
-	}
-
-	@Override
-	@Consumes({"application/json", "application/xml"})
-	@POST
-	@Path("/specifications/")
-	@Produces({"application/json", "application/xml"})
-	@Tags(value = {@Tag(name = "Specification")})
-	public Specification postSpecification(Specification specification)
-		throws Exception {
-
-		return new Specification();
 	}
 
 	public void setContextCompany(Company contextCompany) {

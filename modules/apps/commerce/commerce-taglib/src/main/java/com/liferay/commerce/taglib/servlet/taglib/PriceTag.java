@@ -191,10 +191,13 @@ public class PriceTag extends IncludeTag {
 	protected void cleanUp() {
 		super.cleanUp();
 
+		_commerceContext = null;
+		_commerceDiscountValue = null;
 		_cpDefinitionId = 0;
 		_cpInstanceId = 0;
 		_decimalFormat = null;
 		_discountLabel = null;
+		_displayDiscountLevels = false;
 		_formattedPrice = null;
 		_formattedPromoPrice = null;
 		_promoPriceLabel = null;
@@ -204,6 +207,7 @@ public class PriceTag extends IncludeTag {
 		_showPercentage = true;
 		_showPriceRange = false;
 		_showPromo = true;
+		_themeDisplay = null;
 	}
 
 	protected String getFormattedPrice(

@@ -82,7 +82,7 @@ public abstract class BaseDiscountCategoryResourceImpl
 		}
 	)
 	@Path(
-		"/discounts/by-externalReferenceCode/{externalReferenceCode}/discountCategories/"
+		"/discounts/by-externalReferenceCode/{externalReferenceCode}/discountCategories"
 	)
 	@Produces({"application/json", "application/xml"})
 	@Tags(value = {@Tag(name = "DiscountCategory")})
@@ -106,7 +106,7 @@ public abstract class BaseDiscountCategoryResourceImpl
 		}
 	)
 	@Path(
-		"/discounts/by-externalReferenceCode/{externalReferenceCode}/discountCategories/"
+		"/discounts/by-externalReferenceCode/{externalReferenceCode}/discountCategories"
 	)
 	@Produces({"application/json", "application/xml"})
 	@Tags(value = {@Tag(name = "DiscountCategory")})
@@ -128,7 +128,7 @@ public abstract class BaseDiscountCategoryResourceImpl
 			@Parameter(in = ParameterIn.QUERY, name = "pageSize")
 		}
 	)
-	@Path("/discounts/{id}/discountCategories/")
+	@Path("/discounts/{id}/discountCategories")
 	@Produces({"application/json", "application/xml"})
 	@Tags(value = {@Tag(name = "DiscountCategory")})
 	public Page<DiscountCategory> getDiscountIdDiscountCategoriesPage(
@@ -143,7 +143,7 @@ public abstract class BaseDiscountCategoryResourceImpl
 	@Consumes({"application/json", "application/xml"})
 	@POST
 	@Parameters(value = {@Parameter(in = ParameterIn.PATH, name = "id")})
-	@Path("/discounts/{id}/discountCategories/")
+	@Path("/discounts/{id}/discountCategories")
 	@Produces({"application/json", "application/xml"})
 	@Tags(value = {@Tag(name = "DiscountCategory")})
 	public DiscountCategory postDiscountIdDiscountCategory(

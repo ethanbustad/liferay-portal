@@ -14,93 +14,79 @@
 
 package com.liferay.commerce.frontend.taglib.servlet.taglib;
 
-import com.liferay.commerce.frontend.taglib.internal.js.loader.modules.extender.npm.NPMResolverProvider;
-import com.liferay.commerce.frontend.taglib.internal.util.CPContentHelperProvider;
+import com.liferay.commerce.frontend.taglib.internal.servlet.ServletContextUtil;
 import com.liferay.commerce.product.catalog.CPMedia;
 import com.liferay.commerce.product.content.util.CPContentHelper;
-import com.liferay.frontend.js.loader.modules.extender.npm.NPMResolver;
-import com.liferay.frontend.taglib.soy.servlet.taglib.ComponentRendererTag;
-import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
-import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.taglib.util.IncludeTag;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
 
 /**
  * @author Fabio Mastrorilli
  */
-public class GalleryTag extends ComponentRendererTag {
+public class GalleryTag extends IncludeTag {
 
 	@Override
-	public int doStartTag() {
-		Map<String, Object> context = getContext();
-
+	public int doStartTag() throws JspException {
 		ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
 			WebKeys.THEME_DISPLAY);
 
-		String id = GetterUtil.getString(context.get("id"));
-		long cpDefinitionId = GetterUtil.getLong(context.get("cpDefinitionId"));
-
-		List<CPMedia> productImages = Collections.emptyList();
-
 		try {
-			productImages = _cpContentHelper.getImages(
-				cpDefinitionId, themeDisplay);
+			_images = _cpContentHelper.getImages(_cpDefinitionId, themeDisplay);
 		}
 		catch (PortalException pe) {
 			_log.error(pe, pe);
 		}
 
-		putValue("images", productImages);
-		putValue("selected", 0);
-
-		if (Validator.isNotNull(id)) {
-			setComponentId(id);
-		}
-
-		setTemplateNamespace("Gallery.render");
-
 		return super.doStartTag();
 	}
 
-	@Override
-	public String getModule() {
-		NPMResolver npmResolver = NPMResolverProvider.getNPMResolver();
-
-		if (npmResolver == null) {
-			return StringPool.BLANK;
-		}
-
-		return npmResolver.resolveModuleName(
-			"commerce-frontend-taglib/gallery/Gallery.es");
-	}
-
 	public void setCPDefinitionId(long cpDefinitionId) {
-		putValue("cpDefinitionId", cpDefinitionId);
-	}
-
-	public void setId(String id) {
-		putValue("id", id);
+		_cpDefinitionId = cpDefinitionId;
 	}
 
 	@Override
 	public void setPageContext(PageContext pageContext) {
 		super.setPageContext(pageContext);
 
-		_cpContentHelper = CPContentHelperProvider.getCPContentHelper();
+		_cpContentHelper = ServletContextUtil.getCPContentHelper();
+		servletContext = ServletContextUtil.getServletContext();
 	}
+
+	@Override
+	protected void cleanUp() {
+		super.cleanUp();
+
+		_cpContentHelper = null;
+		_cpDefinitionId = 0;
+		_images = null;
+	}
+
+	@Override
+	protected String getPage() {
+		return _PAGE;
+	}
+
+	@Override
+	protected void setAttributes(HttpServletRequest httpServletRequest) {
+		request.setAttribute("liferay-commerce:gallery:images", _images);
+	}
+
+	private static final String _PAGE = "/gallery/page.jsp";
 
 	private static final Log _log = LogFactoryUtil.getLog(GalleryTag.class);
 
 	private CPContentHelper _cpContentHelper;
+	private long _cpDefinitionId;
+	private List<CPMedia> _images;
 
 }

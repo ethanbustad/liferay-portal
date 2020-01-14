@@ -694,6 +694,20 @@ public interface CommerceOrderModel
 	public void setPaymentStatus(int paymentStatus);
 
 	/**
+	 * Returns the order date of this commerce order.
+	 *
+	 * @return the order date of this commerce order
+	 */
+	public Date getOrderDate();
+
+	/**
+	 * Sets the order date of this commerce order.
+	 *
+	 * @param orderDate the order date of this commerce order
+	 */
+	public void setOrderDate(Date orderDate);
+
+	/**
 	 * Returns the order status of this commerce order.
 	 *
 	 * @return the order status of this commerce order
@@ -735,6 +749,27 @@ public interface CommerceOrderModel
 	 * @param requestedDeliveryDate the requested delivery date of this commerce order
 	 */
 	public void setRequestedDeliveryDate(Date requestedDeliveryDate);
+
+	/**
+	 * Returns the manually adjusted of this commerce order.
+	 *
+	 * @return the manually adjusted of this commerce order
+	 */
+	public boolean getManuallyAdjusted();
+
+	/**
+	 * Returns <code>true</code> if this commerce order is manually adjusted.
+	 *
+	 * @return <code>true</code> if this commerce order is manually adjusted; <code>false</code> otherwise
+	 */
+	public boolean isManuallyAdjusted();
+
+	/**
+	 * Sets whether this commerce order is manually adjusted.
+	 *
+	 * @param manuallyAdjusted the manually adjusted of this commerce order
+	 */
+	public void setManuallyAdjusted(boolean manuallyAdjusted);
 
 	/**
 	 * Returns the status of this commerce order.

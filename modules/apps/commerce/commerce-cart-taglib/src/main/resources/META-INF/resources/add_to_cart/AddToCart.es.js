@@ -1,20 +1,22 @@
-import {Config} from 'metal-state';
 import Component from 'metal-component';
 import Soy from 'metal-soy';
+import {Config} from 'metal-state';
 
 import templates from './AddToCart.soy';
 
 class AddToCart extends Component {
-
 	created() {
-		Liferay.on(this.cpDefinitionId + 'CPInstance:change', this._instanceChange.bind(this));
+		Liferay.on(
+			this.cpDefinitionId + 'CPInstance:change',
+			this._instanceChange.bind(this)
+		);
 	}
 
 	/**
-     * Makes an ajax request to submit the data.
-     * @param {Event} event
-     * @protected
-     */
+	 * Makes an ajax request to submit the data.
+	 * @param {Event} event
+	 * @protected
+	 */
 
 	_addToCart() {
 		var instance = this;
@@ -32,52 +34,60 @@ class AddToCart extends Component {
 			}
 		}
 
-		var quantityNode = document.querySelector('#' + this.taglibQuantityInputId);
+		var quantityNode = document.querySelector(
+			'#' + this.taglibQuantityInputId
+		);
 
 		if (quantityNode) {
 			_quantity = quantityNode.value;
 		}
 
-		let formData = new FormData();
+		const formData = new FormData();
 
-		formData.append(this.portletNamespace + 'cpDefinitionId', this.cpDefinitionId);
-		formData.append(this.portletNamespace + 'cpInstanceId', this.cpInstanceId);
+		formData.append(
+			this.portletNamespace + 'cpDefinitionId',
+			this.cpDefinitionId
+		);
+		formData.append(
+			this.portletNamespace + 'cpInstanceId',
+			this.cpInstanceId
+		);
 		formData.append(this.portletNamespace + 'ddmFormValues', ddmFormValues);
 		formData.append(this.portletNamespace + 'quantity', _quantity);
 		formData.append('p_auth', Liferay.authToken);
 
-		fetch(
-			this.uri,
-			{
-				body: formData,
-				credentials: 'include',
-				method: 'post'
-			}
-		).then(
-			response => response.json()
-		).then(
-			(jsonresponse) => {
+		fetch(this.uri + `&p_auth=${window.Liferay.authToken}`, {
+			body: formData,
+			credentials: 'include',
+			method: 'post'
+		})
+			.then(response => response.json())
+			.then(jsonresponse => {
 				if (jsonresponse.success) {
 					Liferay.fire('commerce:productAddedToCart', jsonresponse);
 
-					instance._showNotification(jsonresponse.successMessage, 'success');
-				}
-				else {
+					instance._showNotification(
+						jsonresponse.successMessage,
+						'success'
+					);
+				} else {
 					var validatorErrors = jsonresponse.validatorErrors;
 
 					if (validatorErrors) {
-						validatorErrors.forEach(
-							function(validatorError) {
-								instance._showNotification(validatorError.message, 'danger');
-							}
+						validatorErrors.forEach(validatorError => {
+							instance._showNotification(
+								validatorError.message,
+								'danger'
+							);
+						});
+					} else {
+						instance._showNotification(
+							jsonresponse.error,
+							'danger'
 						);
 					}
-					else {
-						instance._showNotification(jsonresponse.error, 'danger');
-					}
 				}
-			}
-		);
+			});
 	}
 
 	_getProductContent() {
@@ -90,15 +100,12 @@ class AddToCart extends Component {
 		var productContent = this._getProductContent();
 
 		if (productContent) {
-			productContent.validateProduct(
-				function(hasError) {
-					if (!hasError) {
-						instance._addToCart();
-					}
+			productContent.validateProduct(hasError => {
+				if (!hasError) {
+					instance._addToCart();
 				}
-			);
-		}
-		else {
+			});
+		} else {
 			this._addToCart();
 		}
 	}
@@ -110,25 +117,20 @@ class AddToCart extends Component {
 	}
 
 	_showNotification(message, type) {
-		AUI().use(
-			'liferay-notification',
-			() => {
-				new Liferay.Notification(
-					{
-						closeable: true,
-						delay: {
-							hide: 5000,
-							show: 0
-						},
-						duration: 500,
-						message: message,
-						render: true,
-						title: '',
-						type: type
-					}
-				);
-			}
-		);
+		AUI().use('liferay-notification', () => {
+			new Liferay.Notification({
+				closeable: true,
+				delay: {
+					hide: 5000,
+					show: 0
+				},
+				duration: 500,
+				message,
+				render: true,
+				title: '',
+				type
+			});
+		});
 	}
 }
 
@@ -140,7 +142,6 @@ class AddToCart extends Component {
  */
 
 AddToCart.STATE = {
-
 	/**
 	 * CPDefinitionId.
 	 * @instance
@@ -170,26 +171,6 @@ AddToCart.STATE = {
 	 */
 
 	elementClasses: Config.string(),
-
-	/**
-	 * Id of the html input to get the quantity.
-	 * @instance
-	 * @memberof AddToCart
-	 * @type {?string}
-	 * @default undefined
-	 */
-
-	taglibQuantityInputId: Config.string(),
-
-	/**
-	 * Default quantity to add to cart.
-	 * @instance
-	 * @memberof AddToCart
-	 * @type {?string}
-	 * @default undefined
-	 */
-
-	quantity: Config.string(),
 
 	/**
 	 * Component id.
@@ -226,6 +207,26 @@ AddToCart.STATE = {
 	 */
 
 	productContentId: Config.string(),
+
+	/**
+	 * Default quantity to add to cart.
+	 * @instance
+	 * @memberof AddToCart
+	 * @type {?string}
+	 * @default undefined
+	 */
+
+	quantity: Config.string(),
+
+	/**
+	 * Id of the html input to get the quantity.
+	 * @instance
+	 * @memberof AddToCart
+	 * @type {?string}
+	 * @default undefined
+	 */
+
+	taglibQuantityInputId: Config.string(),
 
 	/**
 	 * Uri to add a cart item.

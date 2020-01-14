@@ -51,6 +51,8 @@ public class WarehouseItemDTOConverter implements DTOConverter {
 
 		return new WarehouseItem() {
 			{
+				externalReferenceCode =
+					commerceInventoryWarehouseItem.getExternalReferenceCode();
 				id =
 					commerceInventoryWarehouseItem.
 						getCommerceInventoryWarehouseItemId();

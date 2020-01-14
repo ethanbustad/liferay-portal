@@ -1095,6 +1095,10 @@ definition {
 			value1 = "Home");
 	}
 
+	macro openDocumentsAndMediaAdmin {
+		Navigator.openWithAppendToBaseURL(urlAppend = "group/${siteURLKey}/~/control_panel/manage?p_p_id=com_liferay_document_library_web_portlet_DLAdminPortlet");
+	}
+
 	macro revertPG {
 		DMNavigator.gotoDocumentVersion();
 
@@ -1414,8 +1418,6 @@ definition {
 		AssertElementPresent(locator1 = "DocumentsAndMediaDocument#DOCUMENT_INFO_DOWNLOAD_DOCUMENT");
 
 		AssertElementPresent(locator1 = "DocumentsAndMediaDocument#DOCUMENT_INFO_GET_URL_OR_WEBDAV_URL");
-
-		Click(locator1 = "DocumentsAndMediaDocument#DOCUMENT_DETAILS_DROPDOWN");
 
 		Panel.expandPanel(panel = "Automatically Extracted Metadata");
 	}

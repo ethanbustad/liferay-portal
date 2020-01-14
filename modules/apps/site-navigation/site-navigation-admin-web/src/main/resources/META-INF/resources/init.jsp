@@ -74,5 +74,6 @@ page import="javax.portlet.PortletURL" %>
 
 <%
 SiteNavigationAdminDisplayContext siteNavigationAdminDisplayContext = new SiteNavigationAdminDisplayContext(liferayPortletRequest, liferayPortletResponse, request);
+
 SiteNavigationMenuItemTypeRegistry siteNavigationMenuItemTypeRegistry = siteNavigationAdminDisplayContext.getSiteNavigationMenuItemTypeRegistry();
 %>

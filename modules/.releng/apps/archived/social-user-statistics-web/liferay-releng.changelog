@@ -7,3 +7,8 @@
 # Bundle Version 4.0.11
 #
 bcfdf4bfa693802e0a8aac99c2cf4a4429834a0a^..db8be7a9e57ac35841c987f0a275b719ffdde350=LPS-103302
+
+#
+# Bundle Version 4.0.12
+#
+db8be7a9e57ac35841c987f0a275b719ffdde350^..ec9f108b5fd8ae6ae60f4092a8097f76ddb478be=LPS-104679

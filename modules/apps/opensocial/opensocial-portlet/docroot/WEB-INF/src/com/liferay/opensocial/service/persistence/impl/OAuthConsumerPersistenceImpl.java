@@ -1027,6 +1027,18 @@ public class OAuthConsumerPersistenceImpl
 		}
 	}
 
+	public void clearCache(Set<Serializable> primaryKeys) {
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
+
+		for (Serializable primaryKey : primaryKeys) {
+			EntityCacheUtil.removeResult(
+				OAuthConsumerModelImpl.ENTITY_CACHE_ENABLED,
+				OAuthConsumerImpl.class, primaryKey);
+		}
+	}
+
 	protected void cacheUniqueFindersCache(
 		OAuthConsumerModelImpl oAuthConsumerModelImpl) {
 

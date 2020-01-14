@@ -74,7 +74,6 @@ public abstract class BaseModelUADDisplay<T extends BaseModel>
 	 * using a {@link DynamicQuery}.
 	 *
 	 * @param dynamicQuery the dynamicQuery to be passed to the service layer
-	 * @return
 	 * @review
 	 */
 	protected abstract long doCount(DynamicQuery dynamicQuery);

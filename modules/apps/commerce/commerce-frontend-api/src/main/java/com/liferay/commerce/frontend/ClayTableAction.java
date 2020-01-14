@@ -20,14 +20,20 @@ package com.liferay.commerce.frontend;
 public class ClayTableAction {
 
 	public ClayTableAction(
-		String href, String icon, String label, boolean quickAction,
-		boolean separator) {
+		String cssClasses, String href, String icon, String label,
+		String onClick, boolean quickAction, boolean separator) {
 
+		_cssClasses = cssClasses;
 		_href = href;
 		_icon = icon;
 		_label = label;
+		_onClick = onClick;
 		_quickAction = quickAction;
 		_separator = separator;
+	}
+
+	public String getCssClasses() {
+		return _cssClasses;
 	}
 
 	public String getHref() {
@@ -40,6 +46,10 @@ public class ClayTableAction {
 
 	public String getLabel() {
 		return _label;
+	}
+
+	public String getOnClick() {
+		return _onClick;
 	}
 
 	public int getOrder() {
@@ -78,9 +88,11 @@ public class ClayTableAction {
 		_separator = separator;
 	}
 
+	private final String _cssClasses;
 	private String _href;
 	private String _icon;
 	private String _label;
+	private final String _onClick;
 	private int _order;
 	private boolean _quickAction;
 	private boolean _separator;

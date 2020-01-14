@@ -81,12 +81,12 @@ public class CommerceProductPriceCalculationImpl
 			cpInstanceId, quantity, commerceContext.getCommerceCurrency(),
 			secure, commerceContext);
 
-		CommerceProductPriceImpl commerceProductPrice =
+		CommerceProductPriceImpl commerceProductPriceImpl =
 			new CommerceProductPriceImpl();
 
-		commerceProductPrice.setQuantity(quantity);
-		commerceProductPrice.setUnitPrice(unitPriceMoney);
-		commerceProductPrice.setUnitPromoPrice(promoPriceMoney);
+		commerceProductPriceImpl.setQuantity(quantity);
+		commerceProductPriceImpl.setUnitPrice(unitPriceMoney);
+		commerceProductPriceImpl.setUnitPromoPrice(promoPriceMoney);
 
 		BigDecimal finalPrice = unitPriceMoney.getPrice();
 
@@ -112,12 +112,13 @@ public class CommerceProductPriceCalculationImpl
 			finalPrice = finalPrice.subtract(discountAmountMoney.getPrice());
 		}
 
-		commerceProductPrice.setCommerceDiscountValue(commerceDiscountValue);
-		commerceProductPrice.setFinalPrice(
+		commerceProductPriceImpl.setCommerceDiscountValue(
+			commerceDiscountValue);
+		commerceProductPriceImpl.setFinalPrice(
 			_commerceMoneyFactory.create(
 				commerceContext.getCommerceCurrency(), finalPrice));
 
-		return commerceProductPrice;
+		return commerceProductPriceImpl;
 	}
 
 	@Override
@@ -170,8 +171,6 @@ public class CommerceProductPriceCalculationImpl
 		CPInstance cpInstance = _cpInstanceLocalService.getCPInstance(
 			cpInstanceId);
 
-		BigDecimal price = cpInstance.getPromoPrice();
-
 		Optional<CommercePriceList> commercePriceList = _getPriceList(
 			cpInstance.getGroupId(), commerceContext);
 
@@ -185,6 +184,8 @@ public class CommerceProductPriceCalculationImpl
 					commerceCurrency, priceListPrice);
 			}
 		}
+
+		BigDecimal price = cpInstance.getPromoPrice();
 
 		CommerceCatalog commerceCatalog =
 			_commerceCatalogLocalService.fetchCommerceCatalogByGroupId(
@@ -306,8 +307,6 @@ public class CommerceProductPriceCalculationImpl
 		CPInstance cpInstance = _cpInstanceLocalService.getCPInstance(
 			cpInstanceId);
 
-		BigDecimal price = cpInstance.getPrice();
-
 		Optional<CommercePriceList> commercePriceList = _getPriceList(
 			cpInstance.getGroupId(), commerceContext);
 
@@ -330,6 +329,8 @@ public class CommerceProductPriceCalculationImpl
 			_commerceCurrencyLocalService.getCommerceCurrency(
 				commerceCatalog.getCompanyId(),
 				commerceCatalog.getCommerceCurrencyCode());
+
+		BigDecimal price = cpInstance.getPrice();
 
 		if (catalogCommerceCurrency.getCommerceCurrencyId() !=
 				commerceCurrency.getCommerceCurrencyId()) {

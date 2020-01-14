@@ -1858,3 +1858,142 @@ app.artifacts-2.0.5=\
 app.change.log-2.0.5=[[trimmed]]MMERCE-1786 COMMERCE-1790 COMMERCE-1791 COMMERCE-1805 COMMERCE-1808 COMMERCE-1811 COMMERCE-1828 COMMERCE-1829 COMMERCE-314 COMMERCE-425 COMMERCE-427 COMMERCE-437 COMMERCE-438 COMMERCE-482 COMMERCE-522 COMMERCE-530 COMMERCE-533 COMMERCE-538 COMMERCE-539 COMMERCE-553 COMMERCE-561 COMMERCE-574 COMMERCE-600 COMMERCE-617 COMMERCE-619 COMMERCE-620 COMMERCE-621 COMMERCE-622 COMMERCE-623 COMMERCE-628 COMMERCE-631 COMMERCE-637 COMMERCE-642 COMMERCE-647 COMMERCE-660 COMMERCE-672 COMMERCE-676 COMMERCE-677 COMMERCE-682 COMMERCE-686 COMMERCE-697 COMMERCE-698 COMMERCE-699 COMMERCE-702 COMMERCE-704 COMMERCE-706 COMMERCE-712 COMMERCE-718 COMMERCE-721 COMMERCE-725 COMMERCE-727 COMMERCE-739 COMMERCE-749 COMMERCE-774 COMMERCE-778 COMMERCE-784 COMMERCE-798 COMMERCE-841 COMMERCE-844 COMMERCE-872 COMMERCE-873 COMMERCE-884 COMMERCE-906 COMMERCE-943 COMMERCE-981 COMMERCE-API COMMERCE-WLT COMMERCE-X LPS-77699 LPS-84119 LPS-85296 LPS-86408 LPS-86413 LPS-91420 LPS-95067 LPS-96481 LPS-96637 LPS-98419 RELEASE-1502
 
 app.git.id-2.0.5=e0f27c0bdddf81e86b96eb0dadc38b783d95bda3
+
+#
+# Liferay App Version 2.0.7
+#
+
+app.artifacts-2.0.7=\
+	com.liferay.commerce.account.admin.web-1.0.10.jar,\
+	com.liferay.commerce.account.api-4.0.1.jar,\
+	com.liferay.commerce.account.group.admin.web-1.0.9.jar,\
+	com.liferay.commerce.account.item.selector.api-1.1.1.jar,\
+	com.liferay.commerce.account.item.selector.web-1.0.9.jar,\
+	com.liferay.commerce.account.service-1.0.19.jar,\
+	com.liferay.commerce.account.web-1.0.21.jar,\
+	com.liferay.commerce.address.content.web-1.0.20.jar,\
+	com.liferay.commerce.address.web-1.0.21.jar,\
+	com.liferay.commerce.admin.api-3.0.1.jar,\
+	com.liferay.commerce.admin.web-1.0.21.jar,\
+	com.liferay.commerce.api-10.1.0.jar,\
+	com.liferay.commerce.application.list-1.1.1.jar,\
+	com.liferay.commerce.availability.estimate.web-1.0.18.jar,\
+	com.liferay.commerce.cart.content.web-1.0.22.jar,\
+	com.liferay.commerce.cart.taglib-2.1.14.jar,\
+	com.liferay.commerce.catalog.web-1.0.8.jar,\
+	com.liferay.commerce.channel.web-1.0.8.jar,\
+	com.liferay.commerce.checkout.web-2.0.5.jar,\
+	com.liferay.commerce.currency.api-2.1.1.jar,\
+	com.liferay.commerce.currency.service-1.0.18.jar,\
+	com.liferay.commerce.currency.web-1.0.20.jar,\
+	com.liferay.commerce.discount.api-3.1.4.jar,\
+	com.liferay.commerce.discount.content.web-1.0.22.jar,\
+	com.liferay.commerce.discount.rule.added.all-1.0.22.jar,\
+	com.liferay.commerce.discount.rule.added.any-1.0.21.jar,\
+	com.liferay.commerce.discount.rule.cart.total-1.0.19.jar,\
+	com.liferay.commerce.discount.service-1.0.23.jar,\
+	com.liferay.commerce.discount.web-1.0.22.jar,\
+	com.liferay.commerce.elasticsearch6-1.0.11.jar,\
+	com.liferay.commerce.frontend.api-2.0.1.jar,\
+	com.liferay.commerce.frontend.impl-1.0.20.jar,\
+	com.liferay.commerce.frontend.js-1.0.5.jar,\
+	com.liferay.commerce.frontend.taglib-3.0.4.jar,\
+	com.liferay.commerce.geocoder.bing-1.0.22.jar,\
+	com.liferay.commerce.health.status.api-2.0.1.jar,\
+	com.liferay.commerce.health.status.web-1.0.22.jar,\
+	com.liferay.commerce.initializer.util-4.0.4.jar,\
+	com.liferay.commerce.inventory.api-2.0.1.jar,\
+	com.liferay.commerce.inventory.service-1.0.8.jar,\
+	com.liferay.commerce.inventory.web-1.0.21.jar,\
+	com.liferay.commerce.item.selector.api-2.1.1.jar,\
+	com.liferay.commerce.item.selector.web-1.0.18.jar,\
+	com.liferay.commerce.lang-1.0.27.jar,\
+	com.liferay.commerce.media.api-1.1.3.jar,\
+	com.liferay.commerce.media.impl-1.0.13.jar,\
+	com.liferay.commerce.notification.api-3.0.1.jar,\
+	com.liferay.commerce.notification.service-1.0.18.jar,\
+	com.liferay.commerce.notification.web-1.0.19.jar,\
+	com.liferay.commerce.order.content.web-1.0.24.jar,\
+	com.liferay.commerce.order.web-2.0.8.jar,\
+	com.liferay.commerce.payment.api-1.4.1.jar,\
+	com.liferay.commerce.payment.method.authorize.net-1.0.16.jar,\
+	com.liferay.commerce.payment.method.mercanet-1.0.16.jar,\
+	com.liferay.commerce.payment.method.money.order-1.0.17.jar,\
+	com.liferay.commerce.payment.method.paypal-1.0.17.jar,\
+	com.liferay.commerce.payment.service-1.0.15.jar,\
+	com.liferay.commerce.payment.web-1.0.15.jar,\
+	com.liferay.commerce.price.list.api-4.1.4.jar,\
+	com.liferay.commerce.price.list.service-1.0.21.jar,\
+	com.liferay.commerce.price.list.web-1.1.7.jar,\
+	com.liferay.commerce.product.api-12.0.1.jar,\
+	com.liferay.commerce.product.asset.categories.navigation.web-1.0.20.jar,\
+	com.liferay.commerce.product.asset.categories.web-1.0.21.jar,\
+	com.liferay.commerce.product.content.api-2.1.6.jar,\
+	com.liferay.commerce.product.content.category.web-1.0.20.jar,\
+	com.liferay.commerce.product.content.search.web-1.0.23.jar,\
+	com.liferay.commerce.product.content.web-1.0.24.jar,\
+	com.liferay.commerce.product.definitions.web-2.0.13.jar,\
+	com.liferay.commerce.product.item.selector.api-1.0.5.jar,\
+	com.liferay.commerce.product.item.selector.web-1.0.20.jar,\
+	com.liferay.commerce.product.measurement.unit.web-1.0.19.jar,\
+	com.liferay.commerce.product.options.web-1.0.28.jar,\
+	com.liferay.commerce.product.service-3.0.2.jar,\
+	com.liferay.commerce.product.subscription.type.web-1.0.17.jar,\
+	com.liferay.commerce.product.taglib-1.1.8.jar,\
+	com.liferay.commerce.product.tax.category.web-1.0.21.jar,\
+	com.liferay.commerce.product.type.grouped.api-2.0.15.jar,\
+	com.liferay.commerce.product.type.grouped.service-1.0.21.jar,\
+	com.liferay.commerce.product.type.grouped.web-1.0.22.jar,\
+	com.liferay.commerce.product.type.simple-1.0.21.jar,\
+	com.liferay.commerce.product.type.virtual.api-2.0.16.jar,\
+	com.liferay.commerce.product.type.virtual.order.api-2.0.13.jar,\
+	com.liferay.commerce.product.type.virtual.order.content.web-1.0.22.jar,\
+	com.liferay.commerce.product.type.virtual.order.service-1.0.21.jar,\
+	com.liferay.commerce.product.type.virtual.service-1.0.21.jar,\
+	com.liferay.commerce.product.type.virtual.web-1.0.22.jar,\
+	com.liferay.commerce.service-5.4.4.jar,\
+	com.liferay.commerce.shipment.content.web-1.0.22.jar,\
+	com.liferay.commerce.shipment.web-1.0.23.jar,\
+	com.liferay.commerce.shipping.engine.fedex-2.0.14.jar,\
+	com.liferay.commerce.shipping.engine.fixed.api-2.0.6.jar,\
+	com.liferay.commerce.shipping.engine.fixed.service-1.0.18.jar,\
+	com.liferay.commerce.shipping.engine.fixed.web-1.0.22.jar,\
+	com.liferay.commerce.shipping.origin.locator-1.0.8.jar,\
+	com.liferay.commerce.shipping.origin.locator.api-1.0.7.jar,\
+	com.liferay.commerce.shipping.web-3.0.1.jar,\
+	com.liferay.commerce.subscription.web-1.0.18.jar,\
+	com.liferay.commerce.taglib-1.5.2.jar,\
+	com.liferay.commerce.tax.api-1.0.9.jar,\
+	com.liferay.commerce.tax.engine.fixed.api-1.1.6.jar,\
+	com.liferay.commerce.tax.engine.fixed.service-1.0.21.jar,\
+	com.liferay.commerce.tax.engine.fixed.web-1.0.21.jar,\
+	com.liferay.commerce.tax.service-1.0.21.jar,\
+	com.liferay.commerce.tax.web-1.0.19.jar,\
+	com.liferay.commerce.theme.minium.api-2.1.1.jar,\
+	com.liferay.commerce.theme.minium.impl-2.0.18.jar,\
+	com.liferay.commerce.theme.minium.site.initializer-2.0.14.jar,\
+	com.liferay.commerce.theme.speedwell.site.initializer-1.0.5.jar,\
+	com.liferay.commerce.warehouse.web-1.0.22.jar,\
+	com.liferay.commerce.wish.list.api-3.0.6.jar,\
+	com.liferay.commerce.wish.list.service-1.0.21.jar,\
+	com.liferay.commerce.wish.list.web-1.0.23.jar,\
+	com.liferay.headless.commerce.admin.account.api-4.0.2.jar,\
+	com.liferay.headless.commerce.admin.account.impl-1.0.14.jar,\
+	com.liferay.headless.commerce.admin.catalog.api-5.0.2.jar,\
+	com.liferay.headless.commerce.admin.catalog.impl-1.0.14.jar,\
+	com.liferay.headless.commerce.admin.inventory.api-2.0.2.jar,\
+	com.liferay.headless.commerce.admin.inventory.impl-1.0.8.jar,\
+	com.liferay.headless.commerce.admin.order.api-2.2.2.jar,\
+	com.liferay.headless.commerce.admin.order.impl-1.0.8.jar,\
+	com.liferay.headless.commerce.admin.pricing.api-5.0.2.jar,\
+	com.liferay.headless.commerce.admin.pricing.impl-1.0.14.jar,\
+	com.liferay.headless.commerce.admin.site.setting.api-2.0.5.jar,\
+	com.liferay.headless.commerce.admin.site.setting.impl-1.0.14.jar,\
+	com.liferay.headless.commerce.core.api-1.1.2.jar,\
+	com.liferay.headless.commerce.core.impl-1.0.4.jar,\
+	minium-theme-2.0.16.war,\
+	speedwell-theme-1.0.14.war
+
+app.change.log-2.0.7=[[trimmed]]MERCE-870 COMMERCE-871 COMMERCE-872 COMMERCE-873 COMMERCE-874 COMMERCE-884 COMMERCE-887 COMMERCE-903 COMMERCE-904 COMMERCE-906 COMMERCE-914 COMMERCE-934 COMMERCE-935 COMMERCE-939 COMMERCE-943 COMMERCE-951 COMMERCE-964 COMMERCE-977 COMMERCE-979 COMMERCE-980 COMMERCE-981 COMMERCE-984 COMMERCE-985 COMMERCE-986 COMMERCE-989 COMMERCE-991 COMMERCE-992 COMMERCE-994 COMMERCE-997 COMMERCE-998 COMMERCE-API COMMERCE-WLT COMMERCE-X COMMERCE-XXX EMP-102 EMP-15 EMP-2 EMP-20 EMP-26 EMP-27 EMP-28 EMP-29 EMP-3 EMP-36 EMP-40 EMP-44 EMP-51 EMP-52 EMP-53 EMP-62 EMP-65 EMP-66 EMP-82 EMP-84 EMP-92 EMP-93 EMP-96 LPS-0 LPS-103809 LPS-104435 LPS-104606 LPS-106128 LPS-106144 LPS-77699 LPS-83808 LPS-84119 LPS-85296 LPS-85973 LPS-86408 LPS-86413 LPS-86806 LPS-89571 LPS-90379 LPS-91413 LPS-91420 LPS-91463 LPS-91772 LPS-94301 LPS-95067 LPS-96481 LPS-96628 LPS-96637 LPS-96911 LPS-97072 LPS-97115 LPS-97133 LPS-97385 LPS-97971 LPS-98024 LPS-98027 LPS-98419 LRQA-51488 RELEASE-1502 RELEASE-1523 RELEASE-1813 RELEASE-1854
+
+app.git.id-2.0.7=b049490b626d10379fdbf93fd2d86d2f793b64d5
